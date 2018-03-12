@@ -2,11 +2,10 @@ package com.excilys.formation.java.persistence;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 
+import com.excilys.formation.java.mapper.CompanyMP;
+import com.excilys.formation.java.mapper.ComputerMP;
 
 
 
@@ -33,12 +32,20 @@ public class ConnexionDB {
 	
 	public static void main(String args[]) throws ClassNotFoundException, SQLException{
 		System.out.println("Test");
-		ConnexionDB computerDataBase = new ConnexionDB();
-		
+		ConnexionDB computerDataBase = new ConnexionDB();		
 		System.out.println("Done");
+	
+		/*
+		ComputerDB cpmdb = new ComputerDB();
+		for(ComputerMP cmp : cpmdb.getComputerList(conn)) {
+			System.out.println(cmp);
+		}*/
 		
 		CompagnyDB cpndb = new CompagnyDB();
-		ComputerDB cptdb = new ComputerDB();
+		for(CompanyMP cpn : cpndb.getCompanyList(conn)) {
+			System.out.println(cpn);
+		}
+		
 		
 	}
 	

@@ -5,12 +5,11 @@ import java.sql.ResultSet;
 
 public class ComputerMP {
 	
-
 	private int id;
 	private String name;
 	private Date introduced;
 	private Date discontinued;
-	private int company_id;
+	private int companyId;
 	/*
 	 * Fonctionnalité  1 à tester immédiatement 
 	 * vérifier le lien avec JDBC (persitance)
@@ -20,7 +19,7 @@ public class ComputerMP {
 		this.name = name;
 		this.introduced = introduced;
 		this.discontinued = discontinued;
-		this.company_id = company_id;
+		this.companyId = company_id;
 	}
 
 	
@@ -99,8 +98,8 @@ public class ComputerMP {
 	/**
 	 * @return the company_id
 	 */
-	public int getCompany_id() {
-		return company_id;
+	public int getCompanyId() {
+		return companyId;
 	}
 
 
@@ -109,7 +108,18 @@ public class ComputerMP {
 	 * @param company_id the company_id to set
 	 */
 	public void setCompany_id(int company_id) {
-		this.company_id = company_id;
+		this.companyId = company_id;
+	}
+	
+	@Override 
+	public String toString() {
+		return "Computer:("
+				+ "id=" + id + ", "
+				+ "name=" + name + ", "
+				+ "introduced=" + introduced + ", "
+				+ "discontinued=" + discontinued + ", "
+				+ "company_id" + companyId + ")";
+		
 	}
 
 	

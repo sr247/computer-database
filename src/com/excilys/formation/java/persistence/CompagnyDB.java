@@ -16,7 +16,7 @@ public class CompagnyDB {
 		if (numCompanies == -1){
 			Statement s = conn.createStatement();
 			ResultSet res = s
-					.executeQuery("SELECT COUNT(*) AS NUM FROM MOVIE");
+					.executeQuery("SELECT COUNT(*) AS NUM FROM company");
 			res.next();
 			numCompanies = res.getInt("NUM");
 		}
@@ -24,11 +24,11 @@ public class CompagnyDB {
 		return numCompanies;
 	}	
 	
-	public ArrayList<CompanyMP> getComputerList(Connection conn) throws SQLException {
+	public ArrayList<CompanyMP> getCompanyList(Connection conn) throws SQLException {
 		ArrayList<CompanyMP> companies = new ArrayList<CompanyMP>();
 		// Solutionner pour les preperedStatement plutot : Plus sécuritaire au niveau des injection sql.
 		Statement s = conn.createStatement();
-		ResultSet res = s.executeQuery("SELECT * FROM COMPUTERS ORDER BY TITLE");
+		ResultSet res = s.executeQuery("SELECT * FROM company ORDER BY ID");
 		
 		while (res.next())
 			companies.add(CompanyMP.map(res));

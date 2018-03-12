@@ -39,7 +39,13 @@ public class CompanyMP {
 		this.name = name;
 	}
 
-
+	@Override 
+	public String toString() {
+		return "Company:("
+				+ "id=" + id + ", "
+				+ "name=" + name + ")";
+		
+	}
 	
 	
 	

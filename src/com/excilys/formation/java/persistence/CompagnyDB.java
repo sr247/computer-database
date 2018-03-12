@@ -7,8 +7,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 
 import com.excilys.formation.java.model.Company;
-import com.excilys.formation.java.model.Computer;
-import com.excilys.formation.java.mapper.ComputerMP;
+import com.excilys.formation.java.mapper.CompanyMP;
 
 public class CompagnyDB {
 	private int numCompanies;

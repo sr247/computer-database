@@ -39,7 +39,6 @@ public class ConnexionDB {
 		
 		CompagnyDB cpndb = new CompagnyDB();
 		ComputerDB cptdb = new ComputerDB();
-		ArrayList<Computeur> computers = new ArrayList<Compurter>();
 		
 	}
 	

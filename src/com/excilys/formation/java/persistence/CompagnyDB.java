@@ -6,7 +6,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 
-import com.excilys.formation.java.model.Company;
 import com.excilys.formation.java.mapper.CompanyMP;
 
 public class CompagnyDB {
@@ -23,11 +22,10 @@ public class CompagnyDB {
 		}
 		
 		return numCompanies;
-	}
+	}	
 	
-	
-	public ArrayList<Company> getComputerList(Connection conn) throws SQLException {
-		ArrayList<Company> companies = new ArrayList<Company>();
+	public ArrayList<CompanyMP> getComputerList(Connection conn) throws SQLException {
+		ArrayList<CompanyMP> companies = new ArrayList<CompanyMP>();
 		// Solutionner pour les preperedStatement plutot : Plus sécuritaire au niveau des injection sql.
 		Statement s = conn.createStatement();
 		ResultSet res = s.executeQuery("SELECT * FROM COMPUTERS ORDER BY TITLE");
@@ -37,6 +35,8 @@ public class CompagnyDB {
 	
 		return companies;
 	}
+	
+	
 	
 	
 }

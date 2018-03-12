@@ -6,8 +6,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 
+import com.excilys.formation.java.mapper.Computer;
 import com.excilys.formation.java.mapper.ComputerMP;
-import com.excilys.formation.java.model.Computer;
 
 public class ComputerDB {
 	private int numComputers;
@@ -27,9 +27,9 @@ public class ComputerDB {
 		return numComputers;
 	}
 	
-	public ArrayList<Computer> getComputerList(Connection conn) throws SQLException {
+	public ArrayList<ComputerMP> getComputerList(Connection conn) throws SQLException {
 		
-		ArrayList<Computer> computers = new ArrayList<Computer>();
+		ArrayList<ComputerMP> computers = new ArrayList<ComputerMP>();
 		// Solutionner pour les preperedStatement plutot : Plus sécuritaire au niveau des injection sql.
 		Statement s = conn.createStatement();
 		ResultSet res = s.executeQuery("SELECT * FROM COMPUTERS ORDER BY TITLE");

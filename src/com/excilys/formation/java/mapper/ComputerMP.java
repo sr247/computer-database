@@ -126,7 +126,7 @@ public class ComputerMP {
 	
 	public static ComputerMP map(ResultSet res) {
 		
-		
+		// Il faudrait check ici : Il y a surement un moyen plus élégant de default/catch
 		int id = -1;
 		String name = "";
 		Date introduced = new Date(0);

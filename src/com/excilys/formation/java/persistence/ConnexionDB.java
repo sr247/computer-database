@@ -35,16 +35,19 @@ public class ConnexionDB {
 		ConnexionDB computerDataBase = new ConnexionDB();		
 		System.out.println("Done");
 	
-		/*
-		ComputerDB cpmdb = new ComputerDB();
-		for(ComputerMP cmp : cpmdb.getComputerList(conn)) {
-			System.out.println(cmp);
-		}*/
 		
+		ComputerDB cpmdb = new ComputerDB();
+		for(ComputerMP cmp : cpmdb.getComputerList(conn, 0, 10)) {
+			System.out.println(cmp);
+		}
+		
+		System.out.println(cpmdb.getComputer(5, conn));
+		
+		/*
 		CompagnyDB cpndb = new CompagnyDB();
 		for(CompanyMP cpn : cpndb.getCompanyList(conn)) {
 			System.out.println(cpn);
-		}
+		}*/
 		
 		
 	}

@@ -11,8 +11,8 @@ import com.mysql.jdbc.PreparedStatement;
 
 public class ComputerDB {
 	
-	private int numComputers;
-		
+	private int numComputers = -1;
+	
 	public int getNumComputers(Connection conn) throws SQLException {
 		synchronized(conn) {
 			if (numComputers == -1)
@@ -27,20 +27,43 @@ public class ComputerDB {
 		return numComputers;
 	}
 	
-	public ArrayList<ComputerMP> getComputerList(Connection conn, int from, int to) throws SQLException {
+	public ArrayList<ComputerMP> getComputerList(Connection conn, int from, int to) {
 		
 		ArrayList<ComputerMP> computers = new ArrayList<ComputerMP>();
-		// Solutionner pour les preperedStatement plutot : Plus sécuritaire au niveau des injection sql.
-		PreparedStatement ps = (PreparedStatement) 
-				conn.prepareStatement("SELECT * FROM computer"
-						+ " ORDER BY ID"
-						+ " LIMIT ? OFFSET ?");
-		ps.setInt(1, to-from);
-		ps.setInt(2, from);
-		ResultSet res = ps.executeQuery();
+		try {
+			// Solutionner pour les preperedStatement plutot : Plus sécuritaire au niveau des injection sql.
+			PreparedStatement ps = (PreparedStatement) 
+					conn.prepareStatement("SELECT * FROM computer"
+							+ " ORDER BY ID"
+							+ " LIMIT ? OFFSET ?");
+			ps.setInt(1, to-from);
+			ps.setInt(2, from);
+			ResultSet res = ps.executeQuery();
+			
+			while (res.next())
+				computers.add(ComputerMP.map(res));
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
+	
+		return computers;
+	}
+	
+public ArrayList<ComputerMP> getComputerList(Connection conn) {
 		
-		while (res.next())
-			computers.add(ComputerMP.map(res));
+		ArrayList<ComputerMP> computers = new ArrayList<ComputerMP>();
+		try {
+			// Solutionner pour les preperedStatement plutot : Plus sécuritaire au niveau des injection sql.
+			PreparedStatement ps = (PreparedStatement) 
+					conn.prepareStatement("SELECT * FROM computer"
+							+ " ORDER BY ID");
+			ResultSet res = ps.executeQuery();
+			
+			while (res.next())
+				computers.add(ComputerMP.map(res));
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
 	
 		return computers;
 	}

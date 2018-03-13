@@ -13,16 +13,51 @@ import com.excilys.formation.java.mapper.ComputerMP;
 public class ConnexionDB {
 		
 	private static Connection conn;
-	private int numComputers = -1;
-	private int numCompanies = -1;
+	private ComputerDB cmpdb;
+	private CompagnyDB cpndb;
 	
-	public ConnexionDB () throws ClassNotFoundException, SQLException 
-	{
+	/**
+	 * @return the cmpdb
+	 */
+	public ComputerDB getCmpdb() {
+		return cmpdb;
+	}
+
+	/**
+	 * @return the cpndb
+	 */
+	public CompagnyDB getCpndb() {
+		return cpndb;
+	}
+
+	
+	// Est-ce vraiment nécéssaire de Set ces objets ??
+	/**
+	 * @param cmpdb the cmpdb to set
+	
+	public void setCmpdb(ComputerDB cmpdb) {
+		this.cmpdb = cmpdb;
+	}
+
+	/**
+	 * @param cpndb the cpndb to set
+	
+	public void setCpndb(CompagnyDB cpndb) {
+		this.cpndb = cpndb;
+	}
+	 */
+	
+	public ConnexionDB () {
+		try {
 			//Chargement du driver postgresql et connexion Ã  la base
 			Class.forName("com.mysql.jdbc.Driver");
 			// conn = DriverManager.getConnection("jdbc:mysql://addresse_of_db??", "admincdb", "qwerty1234");
 			conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/computer-database-db", "admincdb", "qwerty1234");	
-
+			cmpdb = new ComputerDB();
+			cpndb = new CompagnyDB();
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
 	}	
 	
 	public Connection getConnection() {

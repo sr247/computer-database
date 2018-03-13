@@ -1,33 +1,42 @@
 package com.excilys.formation.java.persistence;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 
+import javax.websocket.PongMessage;
+
 import com.excilys.formation.java.mapper.ComputerMP;
 import com.mysql.jdbc.PreparedStatement;
 
-public class ComputerDB {
+public class ComputerDB extends ConnexionDB {
 	
 	private static int numComputers = -1;
 	
-	public int getNumComputers(Connection conn) throws SQLException {
+	public int getNumComputers() {
 		synchronized(conn) {
 			if (numComputers == -1)
 			{
-				Statement s = conn.createStatement();
-				ResultSet res = s
-						.executeQuery("SELECT COUNT(*) AS NUM FROM computer");
-				res.next();
-				numComputers = res.getInt("NUM");
+				Statement s;
+				try {
+					s = conn.createStatement();
+					ResultSet res = s
+							.executeQuery("SELECT COUNT(*) AS NUM FROM computer");
+					res.next();
+					numComputers = res.getInt("NUM");
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 		}
 		return numComputers;
 	}
 	
-	public ArrayList<ComputerMP> getComputerList(Connection conn, int from, int to) {
+	public ArrayList<ComputerMP> getComputerList(int from, int to) {
 		
 		ArrayList<ComputerMP> computers = new ArrayList<ComputerMP>();
 		try {
@@ -49,7 +58,7 @@ public class ComputerDB {
 		return computers;
 	}
 	
-	public ArrayList<ComputerMP> getComputerList(Connection conn) {
+	public ArrayList<ComputerMP> getComputerList() {
 		
 		ArrayList<ComputerMP> computers = new ArrayList<ComputerMP>();
 		try {
@@ -68,7 +77,7 @@ public class ComputerDB {
 		return computers;
 	}
 	
-	public ComputerMP getComputer(int id, Connection conn) {
+	public ComputerMP getComputerByID(int id) {
 		PreparedStatement ps = null;
 		ResultSet res = null;
 		try {
@@ -86,16 +95,18 @@ public class ComputerDB {
 		return ComputerMP.map(res);
 	}
 	
-	public void create(ComputerMP cmp, Connection conn) {
+	
+	public void create(String name, Date introduced, Date discontinued, int company_id) {
 		PreparedStatement crt;
+		int id = getNumComputers()+1;
 		try {
 			crt = (PreparedStatement) conn.prepareStatement("INSERT INTO computer (ID, NAME, INTRODUCED, DISCONTINUED, COMPANY_ID)"
 					+ "VALUES 	(?, ?, ?, ?, ?)");				
-			crt.setInt(1, cmp.getId());
-			crt.setString(2, cmp.getName());
-			crt.setDate(3, cmp.getIntroduced());
-			crt.setDate(4, cmp.getDiscontinued());
-			crt.setInt(5, cmp.getCompanyId());
+			crt.setInt(1, id);
+			crt.setString(2, name);
+			crt.setDate(3, introduced);
+			crt.setDate(4, discontinued);
+			crt.setInt(5, company_id);
 			crt.executeUpdate();
 			//Can't call commit, when autocommit:true
 			//conn.commit();
@@ -104,6 +115,7 @@ public class ComputerDB {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		ComputerMP cmp = new ComputerMP(id, name, introduced, discontinued, company_id);
 		System.out.println("Created:" + cmp);
 	}
 	
@@ -111,13 +123,12 @@ public class ComputerDB {
 	 * Ici check : Field doit déja convenir au champs équivalent requis dans la table.
 	 * Et n'oubli pas de faire des Test Genre MAINTENANT !
 	 */
-	public void update(String field, ComputerMP cmp, Connection conn) {
+	public void update(String field, ComputerMP cmp) {
 		PreparedStatement upd;
 		try {
 			upd = (PreparedStatement) conn.prepareStatement("UPDATE computer "
 					+ "SET ?=?"
-					+ "WHERE ID=?");
-		
+					+ "WHERE ID=?");		
 	
 			upd.setString(1, field);
 			if("NAME".equals(field)) {
@@ -133,7 +144,6 @@ public class ComputerDB {
 				upd.setInt(2, cmp.getCompanyId());
 			}
 			upd.setInt(3, cmp.getId());
-			
 			upd.executeUpdate();
 			//conn.commit();
 		} catch (SQLException e) {

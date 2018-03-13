@@ -6,19 +6,22 @@ import java.util.Scanner;
 
 import com.excilys.formation.java.mapper.CompanyMP;
 import com.excilys.formation.java.mapper.ComputerMP;
-import com.excilys.formation.java.service.WebServiceDB;
+import com.excilys.formation.java.service.WebServiceCompany;
+import com.excilys.formation.java.service.WebServiceComputer;
 
 public class CLI_UI {
 	private boolean exit;
 	private String command;
-	private WebServiceDB wsdb;
+	private WebServiceComputer wscmp;
+	private WebServiceCompany wscpy;
 	protected Scanner sc;
 	
 	
 	public CLI_UI() {
 		this.exit = false;
 		this.command = "";
-		this.wsdb = new WebServiceDB();
+		this.wscmp = WebServiceComputer.getInstance();
+		this.wscpy = WebServiceCompany.getInstance();
 		this.sc = new Scanner(System.in);
 	}
 	
@@ -27,7 +30,7 @@ public class CLI_UI {
 	}
 	
 	public void showDetailComputer(int id) {
-		wsdb.getCnndb().getCmpdb().getComputer(id, wsdb.getCnndb().getConnection());
+		System.out.println(wscmp.getComputerDB().getComputerByID(id));
 	}
 	
 	public void list(String[] t) {
@@ -37,10 +40,10 @@ public class CLI_UI {
 			ArrayList<ComputerMP> cmpList = null;
 			if(listAll) {
 				// Programmation fonctionnel ? Peut etre. Envisager...
-				cmpList = wsdb.getCnndb().getCmpdb().getComputerList(wsdb.getCnndb().getConnection());
+				cmpList = wscmp.getComputerDB().getComputerList();
 			} else {
 				// Gerer les cas from to
-				cmpList = wsdb.getCnndb().getCmpdb().getComputerList(wsdb.getCnndb().getConnection(), 0, 10);
+				cmpList = wscmp.getComputerDB().getComputerList(0, 10);
 			}
 
 			for(ComputerMP cmp : cmpList) {
@@ -51,10 +54,10 @@ public class CLI_UI {
 			
 			if(listAll) {
 				// Programmation fonctionnel ? Peut etre. Envisager...
-				cpyList = wsdb.getCnndb().getCpndb().getCompanyList(wsdb.getCnndb().getConnection());
+				cpyList = wscpy.getCompanyDB().getCompanyList();
 			} else {
 				// Gerer les cas from to
-				cpyList = wsdb.getCnndb().getCpndb().getCompanyList(wsdb.getCnndb().getConnection(), 0, 10);
+				cpyList = wscpy.getCompanyDB().getCompanyList(0, 10);
 			}
 			for(CompanyMP cpn : cpyList) {
 				System.out.println(cpn);
@@ -65,25 +68,17 @@ public class CLI_UI {
 	public void create(String[] t) {
 		boolean into = t[1].equals("into");
 		String table = into ? t[2] : t[1];
+		System.out.println("Enter the tuple corresponding:");
 		if("computer".equals(table)) {
 			// Ici il faudra check la forme et les valeurs de chaque ajout
 			// Valeur null, erreur de syntaxe, nombre de champ
 			String s = sc.nextLine();
-			String[] ss = s.replaceAll("[( | )]", " ").split(",");
-			Date intro = null;				
-			Date discon = null;
-			try {
-				intro = Date.valueOf(ss[2]);				
-				discon = Date.valueOf(ss[3]);
-			} catch(Exception e) {
-				System.err.println("Invalid format date.");
-				e.printStackTrace();
-			}
-			wsdb.create(Integer.valueOf(ss[0]), ss[1], intro, discon, Integer.valueOf(ss[4]));
+			String[] ss = s.replaceAll("[( | )]", " ").split(",");		
+			wscmp.create(ss);
 		} else if("company".equals(table)) {
 			String s = sc.nextLine();
 			String[] ss = s.replaceAll("[( | )]", " ").split(",");			
-			wsdb.create(Integer.valueOf(ss[0]), ss[1]);
+			wscpy.create(Integer.valueOf(ss[0]), ss[1]);
 		}
 	}
 	
@@ -95,7 +90,7 @@ public class CLI_UI {
 			exit = true;
 		} else if("help".equals(command)) {
 			// On peut faire plus propre comme choix d'affichage d'options ( ArgParse )
-			System.out.println("Commande:");
+			System.out.println("Commands:");
 			System.out.println("show table_name id:     show details of instance in table_name where ID=id");
 			System.out.println("list [all] table_name:  list (all) instances in table_name");
 			System.out.println("create into table_name:  create a instance in table_name."
@@ -117,7 +112,6 @@ public class CLI_UI {
 			target = command.split(" ");
 			System.out.println("Command create");
 			create(target);
-			
 		}
 	}
 	
@@ -129,6 +123,7 @@ public class CLI_UI {
 			System.out.print("cli_db > ");
 			cmd.enterCommand();
 		}
+		System.out.print("Exit succes");
 		cmd.sc.close();		
 	}
 

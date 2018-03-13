@@ -1,13 +1,12 @@
 package com.excilys.formation.java.persistence;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
 import com.excilys.formation.java.mapper.CompanyMP;
 import com.excilys.formation.java.mapper.ComputerMP;
-
-
 
 
 public class ConnexionDB {
@@ -31,7 +30,7 @@ public class ConnexionDB {
 	}
 
 	
-	// Est-ce vraiment nécéssaire de Set ces objets ??
+	// Est-ce vraiment nï¿½cï¿½ssaire de Set ces objets ??
 	/**
 	 * @param cmpdb the cmpdb to set
 	
@@ -71,18 +70,23 @@ public class ConnexionDB {
 		System.out.println("Done");
 	
 		
-		ComputerDB cpmdb = new ComputerDB();
-		for(ComputerMP cmp : cpmdb.getComputerList(conn, 0, 10)) {
+		ComputerDB cmpdb = new ComputerDB();
+
+		for(ComputerMP cmp : cmpdb.getComputerList(conn, 0, 10)) {
 			System.out.println(cmp);
 		}
 		
-		System.out.println(cpmdb.getComputer(5, conn));
+		System.out.println(cmpdb.getComputer(5, conn));
 		
 		/*
 		CompagnyDB cpndb = new CompagnyDB();
 		for(CompanyMP cpn : cpndb.getCompanyList(conn)) {
 			System.out.println(cpn);
 		}*/
+		int id = cmpdb.getNumComputers(conn);
+		ComputerMP cp = new ComputerMP(id, "hello"+id, new Date(0), null, 1);
+		//cmpdb.create(cp, conn);
+		cmpdb.delete(cp, conn);
 		
 		
 	}

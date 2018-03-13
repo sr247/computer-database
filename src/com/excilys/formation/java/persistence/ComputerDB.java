@@ -11,7 +11,7 @@ import com.mysql.jdbc.PreparedStatement;
 
 public class ComputerDB {
 	
-	private int numComputers = -1;
+	private static int numComputers = -1;
 	
 	public int getNumComputers(Connection conn) throws SQLException {
 		synchronized(conn) {
@@ -19,7 +19,7 @@ public class ComputerDB {
 			{
 				Statement s = conn.createStatement();
 				ResultSet res = s
-						.executeQuery("SELECT COUNT(*) AS NUM FROM company");
+						.executeQuery("SELECT COUNT(*) AS NUM FROM computer");
 				res.next();
 				numComputers = res.getInt("NUM");
 			}
@@ -79,53 +79,69 @@ public ArrayList<ComputerMP> getComputerList(Connection conn) {
 		return ComputerMP.map(res);
 	}
 	
-	public void create(ComputerMP cp, Connection conn) throws SQLException {
+	public void create(ComputerMP cmp, Connection conn) throws SQLException {
 		PreparedStatement crt = (PreparedStatement) conn.prepareStatement("INSERT INTO computer (ID, NAME, INTRODUCED, DISCONTINUED, COMPANY_ID)"
 				+ "VALUES 	(?, ?, ?, ?, ?)");
 		
-		crt.setInt(1, cp.getId());
-		crt.setString(2, cp.getName());
-		crt.setDate(3, cp.getIntroduced());
-		crt.setDate(4, cp.getDiscontinued());
-		crt.setInt(5, cp.getCompanyId());
+		crt.setInt(1, cmp.getId());
+		crt.setString(2, cmp.getName());
+		crt.setDate(3, cmp.getIntroduced());
+		crt.setDate(4, cmp.getDiscontinued());
+		crt.setInt(5, cmp.getCompanyId());
 		
 		crt.executeUpdate();
-		conn.commit();
-		
+		//conn.commit();
+		System.out.println("Created:" + cmp);
 	}
 	
 	/*
 	 * Ici check : Field doit déja convenir au champs équivalent requis dans la table.
 	 * Et n'oubli pas de faire des Test Genre MAINTENANT !
 	 */
-	
-	public void update(String field, ComputerMP cmp, Connection conn) throws SQLException {
-		PreparedStatement upd = (PreparedStatement) conn.prepareStatement("UPDATE computer "
-				+ "SET ?=?"
-				+ "WHERE ID=?");
+	// Can't call commit, when autocommit:true
+	public void update(String field, ComputerMP cmp, Connection conn) {
+		PreparedStatement upd;
+		try {
+			upd = (PreparedStatement) conn.prepareStatement("UPDATE computer "
+					+ "SET ?=?"
+					+ "WHERE ID=?");
 		
 	
-		upd.setString(1, field);
-		if("NAME".equals(field)) {
-			upd.setString(2, cmp.getName());
+			upd.setString(1, field);
+			if("NAME".equals(field)) {
+				upd.setString(2, cmp.getName());
+			}
+			else if("INTRODUCED".equals(field)){
+				upd.setDate(2, cmp.getIntroduced());
+			}
+			else if ("DISCONTINUED".equals(field)) {
+				upd.setDate(2, cmp.getDiscontinued());
+			}
+			else if("COMPANY_ID".equals(field)) {
+				upd.setInt(2, cmp.getCompanyId());
+			}
+			upd.setInt(3, cmp.getId());
+			
+			upd.executeUpdate();
+			//conn.commit();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-		else if("INTRODUCED".equals(field)){
-			upd.setDate(2, cmp.getIntroduced());
-		}
-		else if ("DISCONTINUED".equals(field)) {
-			upd.setDate(2, cmp.getDiscontinued());
-		}
-		else if("COMPANY_ID".equals(field)) {
-			upd.setInt(2, cmp.getCompanyId());
-		}
-		upd.setInt(3, cmp.getId());
 		
-		upd.executeUpdate();
-		conn.commit();
-		
+		System.out.println("Updated:" + cmp);
 	}
 	
 	public void delete(ComputerMP cmp, Connection conn) {
-		
+		try {
+			PreparedStatement del = (PreparedStatement) conn.prepareStatement("DELETE FROM computer"
+					+ " WHERE ID=?");
+			del.setInt(1, cmp.getId());
+			del.executeUpdate();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		System.out.println("Deleted:" + cmp);
 	}
 }

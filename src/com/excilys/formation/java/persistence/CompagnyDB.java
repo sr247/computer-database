@@ -11,7 +11,7 @@ import com.mysql.jdbc.PreparedStatement;
 
 public class CompagnyDB {
 	
-	private int numCompanies = -1;	
+	private static int numCompanies = -1;	
 	
 	public int getNumCompanies(Connection conn) throws SQLException {
 		if (numCompanies == -1){
@@ -64,6 +64,59 @@ public class CompagnyDB {
 		
 	
 		return companies;
+	}
+	
+
+	public void create(CompanyMP cp, Connection conn) throws SQLException {
+		PreparedStatement crt = (PreparedStatement) conn.prepareStatement("INSERT INTO computer (ID, NAME)"
+				+ "VALUES 	(?, ?");
+		
+		crt.setInt(1, cp.getId());
+		crt.setString(2, cp.getName());
+		
+		crt.executeUpdate();
+		conn.commit();
+		
+	}
+	
+	/*
+	 * Ici check : Field doit déja convenir au champs équivalent requis dans la table.
+	 * Et n'oubli pas de faire des Test Genre MAINTENANT !
+	 */
+	
+	public void update(String field, CompanyMP cmp, Connection conn) {
+		PreparedStatement upd;
+		try {
+			upd = (PreparedStatement) conn.prepareStatement("UPDATE company "
+					+ "SET ?=?"
+					+ "WHERE ID=?");
+		
+	
+			upd.setString(1, field);
+			if("NAME".equals(field)) {
+				upd.setString(2, cmp.getName());
+			}
+			upd.setInt(3, cmp.getId());
+			
+			upd.executeUpdate();
+			conn.commit();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
+	}
+	
+	public void delete(CompanyMP cmp, Connection conn) {
+		try {
+			PreparedStatement upd = (PreparedStatement) conn.prepareStatement("DELETE FROM company"
+					+ " WHERE ID=?");
+			upd.setInt(1, cmp.getId());
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	

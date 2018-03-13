@@ -49,7 +49,7 @@ public class ComputerDB {
 		return computers;
 	}
 	
-public ArrayList<ComputerMP> getComputerList(Connection conn) {
+	public ArrayList<ComputerMP> getComputerList(Connection conn) {
 		
 		ArrayList<ComputerMP> computers = new ArrayList<ComputerMP>();
 		try {
@@ -68,14 +68,21 @@ public ArrayList<ComputerMP> getComputerList(Connection conn) {
 		return computers;
 	}
 	
-	public ComputerMP getComputer(int id, Connection conn) throws SQLException {
-		PreparedStatement ps = (PreparedStatement) 
-				conn.prepareStatement("SELECT * FROM computer"
-						+ " WHERE ID=?");
-		ps.setInt(1, id);
-		ResultSet res = ps.executeQuery();
-		
-		res.next();
+	public ComputerMP getComputer(int id, Connection conn) {
+		PreparedStatement ps = null;
+		ResultSet res = null;
+		try {
+			ps = (PreparedStatement) 
+					conn.prepareStatement("SELECT * FROM computer"
+							+ " WHERE ID=?");
+			ps.setInt(1, id);
+			res = ps.executeQuery();
+			
+			res.next();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		return ComputerMP.map(res);
 	}
 	
@@ -83,8 +90,7 @@ public ArrayList<ComputerMP> getComputerList(Connection conn) {
 		PreparedStatement crt;
 		try {
 			crt = (PreparedStatement) conn.prepareStatement("INSERT INTO computer (ID, NAME, INTRODUCED, DISCONTINUED, COMPANY_ID)"
-					+ "VALUES 	(?, ?, ?, ?, ?)");
-				
+					+ "VALUES 	(?, ?, ?, ?, ?)");				
 			crt.setInt(1, cmp.getId());
 			crt.setString(2, cmp.getName());
 			crt.setDate(3, cmp.getIntroduced());

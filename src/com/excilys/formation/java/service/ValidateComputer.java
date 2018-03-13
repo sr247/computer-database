@@ -8,20 +8,20 @@ public class ValidateComputer {
 	
 	public static boolean check(String[] fields) {
 		boolean res = true;
-		res |= checkName(fields[0]);		
-		checkDate(fields[1]);
-		checkDate(fields[2]);
-		checkForeignKey(fields[3]);
+		res &= checkName(fields[0]);		
+		res &= checkDate(fields[1]);
+		res &= checkDate(fields[2]);
+		res &= checkForeignKey(fields[3]);
 		return res;
 	}
 	
 	private static boolean checkDate(String dt) {
 		boolean ok = true;
+		
 		try {
 			Date date = Date.valueOf(dt);						
-		} catch(Exception e) {
+		} catch(IllegalArgumentException e) {
 			System.err.println("Invalid format date.");
-			e.printStackTrace();
 			ok = false;
 		}
 		return ok;
@@ -29,7 +29,6 @@ public class ValidateComputer {
 	
 	private static boolean checkName(String nm) {
 		boolean ok = true;
-		
 		// Ici on check une belle regex pour elever les symboles bizarre, ou pas
 		return ok;
 	}

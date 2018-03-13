@@ -7,7 +7,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 
-import javax.websocket.PongMessage;
+import javax.print.attribute.standard.PrinterMessageFromOperator;
 
 import com.excilys.formation.java.mapper.ComputerMP;
 import com.mysql.jdbc.PreparedStatement;
@@ -100,19 +100,43 @@ public class ComputerDB extends ConnexionDB {
 		PreparedStatement crt;
 		int id = getNumComputers()+1;
 		try {
-			crt = (PreparedStatement) conn.prepareStatement("INSERT INTO computer (ID, NAME, INTRODUCED, DISCONTINUED, COMPANY_ID)"
-					+ "VALUES 	(?, ?, ?, ?, ?)");				
-			crt.setInt(1, id);
-			crt.setString(2, name);
-			crt.setDate(3, introduced);
-			crt.setDate(4, discontinued);
-			crt.setInt(5, company_id);
+			crt = (PreparedStatement) 
+					conn.prepareStatement("INSERT INTO computer (NAME, INTRODUCED, DISCONTINUED, COMPANY_ID)"
+					+ "VALUES 	(?, ?, ?, ?)");				
+			crt.setString(1, name);
+			
+			//to be functionalized
+			if(introduced == null) {
+				crt.setNull(2, java.sql.Types.DATE);
+			} else {
+				crt.setDate(2, introduced);				
+			} 
+			// to be functionalized
+			if(discontinued == null) {
+				crt.setNull(3, java.sql.Types.DATE);
+			}else {
+				crt.setDate(3, discontinued);
+			}
+			
+			// Essayer d'integrer ce test dans la validation plutot
+			PreparedStatement checkFk = (PreparedStatement)
+					conn.prepareStatement("SELECT * FROM company"
+							+ " WHERE ID=?");
+			checkFk.setInt(1, company_id);
+			ResultSet res = checkFk.executeQuery();
+			if(res.next()) {
+				crt.setInt(4, company_id);
+			}else {
+				throw new SQLException("Instance not found in company");
+			}
+			
 			crt.executeUpdate();
 			//Can't call commit, when autocommit:true
 			//conn.commit();
 		
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
+			System.out.println(e.getMessage());
 			e.printStackTrace();
 		}
 		ComputerMP cmp = new ComputerMP(id, name, introduced, discontinued, company_id);

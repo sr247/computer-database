@@ -9,6 +9,8 @@ public class ComputerMP {
 	private String name;
 	private Date introduced;
 	private Date discontinued;
+
+	// Ce champ deviendra un objet company à part entière.
 	private int companyId;
 	/*
 	 * Fonctionnalité  1 à tester immédiatement 
@@ -126,7 +128,7 @@ public class ComputerMP {
 	
 	public static ComputerMP map(ResultSet res) {
 		
-		// Il faudrait check ici : Il y a surement un moyen plus �l�gant de default/catch
+		// Il faudrait check ici : Il y a surement un moyen plus �l�gant de default/catch
 		int id = -1;
 		String name = "";
 		Date introduced = new Date(0);

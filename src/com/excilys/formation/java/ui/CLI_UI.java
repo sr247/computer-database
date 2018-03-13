@@ -4,6 +4,7 @@ import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+import com.excilys.formation.java.exceptions.IncorrectFieldException;
 import com.excilys.formation.java.mapper.CompanyMP;
 import com.excilys.formation.java.mapper.ComputerMP;
 import com.excilys.formation.java.service.WebServiceCompany;
@@ -73,8 +74,12 @@ public class CLI_UI {
 			// Ici il faudra check la forme et les valeurs de chaque ajout
 			// Valeur null, erreur de syntaxe, nombre de champ
 			String s = sc.nextLine();
-			String[] ss = s.replaceAll("[( | )]", " ").split(",");		
-			wscmp.create(ss);
+			String[] ss = s.replaceAll("[( | )]", " ").split(",");
+			try {
+				wscmp.create(ss);
+			}catch(IncorrectFieldException e) {
+				System.out.println("Error: invalid field provided");
+			}
 		} else if("company".equals(table)) {
 			String s = sc.nextLine();
 			String[] ss = s.replaceAll("[( | )]", " ").split(",");			

@@ -79,18 +79,25 @@ public ArrayList<ComputerMP> getComputerList(Connection conn) {
 		return ComputerMP.map(res);
 	}
 	
-	public void create(ComputerMP cmp, Connection conn) throws SQLException {
-		PreparedStatement crt = (PreparedStatement) conn.prepareStatement("INSERT INTO computer (ID, NAME, INTRODUCED, DISCONTINUED, COMPANY_ID)"
-				+ "VALUES 	(?, ?, ?, ?, ?)");
+	public void create(ComputerMP cmp, Connection conn) {
+		PreparedStatement crt;
+		try {
+			crt = (PreparedStatement) conn.prepareStatement("INSERT INTO computer (ID, NAME, INTRODUCED, DISCONTINUED, COMPANY_ID)"
+					+ "VALUES 	(?, ?, ?, ?, ?)");
+				
+			crt.setInt(1, cmp.getId());
+			crt.setString(2, cmp.getName());
+			crt.setDate(3, cmp.getIntroduced());
+			crt.setDate(4, cmp.getDiscontinued());
+			crt.setInt(5, cmp.getCompanyId());
+			crt.executeUpdate();
+			//Can't call commit, when autocommit:true
+			//conn.commit();
 		
-		crt.setInt(1, cmp.getId());
-		crt.setString(2, cmp.getName());
-		crt.setDate(3, cmp.getIntroduced());
-		crt.setDate(4, cmp.getDiscontinued());
-		crt.setInt(5, cmp.getCompanyId());
-		
-		crt.executeUpdate();
-		//conn.commit();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		System.out.println("Created:" + cmp);
 	}
 	
@@ -98,7 +105,6 @@ public ArrayList<ComputerMP> getComputerList(Connection conn) {
 	 * Ici check : Field doit déja convenir au champs équivalent requis dans la table.
 	 * Et n'oubli pas de faire des Test Genre MAINTENANT !
 	 */
-	// Can't call commit, when autocommit:true
 	public void update(String field, ComputerMP cmp, Connection conn) {
 		PreparedStatement upd;
 		try {

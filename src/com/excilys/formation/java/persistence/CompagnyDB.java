@@ -39,7 +39,6 @@ public class CompagnyDB {
 			e.printStackTrace();
 		}
 		
-	
 		return companies;
 	}
 	
@@ -67,15 +66,24 @@ public class CompagnyDB {
 	}
 	
 
-	public void create(CompanyMP cp, Connection conn) throws SQLException {
-		PreparedStatement crt = (PreparedStatement) conn.prepareStatement("INSERT INTO computer (ID, NAME)"
-				+ "VALUES 	(?, ?");
+	public void create(CompanyMP cp, Connection conn) {
+		PreparedStatement crt;
+		try {
+			crt = (PreparedStatement) conn.prepareStatement("INSERT INTO computer (ID, NAME)"
+					+ "VALUES 	(?, ?");
+			
+			crt.setInt(1, cp.getId());
+			crt.setString(2, cp.getName());
+			
+			crt.executeUpdate();
+			// Can't call commit, when autocommit:true
+			// conn.commit();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
-		crt.setInt(1, cp.getId());
-		crt.setString(2, cp.getName());
-		
-		crt.executeUpdate();
-		conn.commit();
+
 		
 	}
 	
@@ -99,7 +107,8 @@ public class CompagnyDB {
 			upd.setInt(3, cmp.getId());
 			
 			upd.executeUpdate();
-			conn.commit();
+			// Can't call commit, when autocommit:true
+			// conn.commit();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

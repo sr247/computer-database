@@ -7,17 +7,19 @@ import java.util.Scanner;
 import com.excilys.formation.java.mapper.CompanyMP;
 import com.excilys.formation.java.mapper.ComputerMP;
 import com.excilys.formation.java.persistence.ConnexionDB;
+import com.excilys.formation.java.service.WebServiceDB;
+import com.mysql.jdbc.Connection;
 
 public class CLI_UI {
-	// Revoir ce qu'implique un attribut statique ici
 	private boolean exit;
 	private String command;
-	private ConnexionDB cnndb;
+	private WebServiceDB wsdb;
+	
 	
 	public CLI_UI() {
 		this.exit = false;
 		this.command = "";
-		this.cnndb = new ConnexionDB();
+		this.wsdb = new WebServiceDB();
 	}
 	
 	public  boolean exit() {
@@ -34,9 +36,10 @@ public class CLI_UI {
 		if("computer".equals(table)) {
 			ArrayList<ComputerMP> cmpList = null;
 			if(listAll) {
-				cmpList = cnndb.getCmpdb().getComputerList(cnndb.getConnection());
+				cmpList = wsdb.getCnndb().getCmpdb().getComputerList(wsdb.getCnndb().getConnection());
 			} else {
-				cmpList = cnndb.getCmpdb().getComputerList(cnndb.getConnection(), 0, 10);
+				// Gerer les cas from to
+				cmpList = wsdb.getCnndb().getCmpdb().getComputerList(wsdb.getCnndb().getConnection(), 0, 10);
 			}
 
 			for(ComputerMP cmp : cmpList) {
@@ -46,14 +49,35 @@ public class CLI_UI {
 			ArrayList<CompanyMP> cpyList = null;
 			
 			if(listAll) {
-				cpyList = cnndb.getCpndb().getCompanyList(cnndb.getConnection());
+				cpyList = wsdb.getCnndb().getCpndb().getCompanyList(wsdb.getCnndb().getConnection());
 			} else {
-				cpyList = cnndb.getCpndb().getCompanyList(cnndb.getConnection(), 0, 10);
+				// Gerer les cas from to
+				cpyList = wsdb.getCnndb().getCpndb().getCompanyList(wsdb.getCnndb().getConnection(), 0, 10);
 			}
 			for(CompanyMP cpn : cpyList) {
 				System.out.println(cpn);
 			}
 		}
+	}
+	
+	public void create(String[] t) {
+		Scanner sc = new Scanner(System.in);
+		boolean into = t[1].equals("into");
+		String table = into ? t[2] : t[1];
+		if("computer".equals(table)) {
+			// Ici il faudra check la forme et les valeurs de chaque ajout
+			// Valeur null, erreur de syntaxe, nombre de champ
+			String s = sc.nextLine();
+			String[] ss = s.replaceAll("[( | )]", " ").split(",");
+			
+			// Ce bloc est officiellement gÃ©rer par le WebServiceDB
+			wsdb.create(Integer.valueOf(ss[0]), ss[1], null, null, Integer.valueOf(ss[4]));
+		} else if("company".equals(table)){
+			String s = sc.nextLine();
+			String[] ss = s.replaceAll("[( | )]", " ").split(",");
+			wsdb.create(Integer.valueOf(ss[0]), ss[1]);
+		}
+		sc.close();
 	}
 	
 	public void enterCommand() {
@@ -64,8 +88,8 @@ public class CLI_UI {
 		if("exit".equals(command) || "quit".equals(command)){
 			exit = true;
 		} else if (command.contains("list")) {
-			// Ici target = objet visé par la requete i.e une des tables 
-			// i.e la suite de la chaine command, après le mot list	
+			// Ici target = objet visï¿½ par la requete i.e une des tables 
+			// i.e la suite de la chaine command, aprï¿½s le mot list	
 			target = command.split(" ");
 			System.out.println("Command " + target[0] + " " + target[1]);
 			list(target);
@@ -74,12 +98,17 @@ public class CLI_UI {
 			target = command.split(" ");
 			System.out.println("Command " + target[0] + " " + target[1]);
 			System.out.println("Command show");
+		} else if (command.contains("create")) {
+			target = command.split(" ");
+			System.out.println("Command " + target[0] + " " + target[1]);
+			System.out.println("Command show");
+			create(target);
 		}
+		sc.close();
 	}
 	
 	public static void main(String args[]) throws ClassNotFoundException, SQLException {
 		CLI_UI cmd = new CLI_UI();
-		ConnexionDB conndb = new ConnexionDB();
 		
 		System.out.println("-- Command Line Interface --");
 		while(!cmd.exit()) {

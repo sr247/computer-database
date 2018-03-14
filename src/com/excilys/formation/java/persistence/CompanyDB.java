@@ -6,7 +6,6 @@ import java.sql.Statement;
 import java.util.ArrayList;
 
 import com.excilys.formation.java.mapper.CompanyMapper;
-import com.excilys.formation.java.mapper.ComputerMapper;
 import com.excilys.formation.java.model.Company;
 import com.mysql.jdbc.Connection;
 import com.mysql.jdbc.PreparedStatement;
@@ -14,7 +13,7 @@ import com.mysql.jdbc.PreparedStatement;
 public class CompanyDB {
 	
 	private static CompanyDB _interface = null;
-	private static Connection conn = (Connection) ConnexionDB.getInterface().getConnection();
+	private final static Connection conn = (Connection) ConnexionDB.getInterface().getConnection();
 	private static int numCompanies = -1;	
 	
 	private CompanyDB() {
@@ -26,6 +25,10 @@ public class CompanyDB {
 			_interface = new CompanyDB();
 		}
 		return _interface;
+	}
+	
+	public Connection getConnexion() {
+		return conn;
 	}
 	
 	public int getNumCompanies() {
@@ -50,7 +53,7 @@ public class CompanyDB {
 			ResultSet res = null;
 			try {
 				sel = (PreparedStatement) 
-						conn.prepareStatement("SELECT * FROM computer"
+						conn.prepareStatement("SELECT * FROM company"
 								+ " WHERE ID=?");
 				sel.setInt(1, id);
 				res = sel.executeQuery();				

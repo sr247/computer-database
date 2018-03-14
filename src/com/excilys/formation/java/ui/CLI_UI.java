@@ -17,7 +17,6 @@ public class CLI_UI {
 	private WebServiceCompany wscpy;
 	protected Scanner sc;
 	
-	
 	public CLI_UI() {
 		this.exit = false;
 		this.command = "";

@@ -6,7 +6,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 
-import com.excilys.formation.java.exceptions.InstanceNotFoundException;
 import com.excilys.formation.java.mapper.ComputerMapper;
 import com.excilys.formation.java.model.Computer;
 import com.mysql.jdbc.Connection;
@@ -16,7 +15,7 @@ import com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationExceptio
 public class ComputerDB {
 	
 	private static ComputerDB _interface = null;
-	private static Connection conn = (Connection) ConnexionDB.getInterface().getConnection();
+	private final static Connection conn = (Connection) ConnexionDB.getInterface().getConnection();
 	private static int numComputers = -1;
 	
 	private ComputerDB() {
@@ -28,6 +27,10 @@ public class ComputerDB {
 			_interface = new ComputerDB();
 		}
 		return _interface;
+	}
+	
+	public Connection getConnexion() {
+		return conn;
 	}
 
 	public int getNumComputers() {

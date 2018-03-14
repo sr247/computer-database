@@ -26,7 +26,7 @@ public class CLI_UI {
 		this.sc = new Scanner(System.in);
 	}
 	
-	public  boolean exit() {
+	public boolean exit() {
 		return exit;
 	}
 	
@@ -49,9 +49,7 @@ public class CLI_UI {
 			}
 		} else if("company".equals(table)){
 			ArrayList<Company> cpyList = null;
-			
 			if(listAll) {
-				// Modifier WebServiceCompany Comme Computer
 				cpyList = wscpy.getList(0, 0);
 			} else {
 				cpyList = wscpy.getList(0, 10);
@@ -92,10 +90,6 @@ public class CLI_UI {
 					System.err.println("Erreur: Instance inexistante");
 					err = true;
 				}
-			} else if("company".equals(table)) {
-				String s = sc.nextLine();
-				String[] ss = s.replaceAll("[( | )]", " ").split(",");			
-				wscpy.create(Integer.valueOf(ss[0]), ss[1]);
 			}
 		}while(err & !exit);
 	}
@@ -136,10 +130,6 @@ public class CLI_UI {
 					System.err.println("Erreur: Instance inexistante");
 					err = true;
 				}
-			} else if("company".equals(table)) {
-				String s = sc.nextLine();
-				String[] ss = s.replaceAll("[( | )]", " ").split(",");			
-				wscpy.create(Integer.valueOf(ss[0]), ss[1]);
 			}
 		}while(err & !exit);
 	}

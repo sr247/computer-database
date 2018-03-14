@@ -4,7 +4,6 @@ import java.util.ArrayList;
 
 import com.excilys.formation.java.model.Company;
 import com.excilys.formation.java.persistence.CompanyDB;
-import com.excilys.formation.java.persistence.ComputerDB;;
 
 public class WebServiceCompany {
 	
@@ -24,19 +23,10 @@ public class WebServiceCompany {
 	public ArrayList<Company> getList(int from, int to){
 		CompanyDB cpnDB = CompanyDB.getInterface();
 		if(from == 0 && to == 0) {
-			return cpnDB.getCompanyList(0, 0);
+			return cpnDB.getCompanyList();
 		}
 		return cpnDB.getCompanyList(from, to);
 	}
-		
-	public void create(int id, String name) {
-		
-	}
-	
-	public void update() {
-		
-	}
-	
 	
 	
 }

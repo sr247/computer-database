@@ -54,7 +54,8 @@ public class ValidateComputer {
 		
 		if(cpy == null) {
 			throw new InstanceNotFoundException();
-		}		
+		}
+		System.err.println(cpy.getId());
 		return cpy.getId();
 	}
 

@@ -59,12 +59,31 @@ public class ComputerDB {
 							+ " WHERE ID=?");
 			ps.setInt(1, id);
 			res = ps.executeQuery();
-			
+			res.next();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return ComputerMapper.map(res);
+	}
+	
+	public ArrayList<Computer> getComputerList() {
+		
+		ArrayList<Computer> computers = new ArrayList<Computer>();
+		try {
+			// Solutionner pour les preperedStatement plutot : Plus sécuritaire au niveau des injection sql.
+			PreparedStatement ps = (PreparedStatement) 
+					conn.prepareStatement("SELECT * FROM computer"
+							+ " ORDER BY ID");
+			ResultSet res = ps.executeQuery();
+			while (res.next())
+				computers.add(ComputerMapper.map(res));
+			
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+	
+		return computers;
 	}
 	
 	public ArrayList<Computer> getComputerList(int from, int to) {		
@@ -88,31 +107,12 @@ public class ComputerDB {
 		return computers;
 	}
 	
-	public ArrayList<Computer> getComputerList() {
-		
-		ArrayList<Computer> computers = new ArrayList<Computer>();
-		try {
-			// Solutionner pour les preperedStatement plutot : Plus sécuritaire au niveau des injection sql.
-			PreparedStatement ps = (PreparedStatement) 
-					conn.prepareStatement("SELECT * FROM computer"
-							+ " ORDER BY ID");
-			ResultSet res = ps.executeQuery();
-			while (res.next())
-				computers.add(ComputerMapper.map(res));
-			
-		} catch(Exception e) {
-			e.printStackTrace();
-		}
 	
-		return computers;
-	}
-	
-	
-	public PreparedStatement setDateProperly(Date dt, PreparedStatement ps) throws SQLException {
+	public PreparedStatement setDateProperly(Date dt, PreparedStatement ps, int i) throws SQLException {
 		if(dt == null) {
-			ps.setNull(2, java.sql.Types.DATE);
+			ps.setNull(i, java.sql.Types.DATE);
 		} else {
-			ps.setDate(2, dt);				
+			ps.setDate(i, dt);				
 		} 
 		return ps;
 	}
@@ -125,11 +125,11 @@ public class ComputerDB {
 					conn.prepareStatement("INSERT INTO computer (NAME, INTRODUCED, DISCONTINUED, COMPANY_ID)"
 					+ "VALUES 	(?, ?, ?, ?)");				
 			crt.setString(1, cmp.getName());
-			crt = setDateProperly(cmp.getIntroduced(), crt);
-			crt = setDateProperly(cmp.getDiscontinued(), crt);
+			crt = setDateProperly(cmp.getIntroduced(), crt, 2);
+			crt = setDateProperly(cmp.getDiscontinued(), crt, 3);
 			crt.setInt(4, cmp.getCompanyId());
 			crt.executeUpdate();
-			
+			System.out.println("Created:" + cmp);
 			//Can't call commit, when autocommit:true
 			//conn.commit();
 		} catch (MySQLIntegrityConstraintViolationException e) {
@@ -142,7 +142,7 @@ public class ComputerDB {
 			System.out.println(e.getMessage());
 			e.printStackTrace();
 		} 
-		System.out.println("Created:" + cmp);
+		
 	}
 	
 	/*
@@ -163,12 +163,11 @@ public class ComputerDB {
 			upd.setInt(3, cmp.getId());
 			upd.executeUpdate();
 			//conn.commit();
+			System.out.println("Updated:" + cmp);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		System.out.println("Updated:" + cmp);
 	}
 	
 	
@@ -179,10 +178,10 @@ public class ComputerDB {
 					+ " WHERE ID=?");
 			del.setInt(1, cmp.getId());
 			del.executeUpdate();
+			System.out.println("Deleted:" + cmp);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		System.out.println("Deleted:");
 	}
 }

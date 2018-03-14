@@ -1,15 +1,17 @@
 package com.excilys.formation.java.service;
 
-import com.excilys.formation.java.mapper.CompanyMP;
-import com.excilys.formation.java.persistence.CompanyDB;;
+import java.util.ArrayList;
+
+import com.excilys.formation.java.model.Company;
+import com.excilys.formation.java.persistence.CompanyDB;
+import com.excilys.formation.java.persistence.ComputerDB;;
 
 public class WebServiceCompany {
 	
 	private static WebServiceCompany _instance = null;
-	private CompanyDB companyDB;
 
 	private WebServiceCompany() {
-		companyDB = new CompanyDB();
+		
 	}
 	
 	public static WebServiceCompany getInstance() {
@@ -18,13 +20,21 @@ public class WebServiceCompany {
 		}
 		return _instance;
 	}
-	
-	public CompanyDB getCompanyDB() {
-		return companyDB;
+
+	public ArrayList<Company> getList(int from, int to){
+		CompanyDB cpnDB = CompanyDB.getInterface();
+		if(from == 0 && to == 0) {
+			return cpnDB.getCompanyList(0, 0);
+		}
+		return cpnDB.getCompanyList(from, to);
 	}
 		
 	public void create(int id, String name) {
-		companyDB.create(name);
+		
+	}
+	
+	public void update() {
+		
 	}
 	
 	

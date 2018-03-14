@@ -5,25 +5,33 @@ import java.sql.Date;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-import com.excilys.formation.java.mapper.CompanyMP;
-import com.excilys.formation.java.mapper.ComputerMP;
+import com.excilys.formation.java.mapper.ComputerMapper;
 
 
 public class ConnexionDB {
-		
+	
+	private static ConnexionDB _interface = null;
 	protected static Connection conn;
 
 	
-	public ConnexionDB () {
+	private ConnexionDB () {
 		try {
 			//Chargement du driver postgresql et connexion à la base
 			Class.forName("com.mysql.jdbc.Driver");
 			// conn = DriverManager.getConnection("jdbc:mysql://addresse_of_db??", "admincdb", "qwerty1234");
-			conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/computer-database-db", "admincdb", "qwerty1234");	
+			conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/computer-database-db?useSSL=FALSE", "admincdb", "qwerty1234");	
 		}catch(Exception e) {
 			e.printStackTrace();
 		}
-	}	
+	}
+	
+	public static ConnexionDB getInterface() {
+		
+		if(_interface == null) {
+			_interface = new ConnexionDB();
+		}
+		return _interface;
+	}
 	
 	public Connection getConnection() {
 		return conn;

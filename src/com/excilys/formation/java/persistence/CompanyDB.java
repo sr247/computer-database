@@ -5,12 +5,28 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 
-import com.excilys.formation.java.mapper.CompanyMP;
+import com.excilys.formation.java.mapper.CompanyMapper;
+import com.excilys.formation.java.mapper.ComputerMapper;
+import com.excilys.formation.java.model.Company;
+import com.mysql.jdbc.Connection;
 import com.mysql.jdbc.PreparedStatement;
 
-public class CompanyDB extends ConnexionDB {
+public class CompanyDB {
 	
+	private static CompanyDB _interface = null;
+	private static Connection conn = (Connection) ConnexionDB.getInterface().getConnection();
 	private static int numCompanies = -1;	
+	
+	private CompanyDB() {
+		
+	}
+	
+	public static CompanyDB getInterface() {
+		if(_interface == null) {
+			_interface = new CompanyDB();
+		}
+		return _interface;
+	}
 	
 	public int getNumCompanies() {
 		if (numCompanies == -1) {
@@ -27,17 +43,34 @@ public class CompanyDB extends ConnexionDB {
 			}
 		}		
 		return numCompanies;
-	}	
+	}
 	
-	public ArrayList<CompanyMP> getCompanyList() {
-		ArrayList<CompanyMP> companies = new ArrayList<CompanyMP>();
+	public Company getCompanyByID(int id) {
+			PreparedStatement sel = null;
+			ResultSet res = null;
+			try {
+				sel = (PreparedStatement) 
+						conn.prepareStatement("SELECT * FROM computer"
+								+ " WHERE ID=?");
+				sel.setInt(1, id);
+				res = sel.executeQuery();				
+				res.next();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			return CompanyMapper.map(res);
+	}
+	
+	public ArrayList<Company> getCompanyList() {
+		ArrayList<Company> companies = new ArrayList<Company>();
 		// Solutionner pour les preperedStatement plutot : Plus sécuritaire au niveau des injection sql.
 		try {
 			Statement s = conn.createStatement();
 			ResultSet res = s.executeQuery("SELECT * FROM company ORDER BY ID");
 			
 			while (res.next())
-				companies.add(CompanyMP.map(res));
+				companies.add(CompanyMapper.map(res));
 			
 		}catch (Exception e) {
 			e.printStackTrace();
@@ -45,8 +78,8 @@ public class CompanyDB extends ConnexionDB {
 		return companies;
 	}
 	
-	public ArrayList<CompanyMP> getCompanyList(int from, int to) {
-		ArrayList<CompanyMP> companies = new ArrayList<CompanyMP>();
+	public ArrayList<Company> getCompanyList(int from, int to) {
+		ArrayList<Company> companies = new ArrayList<Company>();
 		// Solutionner pour les preperedStatement plutot : Plus sécuritaire au niveau des injection sql.
 		try {
 			PreparedStatement ps = (PreparedStatement) 
@@ -58,7 +91,7 @@ public class CompanyDB extends ConnexionDB {
 			ResultSet res = ps.executeQuery();
 			
 			while (res.next())
-				companies.add(CompanyMP.map(res));
+				companies.add(CompanyMapper.map(res));
 			
 		}catch (Exception e) {
 			e.printStackTrace();
@@ -85,7 +118,7 @@ public class CompanyDB extends ConnexionDB {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		CompanyMP cpy = new CompanyMP(id, name);
+		Company cpy = new Company(id, name);
 		System.out.println("Created:" + cpy);
 		
 	}
@@ -95,7 +128,7 @@ public class CompanyDB extends ConnexionDB {
 	 * Et n'oubli pas de faire des Test Genre MAINTENANT !
 	 */
 	
-	public void update(String field, CompanyMP cmp) {
+	public void update(String field, Company cmp) {
 		PreparedStatement upd;
 		try {
 			upd = (PreparedStatement) conn.prepareStatement("UPDATE company "
@@ -117,7 +150,7 @@ public class CompanyDB extends ConnexionDB {
 		
 	}
 	
-	public void delete(CompanyMP cmp) {
+	public void delete(Company cmp) {
 		try {
 			PreparedStatement upd = (PreparedStatement) conn.prepareStatement("DELETE FROM company"
 					+ " WHERE ID=?");

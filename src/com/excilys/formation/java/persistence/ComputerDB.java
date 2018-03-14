@@ -1,21 +1,35 @@
 package com.excilys.formation.java.persistence;
 
-import java.sql.Connection;
 import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 
-import javax.print.attribute.standard.PrinterMessageFromOperator;
-
-import com.excilys.formation.java.mapper.ComputerMP;
+import com.excilys.formation.java.exceptions.InstanceNotFoundException;
+import com.excilys.formation.java.mapper.ComputerMapper;
+import com.excilys.formation.java.model.Computer;
+import com.mysql.jdbc.Connection;
 import com.mysql.jdbc.PreparedStatement;
+import com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException;
 
-public class ComputerDB extends ConnexionDB {
+public class ComputerDB {
 	
+	private static ComputerDB _interface = null;
+	private static Connection conn = (Connection) ConnexionDB.getInterface().getConnection();
 	private static int numComputers = -1;
 	
+	private ComputerDB() {
+		
+	}
+	
+	public static ComputerDB getInterface() {
+		if(_interface == null) {
+			_interface = new ComputerDB();
+		}
+		return _interface;
+	}
+
 	public int getNumComputers() {
 		synchronized(conn) {
 			if (numComputers == -1)
@@ -36,48 +50,7 @@ public class ComputerDB extends ConnexionDB {
 		return numComputers;
 	}
 	
-	public ArrayList<ComputerMP> getComputerList(int from, int to) {
-		
-		ArrayList<ComputerMP> computers = new ArrayList<ComputerMP>();
-		try {
-			// Solutionner pour les preperedStatement plutot : Plus sécuritaire au niveau des injection sql.
-			PreparedStatement ps = (PreparedStatement) 
-					conn.prepareStatement("SELECT * FROM computer"
-							+ " ORDER BY ID"
-							+ " LIMIT ? OFFSET ?");
-			ps.setInt(1, to-from);
-			ps.setInt(2, from);
-			ResultSet res = ps.executeQuery();
-			
-			while (res.next())
-				computers.add(ComputerMP.map(res));
-		}catch(Exception e) {
-			e.printStackTrace();
-		}
-	
-		return computers;
-	}
-	
-	public ArrayList<ComputerMP> getComputerList() {
-		
-		ArrayList<ComputerMP> computers = new ArrayList<ComputerMP>();
-		try {
-			// Solutionner pour les preperedStatement plutot : Plus sécuritaire au niveau des injection sql.
-			PreparedStatement ps = (PreparedStatement) 
-					conn.prepareStatement("SELECT * FROM computer"
-							+ " ORDER BY ID");
-			ResultSet res = ps.executeQuery();
-			
-			while (res.next())
-				computers.add(ComputerMP.map(res));
-		}catch(Exception e) {
-			e.printStackTrace();
-		}
-	
-		return computers;
-	}
-	
-	public ComputerMP getComputerByID(int id) {
+	public Computer getComputerByID(int id) {
 		PreparedStatement ps = null;
 		ResultSet res = null;
 		try {
@@ -87,86 +60,106 @@ public class ComputerDB extends ConnexionDB {
 			ps.setInt(1, id);
 			res = ps.executeQuery();
 			
-			res.next();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		return ComputerMP.map(res);
+		return ComputerMapper.map(res);
+	}
+	
+	public ArrayList<Computer> getComputerList(int from, int to) {		
+		ArrayList<Computer> computers = new ArrayList<Computer>();
+		try {
+			// Solutionner pour les preperedStatement plutot : Plus sécuritaire au niveau des injection sql.
+			PreparedStatement ps = (PreparedStatement) 
+					conn.prepareStatement("SELECT * FROM computer"
+							+ " ORDER BY ID"
+							+ " LIMIT ? OFFSET ?");
+			ps.setInt(1, to-from);
+			ps.setInt(2, from);
+			ResultSet res = ps.executeQuery();
+			while (res.next())
+				computers.add(ComputerMapper.map(res));
+			
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
+	
+		return computers;
+	}
+	
+	public ArrayList<Computer> getComputerList() {
+		
+		ArrayList<Computer> computers = new ArrayList<Computer>();
+		try {
+			// Solutionner pour les preperedStatement plutot : Plus sécuritaire au niveau des injection sql.
+			PreparedStatement ps = (PreparedStatement) 
+					conn.prepareStatement("SELECT * FROM computer"
+							+ " ORDER BY ID");
+			ResultSet res = ps.executeQuery();
+			while (res.next())
+				computers.add(ComputerMapper.map(res));
+			
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+	
+		return computers;
 	}
 	
 	
-	public void create(String name, Date introduced, Date discontinued, int company_id) {
+	public PreparedStatement setDateProperly(Date dt, PreparedStatement ps) throws SQLException {
+		if(dt == null) {
+			ps.setNull(2, java.sql.Types.DATE);
+		} else {
+			ps.setDate(2, dt);				
+		} 
+		return ps;
+	}
+	
+	
+	public void create(Computer cmp) {
 		PreparedStatement crt;
-		int id = getNumComputers()+1;
 		try {
 			crt = (PreparedStatement) 
 					conn.prepareStatement("INSERT INTO computer (NAME, INTRODUCED, DISCONTINUED, COMPANY_ID)"
 					+ "VALUES 	(?, ?, ?, ?)");				
-			crt.setString(1, name);
-			
-			//to be functionalized
-			if(introduced == null) {
-				crt.setNull(2, java.sql.Types.DATE);
-			} else {
-				crt.setDate(2, introduced);				
-			} 
-			// to be functionalized
-			if(discontinued == null) {
-				crt.setNull(3, java.sql.Types.DATE);
-			}else {
-				crt.setDate(3, discontinued);
-			}
-			
-			// Essayer d'integrer ce test dans la validation plutot
-			PreparedStatement checkFk = (PreparedStatement)
-					conn.prepareStatement("SELECT * FROM company"
-							+ " WHERE ID=?");
-			checkFk.setInt(1, company_id);
-			ResultSet res = checkFk.executeQuery();
-			if(res.next()) {
-				crt.setInt(4, company_id);
-			}else {
-				throw new SQLException("Instance not found in company");
-			}
-			
+			crt.setString(1, cmp.getName());
+			crt = setDateProperly(cmp.getIntroduced(), crt);
+			crt = setDateProperly(cmp.getDiscontinued(), crt);
+			crt.setInt(4, cmp.getCompanyId());
 			crt.executeUpdate();
+			
 			//Can't call commit, when autocommit:true
 			//conn.commit();
+		} catch (MySQLIntegrityConstraintViolationException e) {
+			// TODO Auto-generated catch block
+			// System.err.println(e.getMessage());
+			System.err.println("Erreur: clé de company inexistante");
 		
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			System.out.println(e.getMessage());
 			e.printStackTrace();
-		}
-		ComputerMP cmp = new ComputerMP(id, name, introduced, discontinued, company_id);
+		} 
 		System.out.println("Created:" + cmp);
 	}
 	
 	/*
-	 * Ici check : Field doit déja convenir au champs équivalent requis dans la table.
-	 * Et n'oubli pas de faire des Test Genre MAINTENANT !
+	 * Ici on update forcément tout.. Bonne ou mauvaise solution ?
+	 * Essayer une version qui update seulement x champs.
 	 */
-	public void update(String field, ComputerMP cmp) {
+	public void update(Computer cmp) {
 		PreparedStatement upd;
 		try {
 			upd = (PreparedStatement) conn.prepareStatement("UPDATE computer "
-					+ "SET ?=?"
+					+ "SET NAME=?, INTRODUCED=?, DISCONTINUED=?, COMPANY_ID=?"
 					+ "WHERE ID=?");		
-	
-			upd.setString(1, field);
-			if("NAME".equals(field)) {
-				upd.setString(2, cmp.getName());
-			}
-			else if("INTRODUCED".equals(field)){
-				upd.setDate(2, cmp.getIntroduced());
-			}
-			else if ("DISCONTINUED".equals(field)) {
-				upd.setDate(2, cmp.getDiscontinued());
-			}
-			else if("COMPANY_ID".equals(field)) {
-				upd.setInt(2, cmp.getCompanyId());
-			}
+
+			upd.setString(2, cmp.getName());		
+			upd.setDate(2, cmp.getIntroduced());		
+			upd.setDate(2, cmp.getDiscontinued());		
+			upd.setInt(2, cmp.getCompanyId());		
 			upd.setInt(3, cmp.getId());
 			upd.executeUpdate();
 			//conn.commit();
@@ -178,7 +171,9 @@ public class ComputerDB extends ConnexionDB {
 		System.out.println("Updated:" + cmp);
 	}
 	
-	public void delete(ComputerMP cmp, Connection conn) {
+	
+	// Pour le moment on recoit juste l'id
+	public void delete(Computer cmp) {
 		try {
 			PreparedStatement del = (PreparedStatement) conn.prepareStatement("DELETE FROM computer"
 					+ " WHERE ID=?");
@@ -188,6 +183,6 @@ public class ComputerDB extends ConnexionDB {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		System.out.println("Deleted:" + cmp);
+		System.out.println("Deleted:");
 	}
 }

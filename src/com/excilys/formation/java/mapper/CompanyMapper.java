@@ -23,15 +23,14 @@ public class CompanyMapper {
 	public static Company map(ResultSet res) {
 		Company cpn = null;		
 		try {
-			int id = -1;
-			String name = "";
-			id = res.getInt("ID");
-			name = res.getString("NAME");
-			cpn = new Company(id, name);
+			if(!res.equals(null)) {
+				int id = res.getInt("ID");
+				String name = res.getString("NAME");
+				cpn = new Company(id, name);
+			}
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
 		return cpn;
 	}
-
 }

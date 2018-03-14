@@ -22,7 +22,7 @@ public class ComputerMapper {
 		int company_id  = -1; 
 		
 		try {
-			if(res.next()) {
+			if(!res.equals(null)) {
 				id = res.getInt("ID");
 				name = res.getString("NAME");
 				introduced = res.getDate("INTRODUCED");

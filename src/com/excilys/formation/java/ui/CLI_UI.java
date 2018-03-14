@@ -44,7 +44,6 @@ public class CLI_UI {
 			} else {
 				cmpList = wscmp.getList(0, 10);
 			}
-
 			for(Computer cmp : cmpList) {
 				System.out.println(cmp);
 			}
@@ -66,8 +65,7 @@ public class CLI_UI {
 	public void create(String[] t) {
 		boolean err = false;
 		boolean exit = false;
-		boolean into = t[1].equals("into");
-		String table = into ? t[2] : t[1];
+		String table = t[1];
 		
 		do{
 			if("computer".equals(table)) {
@@ -157,7 +155,7 @@ public class CLI_UI {
 			System.out.println("Commandes:");
 			System.out.println("show table_name id:          show details of instance in table_name where ID=id");
 			System.out.println("list [all] table_name:       list (all) instances in table_name");
-			System.out.println("create into table_name:      create a instance in table_name."
+			System.out.println("create table_name:      create a instance in table_name."
 					+ "\n\t\t\t     This require you to provide a value for each attribute of the object.");
 			
 			System.out.println("delete [table name] id:      delete the instance in table_name where ID=id");
@@ -166,27 +164,32 @@ public class CLI_UI {
 			
 		} else if (command.contains("list")) {
 			target = command.split(" ");
-			list(target);
+			if(target.length > 1)
+				list(target);
 			
 		} else if (command.contains("show")) {
 			target = command.split(" ");
 			System.out.println("Command show");
-			showDetailComputer(target[2]);
+			if(target.length > 2)
+				showDetailComputer(target[2]);
 			
 		} else if (command.contains("create")) {
 			target = command.split(" ");
 			System.out.println("Command create");
-			create(target);
+			if(target.length > 1)
+				create(target);
 			
 		} else if (command.contains("update")) {
 			target = command.split(" ");
 			System.out.println("Command delete");
-			update(target);
+			if(target.length > 2)
+				update(target);
 			
 		} else if (command.contains("delete")) {
 			target = command.split(" ");
 			System.out.println("Command delete");
-			delete(target[2]);
+			if(target.length > 2)
+				delete(target[2]);
 		}
 	}
 	

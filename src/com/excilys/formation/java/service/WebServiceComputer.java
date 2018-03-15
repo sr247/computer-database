@@ -47,7 +47,7 @@ public class WebServiceComputer {
 		Date introduced = vcmp.checkDate(fields.get(1));
 		Date discontinued = vcmp.checkDate(fields.get(2));
 		int company_id = vcmp.checkForeignKey(fields.get(3));
-		Computer cmp = new Computer(name, introduced, discontinued, company_id);
+		Computer cmp = new Computer(cmpDB.getNumComputers()+1, name, introduced, discontinued, company_id);
 		
 		cmpDB.create(cmp);
 		

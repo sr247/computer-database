@@ -27,7 +27,7 @@ class ComputerMapperTest {
 		
 		PreparedStatement ps = null;
 		ps = (PreparedStatement) 
-				cmpDB.getConnexion().prepareStatement("SELECT * FROM computer"
+				cmpDB.getConnection().prepareStatement("SELECT * FROM computer"
 						+ " WHERE ID=?");
 		ps.setInt(1, 1);
 		

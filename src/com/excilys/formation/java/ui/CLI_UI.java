@@ -71,13 +71,13 @@ public class CLI_UI {
 				ArrayList<String> fields = new ArrayList<String>();
 				System.out.print("Entrez le nom: ");
 				fields.add(sc.nextLine());
-				System.out.print("Entrez la date d'achat: ");
+				System.out.print("Entrez la date d'achat:(dd/mm/aaaa) ");
 				fields.add(sc.nextLine());
-				System.out.print("Entrez la date de fin de production: ");
+				System.out.print("Entrez la date de fin de production:(dd/mm/aaaa) ");
 				fields.add(sc.nextLine());
 	
 				// Ici une formulation différente 
-				System.out.print("Entrez l'id de l'entreprise propritaire: ");			
+				System.out.print("Entrez l'id de l'entreprise propritaire:");			
 				fields.add(sc.nextLine());
 				err = false;
 				try {
@@ -111,9 +111,9 @@ public class CLI_UI {
 				System.out.print("Entrez une valeur pour le champ à mettre à jour. Laisser le champ vide pour ne rien modifier: ");
 				System.out.print("Entrez le nom: ");
 				fields.add(sc.nextLine());
-				System.out.print("Entrez la date d'achat: ");
+				System.out.print("Entrez la date d'achat:(dd/mm/aaaa) ");
 				fields.add(sc.nextLine());
-				System.out.print("Entrez la date de fin de production: ");
+				System.out.print("Entrez la date de fin de production:(dd/mm/aaaa) ");
 				fields.add(sc.nextLine());
 	
 				// ici une formulation différente 
@@ -144,7 +144,7 @@ public class CLI_UI {
 			System.out.println("Commandes:");
 			System.out.println("show table_name id:          show details of instance in table_name where ID=id");
 			System.out.println("list [all] table_name:       list (all) instances in table_name");
-			System.out.println("create table_name:      create a instance in table_name."
+			System.out.println("create table_name:           create a instance in table_name."
 					+ "\n\t\t\t     This require you to provide a value for each attribute of the object.");
 			
 			System.out.println("delete [table name] id:      delete the instance in table_name where ID=id");

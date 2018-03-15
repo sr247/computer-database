@@ -130,4 +130,15 @@ public class Computer {
 				+ "company_id=" + companyId + ")";
 		
 	}
+	
+	@Override
+	public boolean equals(Object  o) {
+		Computer cmp = (Computer) o;
+		return this.id == cmp.id
+				&& this.name.equals(cmp.name)
+				&& this.introduced == cmp.introduced
+				&& this.discontinued == cmp.discontinued
+				&& this.companyId == cmp.companyId;
+		
+	}
 }

@@ -29,28 +29,46 @@ public class ComputerDB {
 		return _interface;
 	}
 	
-	public Connection getConnexion() {
+	public Connection getConnection() {
 		return conn;
 	}
 
 	public int getNumComputers() {
 		synchronized(conn) {
-			if (numComputers == -1)
-			{
-				Statement s;
-				try {
-					s = conn.createStatement();
-					ResultSet res = s
-							.executeQuery("SELECT COUNT(*) AS NUM FROM computer");
-					res.next();
-					numComputers = res.getInt("NUM");
-				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+			Statement s;
+			try {
+				s = conn.createStatement();
+				ResultSet res = s
+						.executeQuery("SELECT COUNT(*) AS NUM FROM computer");
+				res.next();
+				numComputers = res.getInt("NUM");
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 		}
 		return numComputers;
+	}
+	
+	public int getCurrentAutoIncrements() {
+		int val = 0;
+		synchronized(conn) {
+			Statement s;
+			try {
+				s = conn.createStatement();
+				ResultSet res = s
+						.executeQuery("SELECT AUTO_INCREMENT "
+								+ "FROM INFORMATION_SCHEMA.TABLES "
+								+ "WHERE TABLE_SCHEMA = 'computer-database-db' "
+								+ "AND   TABLE_NAME   = computer");
+				res.next();
+				val = res.getInt("AUTO_INCREMENT");
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		return val;
 	}
 	
 	public Computer getComputerByID(int id) {

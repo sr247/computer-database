@@ -3,6 +3,8 @@ package com.excilys.formation.java.service;
 import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 
 import com.excilys.formation.java.exceptions.IncorrectFieldException;
 import com.excilys.formation.java.exceptions.InstanceNotFoundException;
@@ -35,14 +37,23 @@ public class ValidateComputer {
 	
 	public Date checkDate(String dt) throws IncorrectFieldException {
 		Date date = null;
+		SimpleDateFormat sdfJAVA = new SimpleDateFormat("dd/MM/yyyy");
+		SimpleDateFormat sdfSQL = new SimpleDateFormat("yyyy-MM-dd");
+		java.util.Date tmp = new java.util.Date(0);		
 		try {
 			if(!("".equals(dt)) 
 					&& !("null".equals(dt))) {
-				date = Date.valueOf(dt);
+				tmp = sdfJAVA.parse(dt);
+				String dtt = sdfSQL.format(tmp);
+				date = Date.valueOf(dtt);
 			}					
 		} catch(IllegalArgumentException e) {
 			System.err.println("Invalid format date");
 			throw new IncorrectFieldException();
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			System.err.println("Invalid format date");
+			e.printStackTrace();
 		}
 		return date;
 	}

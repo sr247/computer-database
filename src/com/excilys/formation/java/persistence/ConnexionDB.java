@@ -12,9 +12,17 @@ public class ConnexionDB {
 		try {
 			// Chargement du driver mysql et connexion a la base
 			Class.forName("com.mysql.jdbc.Driver");
-			conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/computer-database-db?useSSL=FALSE", "admincdb", "qwerty1234");	
+			conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/computer-database-db?useSSL=FALSE", "admincdb", "qwerty1234");
+			
+			/*
+			 * Log into file : Connection succeded in data base
+			 */
 		}catch(Exception e) {
 			e.printStackTrace();
+			
+			/*
+			 * Log in screen or terminal : Connection failed to database
+			 */
 		}
 	}
 	

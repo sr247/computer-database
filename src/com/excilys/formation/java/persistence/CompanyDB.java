@@ -4,40 +4,39 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.List;
 
 import com.excilys.formation.java.mapper.CompanyMapper;
 import com.excilys.formation.java.model.Company;
 import com.mysql.jdbc.Connection;
 import com.mysql.jdbc.PreparedStatement;
 
-public class CompanyDB {
+public enum CompanyDB {
 	
-	private static CompanyDB _interface = null;
-	private final static Connection conn = (Connection) ConnexionDB.getInterface().getConnection();
+	INSTANTCE;
+		
 	private static int numCompanies = -1;	
+	
+	private final static String COUNT_NUMBER_OF = "SELECT COUNT(*) AS NUM FROM company;";
+	private final static String SELECT_ONE = "SELECT * FROM company WHERE ID=?;";
+	private final static String SELECT_UNLIMITED_LIST = "SELECT * FROM company ORDER BY ID;";
+	private final static String SELECT_LIMITED_LIST = "SELECT * FROM company ORDER BY ID LIMIT ? OFFSET ?;";
+	private final static String CREATE_REQUEST  = "INSERT INTO computer (ID, NAME) VALUES (?, ?);";
+	private final static String UPDTATE_REQUEST = "UPDATE company SET ?=? WHERE ID=?;";
+	private final static String DELETE_REQUEST  = "DELETE FROM company WHERE ID=?";
 	
 	private CompanyDB() {
 		
 	}
 	
-	public static CompanyDB getInterface() {
-		if(_interface == null) {
-			_interface = new CompanyDB();
-		}
-		return _interface;
-	}
-	
-	public Connection getConnexion() {
-		return conn;
-	}
-	
 	public int getNumCompanies() {
+		
 		if (numCompanies == -1) {
 			Statement s;
-			try {
+			try (Connection conn = (Connection) ConnexionDB.INSTANCE.getConnection();){
 				s = conn.createStatement();
 				ResultSet res = s
-						.executeQuery("SELECT COUNT(*) AS NUM FROM company");
+						.executeQuery(COUNT_NUMBER_OF);
 				res.next();
 				numCompanies = res.getInt("NUM");
 			} catch (SQLException e) {
@@ -51,26 +50,27 @@ public class CompanyDB {
 	public Company getCompanyByID(int id) {
 			PreparedStatement sel = null;
 			ResultSet res = null;
-			try {
+			Company cpy = null;
+			try (Connection conn = (Connection) ConnexionDB.INSTANCE.getConnection();){
 				sel = (PreparedStatement) 
-						conn.prepareStatement("SELECT * FROM company"
-								+ " WHERE ID=?");
+						conn.prepareStatement(SELECT_ONE);
 				sel.setInt(1, id);
 				res = sel.executeQuery();				
 				res.next();
+				cpy = CompanyMapper.map(res);
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			return CompanyMapper.map(res);
+			return cpy;
 	}
 	
-	public ArrayList<Company> getCompanyList() {
-		ArrayList<Company> companies = new ArrayList<Company>();
+	public List<Company> getCompanyList() {
+		List<Company> companies = new ArrayList<Company>();
 		// Solutionner pour les preperedStatement plutot : Plus sécuritaire au niveau des injection sql.
-		try {
+		try (Connection conn = (Connection) ConnexionDB.INSTANCE.getConnection();){
 			Statement s = conn.createStatement();
-			ResultSet res = s.executeQuery("SELECT * FROM company ORDER BY ID");
+			ResultSet res = s.executeQuery(SELECT_UNLIMITED_LIST);
 			
 			while (res.next())
 				companies.add(CompanyMapper.map(res));
@@ -81,14 +81,12 @@ public class CompanyDB {
 		return companies;
 	}
 	
-	public ArrayList<Company> getCompanyList(int from, int to) {
-		ArrayList<Company> companies = new ArrayList<Company>();
+	public List<Company> getCompanyList(int from, int to) {
+		List<Company> companies = new ArrayList<Company>();
 		// Solutionner pour les preperedStatement plutot : Plus sécuritaire au niveau des injection sql.
-		try {
+		try (Connection conn = (Connection) ConnexionDB.INSTANCE.getConnection();){
 			PreparedStatement ps = (PreparedStatement) 
-					conn.prepareStatement("SELECT * FROM company"
-							+ " ORDER BY ID"
-							+ " LIMIT ? OFFSET ?");
+					conn.prepareStatement(SELECT_LIMITED_LIST);
 			ps.setInt(1, to-from);
 			ps.setInt(2, from);
 			ResultSet res = ps.executeQuery();
@@ -104,12 +102,11 @@ public class CompanyDB {
 	}
 	
 
-	public void create(String name) {
+	private void create(String name) {
 		PreparedStatement crt;
 		int id = getNumCompanies()+1;
-		try {
-			crt = (PreparedStatement) conn.prepareStatement("INSERT INTO computer (ID, NAME)"
-					+ "VALUES 	(?, ?");
+		try (Connection conn = (Connection) ConnexionDB.INSTANCE.getConnection();){
+			crt = (PreparedStatement) conn.prepareStatement(CREATE_REQUEST);
 			
 			crt.setInt(1, id);
 			crt.setString(2, name);
@@ -125,18 +122,12 @@ public class CompanyDB {
 		System.out.println("Created:" + cpy);
 		
 	}
+
 	
-	/*
-	 * Ici check : Field doit déja convenir au champs équivalent requis dans la table.
-	 * Et n'oubli pas de faire des Test Genre MAINTENANT !
-	 */
-	
-	public void update(String field, Company cmp) {
+	private void update(String field, Company cmp) {
 		PreparedStatement upd;
-		try {
-			upd = (PreparedStatement) conn.prepareStatement("UPDATE company "
-					+ "SET ?=?"
-					+ "WHERE ID=?");
+		try (Connection conn = (Connection) ConnexionDB.INSTANCE.getConnection();){
+			upd = (PreparedStatement) conn.prepareStatement(UPDTATE_REQUEST);
 
 			upd.setString(1, field);
 			if("NAME".equals(field)) {
@@ -153,10 +144,9 @@ public class CompanyDB {
 		
 	}
 	
-	public void delete(Company cmp) {
-		try {
-			PreparedStatement upd = (PreparedStatement) conn.prepareStatement("DELETE FROM company"
-					+ " WHERE ID=?");
+	private void delete(Company cmp) {
+		try (Connection conn = (Connection) ConnexionDB.INSTANCE.getConnection();){
+			PreparedStatement upd = (PreparedStatement) conn.prepareStatement(DELETE_REQUEST);
 			upd.setInt(1, cmp.getId());
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block

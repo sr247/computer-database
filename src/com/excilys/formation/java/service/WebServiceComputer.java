@@ -2,6 +2,7 @@ package com.excilys.formation.java.service;
 
 import java.sql.Date;
 import java.util.ArrayList;
+import java.util.List;
 
 import com.excilys.formation.java.exceptions.IncorrectFieldException;
 import com.excilys.formation.java.exceptions.InstanceNotFoundException;
@@ -25,12 +26,12 @@ public class WebServiceComputer {
 	}
 	
 	public Computer getComputer(String id) {
-		ComputerDB cmpDB = ComputerDB.getInterface();
+		ComputerDB cmpDB = ComputerDB.INSTANCE;
 		return cmpDB.getComputerByID(Integer.valueOf(id));
 	}
 	
-	public ArrayList<Computer> getList(int from, int to) {
-		ComputerDB cmpDB = ComputerDB.getInterface();
+	public List<Computer> getList(int from, int to) {
+		ComputerDB cmpDB = ComputerDB.INSTANCE;
 		if(from == 0 && to == 0) {
 			return cmpDB.getComputerList();
 		}
@@ -40,8 +41,8 @@ public class WebServiceComputer {
 
 	
 	public void createComputer(ArrayList<String> fields) throws IncorrectFieldException, InstanceNotFoundException {
-		ValidateComputer vcmp = ValidateComputer.getinterface();
-		ComputerDB cmpDB = ComputerDB.getInterface();
+		ValidateComputer vcmp = ValidateComputer.INSTANCE;
+		ComputerDB cmpDB = ComputerDB.INSTANCE;
 		
 		String name = vcmp.checkName(fields.get(0));
 		Date introduced = vcmp.checkDate(fields.get(1));
@@ -55,8 +56,8 @@ public class WebServiceComputer {
 	
 	public void updateComputer(ArrayList<String> fields, String id) throws IncorrectFieldException, InstanceNotFoundException {
 		
-		ValidateComputer vcmp = ValidateComputer.getinterface();
-		ComputerDB cmpDB = ComputerDB.getInterface();
+		ValidateComputer vcmp = ValidateComputer.INSTANCE;
+		ComputerDB cmpDB = ComputerDB.INSTANCE;
 		Computer cmp = getComputer(id);
 		
 		String name = vcmp.checkName(fields.get(0));
@@ -73,7 +74,7 @@ public class WebServiceComputer {
 	}
 	
 	public void deleteComputer(String id) {
-		ComputerDB cmpDB = ComputerDB.getInterface();
+		ComputerDB cmpDB = ComputerDB.INSTANCE;
 		Computer cmp = getComputer(id);
 		cmpDB.delete(cmp);
 		

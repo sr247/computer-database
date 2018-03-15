@@ -1,6 +1,6 @@
 package com.excilys.formation.java.service;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import com.excilys.formation.java.model.Company;
 import com.excilys.formation.java.persistence.CompanyDB;
@@ -20,8 +20,8 @@ public class WebServiceCompany {
 		return _instance;
 	}
 
-	public ArrayList<Company> getList(int from, int to){
-		CompanyDB cpnDB = CompanyDB.getInterface();
+	public List<Company> getList(int from, int to){
+		CompanyDB cpnDB = CompanyDB.INSTANTCE;
 		if(from == 0 && to == 0) {
 			return cpnDB.getCompanyList();
 		}

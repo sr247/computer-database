@@ -1,6 +1,7 @@
 package com.excilys.formation.java.ui;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 import com.excilys.formation.java.exceptions.IncorrectFieldException;
@@ -37,7 +38,7 @@ public class CLI_UI {
 		boolean listAll =  t[1].equals("all");
 		String table = listAll ? t[2] : t[1];
 		if("computer".equals(table)) {
-			ArrayList<Computer> cmpList = null;
+			List<Computer> cmpList = null;
 			if(listAll) {
 				cmpList = wscmp.getList(0, 0);
 			} else {
@@ -47,7 +48,7 @@ public class CLI_UI {
 				System.out.println(cmp);
 			}
 		} else if("company".equals(table)){
-			ArrayList<Company> cpyList = null;
+			List<Company> cpyList = null;
 			if(listAll) {
 				cpyList = wscpy.getList(0, 0);
 			} else {

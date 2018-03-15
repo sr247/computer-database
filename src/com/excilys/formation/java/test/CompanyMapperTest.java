@@ -12,6 +12,8 @@ import org.junit.jupiter.api.Test;
 
 import com.excilys.formation.java.model.Company;
 import com.excilys.formation.java.persistence.CompanyDB;
+import com.excilys.formation.java.persistence.ConnexionDB;
+import com.mysql.jdbc.Connection;
 import com.mysql.jdbc.PreparedStatement;
 
 class CompanyMapperTest {
@@ -21,11 +23,12 @@ class CompanyMapperTest {
 	
 	@BeforeAll
 	static void setUpBeforeClass() throws Exception {
-		CompanyDB cmpDB = CompanyDB.getInterface();		
+		CompanyDB cmpDB = CompanyDB.INSTANTCE;		
 		expected = cmpDB.getCompanyByID(1);		
 		PreparedStatement ps = null;
+		Connection conn = (Connection) ConnexionDB.INSTANCE.getConnection();
 		ps = (PreparedStatement) 
-				cmpDB.getConnexion().prepareStatement("SELECT * FROM company"
+				conn.prepareStatement("SELECT * FROM company"
 						+ " WHERE ID=?");
 		ps.setInt(1, 1);
 		
@@ -40,6 +43,8 @@ class CompanyMapperTest {
 
 	@AfterAll
 	static void tearDownAfterClass() throws Exception {
+		Connection conn = (Connection) ConnexionDB.INSTANCE.getConnection();
+		conn.close();
 	}
 
 	@BeforeEach

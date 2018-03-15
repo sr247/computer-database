@@ -20,7 +20,6 @@ public class Company {
 				+ "name=" + name + ")";
 	}
 
-
 	/**
 	 * @return the id
 	 */
@@ -52,7 +51,19 @@ public class Company {
 		this.name = name;
 	}
 
+	@Override
+	public boolean equals(Object o) {
+		Company cpy = (Company) o;
+		return this.id == cpy.id && this.name.equals(cpy.name);
+	}
 	
-	
+	@Override
+	public int hashCode() {
+		int hash = this.getClass().getMethods().length;
+		hash = hash * 7 + id;
+		hash = hash * 11 + name.hashCode();
+		
+		return hash;
+	}
 
 }

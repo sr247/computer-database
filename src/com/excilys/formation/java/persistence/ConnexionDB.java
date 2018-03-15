@@ -1,40 +1,61 @@
 package com.excilys.formation.java.persistence;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.util.Properties;
 
-public class ConnexionDB {
+public enum ConnexionDB {
 	
-	private static ConnexionDB _interface = null;
-	private static Connection conn;
+	INSTANCE;
+	
+	private Connection conn;
 	
 	private ConnexionDB () {
+
+	}
+	
+	public Connection getConnection() {
+		Properties prop = new Properties();
+		String root = System.getProperty("user.dir");
+		String fileConf = root + "/config/db/config.properties";
+		System.out.println(fileConf);
+		
+		
+		try(FileInputStream fis = new FileInputStream(fileConf);){
+			prop.load(fis);
+			
+		} catch (FileNotFoundException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
 		try {
+			String driverName = prop.getProperty("Driver");
+			String urlDB = prop.getProperty("Url");
+			String user = prop.getProperty("user");
+			String passwd = prop.getProperty("passwd");
 			// Chargement du driver mysql et connexion a la base
-			Class.forName("com.mysql.jdbc.Driver");
-			conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/computer-database-db?useSSL=FALSE", "admincdb", "qwerty1234");
+			Class.forName(driverName);
+			conn = DriverManager.getConnection(urlDB, user, passwd);
 			
 			/*
 			 * Log into file : Connection succeded in data base
 			 */
-		}catch(Exception e) {
+		}catch(SQLException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 			
-			/*
-			 * Log in screen or terminal : Connection failed to database
-			 */
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-	}
-	
-	public static ConnexionDB getInterface() {
-		
-		if(_interface == null) {
-			_interface = new ConnexionDB();
-		}
-		return _interface;
-	}
-	
-	public Connection getConnection() {
 		return conn;
 	}	
 	

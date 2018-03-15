@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.sql.Date;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
@@ -13,6 +14,8 @@ import org.junit.jupiter.api.Test;
 
 import com.excilys.formation.java.model.Computer;
 import com.excilys.formation.java.persistence.ComputerDB;
+import com.excilys.formation.java.persistence.ConnexionDB;
+import com.mysql.jdbc.Connection;
 import com.mysql.jdbc.PreparedStatement;
 
 class ComputerMapperTest {
@@ -22,24 +25,6 @@ class ComputerMapperTest {
 	
 	@BeforeAll
 	static void setUpBeforeClass() throws Exception {
-		ComputerDB cmpDB = ComputerDB.getInterface();		
-		expected = cmpDB.getComputerByID(1);
-		
-		PreparedStatement ps = null;
-		ps = (PreparedStatement) 
-				cmpDB.getConnection().prepareStatement("SELECT * FROM computer"
-						+ " WHERE ID=?");
-		ps.setInt(1, 1);
-		
-		res = ps.executeQuery();
-		res.next();
-		
-		int id = res.getInt("ID");
-		String name = res.getString("NAME");
-		Date introduced = res.getDate("INTRODUCED");
-		Date discontinued = res.getDate("DISCONTINUED");
-		int company_id = res.getInt("COMPANY_ID");
-		actual = new Computer(id, name, introduced, discontinued, company_id);
 	}
 
 	@AfterAll
@@ -62,8 +47,26 @@ class ComputerMapperTest {
 	}
 	
 	@Test
-	void testMap() {
-		// System.err.println(expected.getName() + " == " + actual.getName());
+	void testMap() throws SQLException {
+		String SELECT_ONE = "SELECT * FROM computer WHERE ID=?;";
+		Connection conn = (Connection) ConnexionDB.INSTANCE.getConnection();
+		PreparedStatement ps = null;
+		ps = (PreparedStatement) 
+				conn.prepareStatement(SELECT_ONE);
+		ps.setInt(1, 1);
+		res = ps.executeQuery();
+		res.next();		
+		int id = res.getInt("ID");
+		String name = res.getString("NAME");
+		Date introduced = res.getDate("INTRODUCED");
+		Date discontinued = res.getDate("DISCONTINUED");
+		int company_id = res.getInt("COMPANY_ID");
+		actual = new Computer(id, name, introduced, discontinued, company_id);
+		
+		ComputerDB cmpDB = ComputerDB.INSTANCE;		
+		expected = cmpDB.getComputerByID(1);
+		
+		
 		assertTrue(expected.getId() == actual.getId(), "ID");
 		assertTrue(expected.getName().equals(actual.getName()), "Name");
 		assertTrue(expected.getIntroduced() == actual.getIntroduced(), "Intro");

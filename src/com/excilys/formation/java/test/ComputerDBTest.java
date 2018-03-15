@@ -9,6 +9,7 @@ import java.sql.Connection;
 import java.sql.Date;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
@@ -43,26 +44,19 @@ class ComputerDBTest {
 	}
 
 	@Test
-	void testGetConnexion() throws SQLException {
-		ComputerDB connDB = ComputerDB.getInterface();
-		assertNotEquals(connDB.getConnection(), null);
-		Connection conn = connDB.getConnection();
-		assertEquals(conn.isValid(0), true);
-	}
-
-	@Test
 	void testGetNumComputers() {
-		ComputerDB connDB = ComputerDB.getInterface();
+		ComputerDB connDB = ComputerDB.INSTANCE;
 		int expected = 574;
 		assertEquals(expected, connDB.getNumComputers());
 	}
 
 	@Test
 	void testGetComputerByID() {
-		ComputerDB connDB = ComputerDB.getInterface();
+		ComputerDB connDB = ComputerDB.INSTANCE;
 		Computer expected = new Computer(1, "MacBook Pro 15.4 inch", null, null, 1);
 		Computer actual = connDB.getComputerByID(1);
-		assertEquals(expected.getClass(), actual.getClass());
+		assertEquals(expected.getClass(), 
+				actual.getClass());
 		assertEquals(expected.getId(), actual.getId());
 		assertEquals(expected.getIntroduced(), actual.getIntroduced());
 		assertEquals(expected.getDiscontinued(), actual.getDiscontinued());
@@ -77,14 +71,14 @@ class ComputerDBTest {
 
 	@Test
 	void testGetComputerListIntInt() {
-		ComputerDB connDB = ComputerDB.getInterface();
-		ArrayList<Computer> expected = new ArrayList<Computer>();
+		ComputerDB connDB = ComputerDB.INSTANCE;
+		List<Computer> expected = new ArrayList<Computer>();
 		expected.add(new Computer(1, "MacBook Pro 15.4 inch", null, null, 1));
 		expected.add(new Computer(2, "CM-2a", null, null, 2));	
 		expected.add(new Computer(3, "CM-200", null, null, 2));
 		expected.add(new Computer(4, "CM-5e", null, null, 2));
 		expected.add(new Computer(5, "CM-5", Date.valueOf("1991-01-01"), null, 2));
-		ArrayList<Computer> actual = connDB.getComputerList(0, 5);
+		List<Computer> actual = connDB.getComputerList(0, 5);
 				
 		assertTrue(expected.size() == actual.size());
 		for(int i = 0; i < expected.size(); i++) {

@@ -5,18 +5,12 @@ import java.sql.ResultSet;
 
 import com.excilys.formation.java.model.Computer;
 
-public class ComputerMapper {
-	private static ComputerMapper _interface = null;
+public enum ComputerMapper {
+	
+	INSTANCE;
 	
 	private ComputerMapper() {
 		
-	}
-	
-	public static ComputerMapper getInterface() {
-		if(_interface == null) {
-			_interface = new ComputerMapper();
-		}
-		return _interface;
 	}
 
 	

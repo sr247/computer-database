@@ -13,19 +13,11 @@ import com.excilys.formation.java.persistence.CompanyDB;
 import com.mysql.jdbc.PreparedStatement;
 
 // Cette classe devient un singleton
-public class ValidateComputer {
-	private static ValidateComputer _interface = null;
-	
+public enum ValidateComputer {
+	INSTANCE;	
 	
 	private ValidateComputer() {
 		
-	}
-	
-	public static ValidateComputer getinterface() {
-		if(_interface == null) {
-			_interface = new ValidateComputer();
-		}
-		return _interface;
 	}
 	
 	public String checkName(String nm) {
@@ -60,7 +52,7 @@ public class ValidateComputer {
 	
 
 	public int checkForeignKey(String fk) throws InstanceNotFoundException {
-		CompanyDB cpyDB = CompanyDB.getInterface();
+		CompanyDB cpyDB = CompanyDB.INSTANTCE;
 		Company cpy = cpyDB.getCompanyByID(Integer.valueOf(fk));
 		
 		if(cpy == null) {

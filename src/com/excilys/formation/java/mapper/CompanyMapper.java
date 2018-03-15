@@ -5,19 +5,12 @@ import java.sql.SQLException;
 
 import com.excilys.formation.java.model.Company;
 
-public class CompanyMapper {
+public enum CompanyMapper {
 
-	private static CompanyMapper _interface = null;
+	INSTANCE;
 	
 	private CompanyMapper() {
 		
-	}
-	
-	public static CompanyMapper getInterface() {
-		if(_interface == null) {
-			_interface = new CompanyMapper();
-		}
-		return _interface;
 	}
 	
 	public static Company map(ResultSet res) {

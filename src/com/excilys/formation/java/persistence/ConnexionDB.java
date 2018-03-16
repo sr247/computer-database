@@ -21,10 +21,9 @@ public enum ConnexionDB {
 	public Connection getConnection() {
 		Properties prop = new Properties();
 		String root = System.getProperty("user.dir");
-		String fileConf = root + "/config/db/config.properties";
+		String fileConf = "config/db/config.properties";
 		System.out.println(fileConf);
-		
-		
+				
 		try(FileInputStream fis = new FileInputStream(fileConf);){
 			prop.load(fis);
 			
@@ -37,10 +36,10 @@ public enum ConnexionDB {
 		}
 		
 		try {
-			String driverName = prop.getProperty("Driver");
-			String urlDB = prop.getProperty("Url");
-			String user = prop.getProperty("user");
-			String passwd = prop.getProperty("passwd");
+			String driverName = prop.getProperty("mysql.Driver");
+			String urlDB = prop.getProperty("mysql.Url");
+			String user = prop.getProperty("mysql.user");
+			String passwd = prop.getProperty("mysql.passwd");
 			// Chargement du driver mysql et connexion a la base
 			Class.forName(driverName);
 			conn = DriverManager.getConnection(urlDB, user, passwd);
@@ -57,6 +56,11 @@ public enum ConnexionDB {
 			e.printStackTrace();
 		}
 		return conn;
-	}	
+	}
+	
+	public static void main (String[] args) throws SQLException {
+		Connection conn = ConnexionDB.INSTANCE.getConnection();
+		conn.close();
+	}
 	
 }

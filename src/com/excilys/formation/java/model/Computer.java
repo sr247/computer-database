@@ -1,13 +1,13 @@
 package com.excilys.formation.java.model;
 
-import java.sql.Date;
+import java.time.LocalDate;
 
 public class Computer {
 	
 	private int id;
 	private String name;
-	private Date introduced;
-	private Date discontinued;
+	private LocalDate introduced;
+	private LocalDate discontinued;
 
 	// Ce champ deviendra un objet company à part entière.
 	private int companyId;
@@ -15,7 +15,7 @@ public class Computer {
 	 * Fonctionnalité  1 à tester immédiatement 
 	 * vérifier le lien avec JDBC (persitance)
 	 */
-	public Computer(int id, String name, Date introduced, Date discontinued, int company_id) {
+	public Computer(int id, String name, LocalDate introduced, LocalDate discontinued, int company_id) {
 		this.id = id;
 		this.name = name;
 		this.introduced = introduced;
@@ -23,7 +23,7 @@ public class Computer {
 		this.companyId = company_id;
 	}
 	
-	public Computer(String name, Date introduced, Date discontinued, int company_id) {
+	public Computer(String name, LocalDate introduced, LocalDate discontinued, int company_id) {
 		this.id = 0;
 		this.name = name;
 		this.introduced = introduced;
@@ -71,7 +71,7 @@ public class Computer {
 	/**
 	 * @return the introduced
 	 */
-	public Date getIntroduced() {
+	public LocalDate getIntroduced() {
 		return introduced;
 	}
 
@@ -80,7 +80,7 @@ public class Computer {
 	/**
 	 * @param introduced the introduced to set
 	 */
-	public void setIntroduced(Date introduced) {
+	public void setIntroduced(LocalDate introduced) {
 		this.introduced = introduced;
 	}
 
@@ -89,7 +89,7 @@ public class Computer {
 	/**
 	 * @return the discontinued
 	 */
-	public Date getDiscontinued() {
+	public LocalDate getDiscontinued() {
 		return discontinued;
 	}
 
@@ -98,7 +98,7 @@ public class Computer {
 	/**
 	 * @param discontinued the discontinued to set
 	 */
-	public void setDiscontinued(Date discontinued) {
+	public void setDiscontinued(LocalDate discontinued) {
 		this.discontinued = discontinued;
 	}
 

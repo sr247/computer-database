@@ -1,6 +1,6 @@
 package com.excilys.formation.java.service;
 
-import java.sql.Date;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,8 +45,8 @@ public class WebServiceComputer {
 		ComputerDB cmpDB = ComputerDB.INSTANCE;
 		
 		String name = vcmp.checkName(fields.get(0));
-		Date introduced = vcmp.checkDate(fields.get(1));
-		Date discontinued = vcmp.checkDate(fields.get(2));
+		LocalDate introduced = vcmp.checkDate(fields.get(1));
+		LocalDate discontinued = vcmp.checkDate(fields.get(2));
 		int company_id = vcmp.checkForeignKey(fields.get(3));
 		Computer cmp = new Computer(cmpDB.getNumComputers()+1, name, introduced, discontinued, company_id);
 		
@@ -61,8 +61,8 @@ public class WebServiceComputer {
 		Computer cmp = getComputer(id);
 		
 		String name = vcmp.checkName(fields.get(0));
-		Date introduced = vcmp.checkDate(fields.get(1));
-		Date discontinued = vcmp.checkDate(fields.get(2));
+		LocalDate introduced = vcmp.checkDate(fields.get(1));
+		LocalDate discontinued = vcmp.checkDate(fields.get(2));
 		int company_id = vcmp.checkForeignKey(fields.get(3));
 		
 		cmp.setName(name);

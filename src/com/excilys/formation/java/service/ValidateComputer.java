@@ -1,16 +1,15 @@
 package com.excilys.formation.java.service;
 
-import java.sql.Date;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 
 import com.excilys.formation.java.exceptions.IncorrectFieldException;
 import com.excilys.formation.java.exceptions.InstanceNotFoundException;
 import com.excilys.formation.java.model.Company;
 import com.excilys.formation.java.persistence.CompanyDB;
-import com.mysql.jdbc.PreparedStatement;
+
 
 // Cette classe devient un singleton
 public enum ValidateComputer {
@@ -27,27 +26,18 @@ public enum ValidateComputer {
 	}
 	
 	
-	public Date checkDate(String dt) throws IncorrectFieldException {
-		Date date = null;
-		SimpleDateFormat sdfJAVA = new SimpleDateFormat("dd/MM/yyyy");
-		SimpleDateFormat sdfSQL = new SimpleDateFormat("yyyy-MM-dd");
-		java.util.Date tmp = new java.util.Date(0);		
+	public LocalDate checkDate(String dt) throws IncorrectFieldException {
+		LocalDate date = null;
 		try {
-			if(!("".equals(dt)) 
-					&& !("null".equals(dt))) {
-				tmp = sdfJAVA.parse(dt);
-				String dtt = sdfSQL.format(tmp);
-				date = Date.valueOf(dtt);
-			}					
-		} catch(IllegalArgumentException e) {
-			System.err.println("Invalid format date");
-			throw new IncorrectFieldException();
-		} catch (ParseException e) {
-			// TODO Auto-generated catch block
-			System.err.println("Invalid format date");
+			DateTimeFormatter fmt = DateTimeFormatter.ofPattern("dd/MM/uuuu");
+			date = LocalDate.parse(dt, fmt);
+			return date;
+		}catch (DateTimeParseException e) {
+			// TODO: handle exception
 			e.printStackTrace();
+			throw new IncorrectFieldException();
 		}
-		return date;
+
 	}
 	
 

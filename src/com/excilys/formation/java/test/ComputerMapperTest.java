@@ -1,10 +1,10 @@
 package com.excilys.formation.java.test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDate;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
@@ -58,8 +58,8 @@ class ComputerMapperTest {
 		res.next();		
 		int id = res.getInt("ID");
 		String name = res.getString("NAME");
-		Date introduced = res.getDate("INTRODUCED");
-		Date discontinued = res.getDate("DISCONTINUED");
+		LocalDate introduced = res.getDate("INTRODUCED").toLocalDate();
+		LocalDate discontinued = res.getDate("DISCONTINUED").toLocalDate();
 		int company_id = res.getInt("COMPANY_ID");
 		actual = new Computer(id, name, introduced, discontinued, company_id);
 		

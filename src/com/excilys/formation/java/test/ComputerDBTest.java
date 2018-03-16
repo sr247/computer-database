@@ -1,13 +1,10 @@
 package com.excilys.formation.java.test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
-import java.sql.Connection;
-import java.sql.Date;
-import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -77,7 +74,7 @@ class ComputerDBTest {
 		expected.add(new Computer(2, "CM-2a", null, null, 2));	
 		expected.add(new Computer(3, "CM-200", null, null, 2));
 		expected.add(new Computer(4, "CM-5e", null, null, 2));
-		expected.add(new Computer(5, "CM-5", Date.valueOf("1991-01-01"), null, 2));
+		expected.add(new Computer(5, "CM-5", LocalDate.parse("1991-01-01"), null, 2));
 		List<Computer> actual = connDB.getComputerList(0, 5);
 				
 		assertTrue(expected.size() == actual.size());

@@ -1,15 +1,16 @@
 package com.excilys.formation.java.persistence;
 
+import java.sql.Connection;
 import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
 import com.excilys.formation.java.mapper.ComputerMapper;
 import com.excilys.formation.java.model.Computer;
-import java.sql.Connection;
 import com.mysql.jdbc.PreparedStatement;
 import com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException;
 
@@ -102,10 +103,11 @@ public enum ComputerDB {
 	}
 	
 	
-	public PreparedStatement setDateProperly(Date dt, PreparedStatement ps, int i) throws SQLException {
-		if(dt == null) {
+	public PreparedStatement setDateProperly(LocalDate date, PreparedStatement ps, int i) throws SQLException {
+		if(date == null) {
 			ps.setNull(i, java.sql.Types.DATE);
 		} else {
+			Date dt = Date.valueOf(date);
 			ps.setDate(i, dt);				
 		} 
 		return ps;
@@ -148,8 +150,8 @@ public enum ComputerDB {
 			upd = (PreparedStatement) conn.prepareStatement(UPDTATE_REQUEST);		
 
 			upd.setString(2, cmp.getName());		
-			upd.setDate(2, cmp.getIntroduced());		
-			upd.setDate(2, cmp.getDiscontinued());		
+			upd.setDate(2, Date.valueOf(cmp.getIntroduced()));		
+			upd.setDate(2, Date.valueOf(cmp.getDiscontinued()));		
 			upd.setInt(2, cmp.getCompanyId());		
 			upd.setInt(3, cmp.getId());
 			upd.executeUpdate();

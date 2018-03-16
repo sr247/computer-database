@@ -2,6 +2,7 @@ package com.excilys.formation.java.mapper;
 
 import java.sql.Date;
 import java.sql.ResultSet;
+import java.time.LocalDate;
 
 import com.excilys.formation.java.model.Computer;
 
@@ -20,17 +21,17 @@ public enum ComputerMapper {
 			if(!res.equals(null)) {
 				int id = res.getInt("ID");
 				String name = res.getString("NAME");
-				Date introduced = res.getDate("INTRODUCED");
-				Date discontinued = res.getDate("DISCONTINUED");
+				Date intro = res.getDate("INTRODUCED");
+				Date discon = res.getDate("DISCONTINUED");
+				LocalDate introduced = intro.toLocalDate();
+				LocalDate discontinued = discon.toLocalDate();
 				int company_id = res.getInt("COMPANY_ID");
 				cmp = new Computer(id, name, introduced, discontinued, company_id);
-			}			
+			}
 		}catch(Exception e) {
+			System.err.println(e.getMessage());
 			e.printStackTrace();
-		}
-		finally {
-			
-		}		
+		}	
 		return cmp;
 	}
 	

@@ -187,6 +187,8 @@ public class CLI_UI {
 		CLI_UI cmd = new CLI_UI();
 		System.out.println("-- Command Line Interface --");
 		System.out.println("Type help for more informations");
+		
+		
 		while(!cmd.exit()) {
 			System.out.print("cli_db > ");
 			cmd.enterCommand();

@@ -88,7 +88,7 @@ class ComputerTest {
 	void testGetIntroduced() {
 		Date d1 = Date.valueOf("1992-10-10");
 		Date d2 = Date.valueOf("1993-10-10");
-		Computer cmp = new Computer(1, "Lenovo", d1, d2, 40);
+		Computer cmp = new Computer(1, "Lenovo", d1.toLocalDate(), d2.toLocalDate(), 40);
 		assertEquals(cmp.getIntroduced(), Date.valueOf("1992-10-10"));
 	}
 
@@ -97,13 +97,13 @@ class ComputerTest {
 		Date d1 = Date.valueOf("1991-10-10");
 		Date d2 = Date.valueOf("1992-10-10");
 		Date d3 = Date.valueOf("1993-10-10");
-		Computer cmp = new Computer(1, "Lenovo", d2, d3, 40);
+		Computer cmp = new Computer(1, "Lenovo", d2.toLocalDate(), d3.toLocalDate(), 40);
 		assertEquals(cmp.getId(), 1);
 		assertEquals(cmp.getName(), "Lenovo");
 		assertEquals(cmp.getIntroduced(), Date.valueOf("1992-10-10"));
 		assertEquals(cmp.getDiscontinued(), Date.valueOf("1993-10-10"));
 		assertEquals(cmp.getCompanyId(), 40);
-		cmp.setIntroduced(d1);
+		cmp.setIntroduced(d1.toLocalDate());
 		assertEquals(cmp.getId(), 1);
 		assertEquals(cmp.getName(), "Lenovo");
 		assertEquals(cmp.getIntroduced(), Date.valueOf("1991-10-10"));
@@ -115,7 +115,7 @@ class ComputerTest {
 	void testGetDiscontinued() {
 		Date d1 = Date.valueOf("1991-10-10");
 		Date d2 = Date.valueOf("1992-10-10");
-		Computer cmp = new Computer(1, "Lenovo", d1, d2, 40);
+		Computer cmp = new Computer(1, "Lenovo", d1.toLocalDate(), d2.toLocalDate(), 40);
 		assertEquals(cmp.getDiscontinued(), Date.valueOf("1992-10-10"));
 	}
 
@@ -124,13 +124,13 @@ class ComputerTest {
 		Date d1 = Date.valueOf("1991-10-10");
 		Date d2 = Date.valueOf("1992-10-10");
 		Date d3 = Date.valueOf("1993-10-10");
-		Computer cmp = new Computer(1, "Lenovo", d1, d2, 40);
+		Computer cmp = new Computer(1, "Lenovo", d1.toLocalDate(), d2.toLocalDate(), 40);
 		assertEquals(cmp.getId(), 1);
 		assertEquals(cmp.getName(), "Lenovo");
 		assertEquals(cmp.getIntroduced(), Date.valueOf("1991-10-10"));
 		assertEquals(cmp.getDiscontinued(), Date.valueOf("1992-10-10"));
 		assertEquals(cmp.getCompanyId(), 40);
-		cmp.setDiscontinued(d3);
+		cmp.setDiscontinued(d3.toLocalDate());
 		assertEquals(cmp.getId(), 1);
 		assertEquals(cmp.getName(), "Lenovo");
 		assertEquals(cmp.getIntroduced(), Date.valueOf("1991-10-10"));
@@ -142,7 +142,7 @@ class ComputerTest {
 	void testGetCompanyId() {
 		Date d1 = Date.valueOf("1991-10-10");
 		Date d2 = Date.valueOf("1992-10-10");
-		Computer cmp = new Computer(1, "Lenovo", d1, d2, 40);
+		Computer cmp = new Computer(1, "Lenovo", d1.toLocalDate(), d2.toLocalDate(), 40);
 		assertEquals(cmp.getCompanyId(), 40);
 	}
 
@@ -150,7 +150,7 @@ class ComputerTest {
 	void testSetCompany_id() {
 		Date d1 = Date.valueOf("1991-10-10");
 		Date d2 = Date.valueOf("1992-10-10");
-		Computer cmp = new Computer(1, "Lenovo", d1, d2, 40);
+		Computer cmp = new Computer(1, "Lenovo", d1.toLocalDate(), d2.toLocalDate(), 40);
 		assertEquals(cmp.getId(), 1);
 		assertEquals(cmp.getName(), "Lenovo");
 		assertEquals(cmp.getIntroduced(), Date.valueOf("1991-10-10"));

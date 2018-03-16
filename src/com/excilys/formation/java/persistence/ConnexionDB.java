@@ -20,7 +20,6 @@ public enum ConnexionDB {
 	
 	public Connection getConnection() {
 		Properties prop = new Properties();
-		String root = System.getProperty("user.dir");
 		String fileConf = "config/db/config.properties";
 		System.out.println(fileConf);
 				

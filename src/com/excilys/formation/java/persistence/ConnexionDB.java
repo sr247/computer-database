@@ -21,7 +21,6 @@ public enum ConnexionDB {
 	public Connection getConnection() {
 		Properties prop = new Properties();
 		String fileConf = "config/db/config.properties";
-		System.out.println(fileConf);
 				
 		try(FileInputStream fis = new FileInputStream(fileConf);){
 			prop.load(fis);

@@ -58,14 +58,13 @@ class ComputerMapperTest {
 		res.next();		
 		int id = res.getInt("ID");
 		String name = res.getString("NAME");
-		LocalDate introduced = res.getDate("INTRODUCED").toLocalDate();
-		LocalDate discontinued = res.getDate("DISCONTINUED").toLocalDate();
+		LocalDate introduced = res.getDate("INTRODUCED").toLocalDate() == null ? null : res.getDate("INTRODUCED").toLocalDate();
+		LocalDate discontinued = res.getDate("DISCONTINUED").toLocalDate() == null ? null: res.getDate("DISCONTINUED").toLocalDate() ;
 		int company_id = res.getInt("COMPANY_ID");
 		actual = new Computer(id, name, introduced, discontinued, company_id);
 		
 		ComputerDB cmpDB = ComputerDB.INSTANCE;		
 		expected = cmpDB.getComputerByID(1);
-		
 		
 		assertTrue(expected.getId() == actual.getId(), "ID");
 		assertTrue(expected.getName().equals(actual.getName()), "Name");

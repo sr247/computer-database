@@ -23,8 +23,8 @@ class CompanyMapperTest {
 	
 	@BeforeAll
 	static void setUpBeforeClass() throws Exception {
-		CompanyDB cmpDB = CompanyDB.INSTANTCE;		
-		expected = cmpDB.getCompanyByID(1);		
+		CompanyDB cmpDB = CompanyDB.INSTANCE;		
+		expected = cmpDB.getCompanyByID(1).get();		
 		PreparedStatement ps = null;
 		Connection conn = (Connection) ConnexionDB.INSTANCE.getConnection();
 		ps = (PreparedStatement) 

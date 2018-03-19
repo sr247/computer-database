@@ -10,27 +10,26 @@ public class Computer {
 	private LocalDate discontinued;
 
 	// Ce champ deviendra un objet company à part entière.
-	private int companyId;
+	private Company company;
 	/*
 	 * Fonctionnalité  1 à tester immédiatement 
 	 * vérifier le lien avec JDBC (persitance)
 	 */
-	public Computer(int id, String name, LocalDate introduced, LocalDate discontinued, int company_id) {
+	public Computer(int id, String name, LocalDate introduced, LocalDate discontinued, Company company) {
 		this.id = id;
 		this.name = name;
 		this.introduced = introduced;
 		this.discontinued = discontinued;
-		this.companyId = company_id;
+		this.company = company;
 	}
 	
-	public Computer(String name, LocalDate introduced, LocalDate discontinued, int company_id) {
+	public Computer(String name, LocalDate introduced, LocalDate discontinued, Company company) {
 		this.id = 0;
 		this.name = name;
 		this.introduced = introduced;
 		this.discontinued = discontinued;
-		this.companyId = company_id;
+		this.company = company;
 	}
-
 	
 	/**
 	 * @return the id
@@ -107,8 +106,8 @@ public class Computer {
 	/**
 	 * @return the company_id
 	 */
-	public int getCompanyId() {
-		return companyId;
+	public Company getCompany() {
+		return company;
 	}
 
 
@@ -116,8 +115,8 @@ public class Computer {
 	/**
 	 * @param company_id the company_id to set
 	 */
-	public void setCompany_id(int company_id) {
-		this.companyId = company_id;
+	public void setCompany(Company company) {
+		this.company = company;
 	}
 	
 	@Override 
@@ -127,7 +126,7 @@ public class Computer {
 				+ "name=" + name + ", "
 				+ "introduced=" + introduced + ", "
 				+ "discontinued=" + discontinued + ", "
-				+ "company_id=" + companyId + ")";
+				+ "company=" + company + ")";
 		
 	}
 	
@@ -138,7 +137,7 @@ public class Computer {
 				&& this.name.equals(cmp.name)
 				&& this.introduced == cmp.introduced
 				&& this.discontinued == cmp.discontinued
-				&& this.companyId == cmp.companyId;
+				&& this.company == cmp.company;
 		
 	}
 }

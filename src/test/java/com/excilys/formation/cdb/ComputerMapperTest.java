@@ -12,6 +12,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import com.excilys.formation.cdb.model.Company;
 import com.excilys.formation.cdb.model.Computer;
 import com.excilys.formation.cdb.persistence.ComputerDB;
 import com.excilys.formation.cdb.persistence.ConnexionDB;
@@ -61,7 +62,7 @@ class ComputerMapperTest {
 		LocalDate introduced = res.getDate("INTRODUCED").toLocalDate() == null ? null : res.getDate("INTRODUCED").toLocalDate();
 		LocalDate discontinued = res.getDate("DISCONTINUED").toLocalDate() == null ? null: res.getDate("DISCONTINUED").toLocalDate() ;
 		int company_id = res.getInt("COMPANY_ID");
-		actual = new Computer(id, name, introduced, discontinued, company_id);
+		actual = new Computer(id, name, introduced, discontinued, new Company(1, "Apple Inc."));
 		
 		ComputerDB cmpDB = ComputerDB.INSTANCE;		
 		expected = cmpDB.getComputerByID(1);

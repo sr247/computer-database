@@ -7,21 +7,22 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import com.excilys.formation.cdb.mapper.CompanyMapper;
 import com.excilys.formation.cdb.model.Company;
 
 public enum CompanyDB {
 	
-	INSTANTCE;
+	INSTANCE;
 		
 	private static int numCompanies = -1;	
 	
 	private final static String COUNT_NUMBER_OF = "SELECT COUNT(*) AS NUM FROM company;";
-	private final static String SELECT_ONE = "SELECT * FROM company WHERE ID=?;";
-	private final static String SELECT_UNLIMITED_LIST = "SELECT * FROM company ORDER BY ID;";
-	private final static String SELECT_LIMITED_LIST = "SELECT * FROM company ORDER BY ID LIMIT ? OFFSET ?;";
-	private final static String CREATE_REQUEST  = "INSERT INTO computer (ID, NAME) VALUES (?, ?);";
+	private final static String SELECT_ONE = "SELECT ID, NAME FROM company WHERE ID=?;";
+	private final static String SELECT_UNLIMITED_LIST = "SELECT ID, NAME FROM company ORDER BY ID;";
+	private final static String SELECT_LIMITED_LIST = "SELECT ID, NAME FROM company ORDER BY ID LIMIT ? OFFSET ?;";
+	private final static String CREATE_REQUEST  = "INSERT INTO company NAME VALUES ?;";
 	private final static String UPDTATE_REQUEST = "UPDATE company SET ?=? WHERE ID=?;";
 	private final static String DELETE_REQUEST  = "DELETE FROM company WHERE ID=?";
 	
@@ -47,7 +48,7 @@ public enum CompanyDB {
 		return numCompanies;
 	}
 	
-	public Company getCompanyByID(int id) {
+	public Optional <Company> getCompanyByID(int id) {
 			PreparedStatement sel = null;
 			ResultSet res = null;
 			Company cpy = null;
@@ -62,7 +63,7 @@ public enum CompanyDB {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			return cpy;
+			return Optional.ofNullable(cpy);
 	}
 	
 	public List<Company> getCompanyList() {
@@ -102,25 +103,31 @@ public enum CompanyDB {
 	}
 	
 
-	private void create(String name) {
+	private void create(Company cpy) {
 		PreparedStatement crt;
+		ResultSet generatedKey = null;
 		int id = getNumCompanies()+1;
 		try (Connection conn = (Connection) ConnexionDB.INSTANCE.getConnection();){
 			crt = (PreparedStatement) conn.prepareStatement(CREATE_REQUEST);
 			
 			crt.setInt(1, id);
-			crt.setString(2, name);
+			crt.setString(2, cpy.getName());
 			
 			crt.executeUpdate();
 			// Can't call commit, when autocommit:true
 			// conn.commit();
+			generatedKey = crt.getGeneratedKeys();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		Company cpy = new Company(id, name);
-		System.out.println("Created:" + cpy);
-		
+		try {
+			cpy.setId(generatedKey.getInt("ID"));
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		System.out.println("Created:" + cpy);		
 	}
 
 	

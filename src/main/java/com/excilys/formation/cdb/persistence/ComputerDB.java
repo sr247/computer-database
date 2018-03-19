@@ -22,12 +22,23 @@ public enum ComputerDB {
 	private static int numComputers = -1;
 	
 	private final static String COUNT_NUMBER_OF = "SELECT COUNT(*) AS NUM FROM computer;";
-	private final static String SELECT_ONE = "SELECT ID, NAME, INTRODUCED, DISCONTINUED, COMPANY_ID "
-			+ "FROM computer WHERE ID=?;";
-	private final static String SELECT_UNLIMITED_LIST ="SELECT ID, NAME, INTRODUCED, DISCONTINUED, COMPANY_ID "
-			+ "FROM computer ORDER BY ID;";
-	private final static String SELECT_LIMIT_LIST = "SELECT ID, NAME, INTRODUCED, DISCONTINUED, COMPANY_ID "
-			+ "FROM computer ORDER BY ID LIMIT ? OFFSET ?;";
+	private final static String SELECT_ONE = "SELECT computer.id as cmpId, computer.name as cmpName, introduced, discontinued, " + 
+			"company.id as caId, company.name as caName " + 
+			"FROM computer " + 
+			"LEFT JOIN company ON company.id = ?;";
+	
+	// Il y a surement moyen de faire une seul requete avec les deux suivantes 
+	private final static String SELECT_UNLIMITED_LIST = "SELECT computer.id as cmpId, computer.name as cmpName, introduced, discontinued, " 
+			+ "company.id as caId, company.name as caName "
+			+ "FROM computer "
+			+ "LEFT JOIN company ON company.id = computer.company_id "
+			+ "ORDER BY ID;";
+	private final static String SELECT_LIMIT_LIST = "SELECT computer.id as cmpId, computer.name as cmpName, introduced, discontinued, " 
+			+ "company.id as caId, company.name as caName "
+			+ "FROM computer "
+			+ "LEFT JOIN company ON company.id = computer.company_id "
+			+ "ORDER BY ID LIMIT ? OFFSET ?;";
+	
 	private final static String CREATE_REQUEST  = "INSERT INTO computer (NAME, INTRODUCED, DISCONTINUED, COMPANY_ID) VALUES (?, ?, ?, ?);";
 	private final static String UPDTATE_REQUEST = "UPDATE computer SET NAME=?, INTRODUCED=?, DISCONTINUED=?, COMPANY_ID=? WHERE ID=?;";
 	private final static String DELETE_REQUEST  = "DELETE FROM computer WHERE ID=?;";
@@ -82,8 +93,7 @@ public enum ComputerDB {
 			
 		} catch(Exception e) {
 			e.printStackTrace();
-		}
-	
+		}	
 		return computers;
 	}
 	
@@ -126,7 +136,7 @@ public enum ComputerDB {
 			crt.setString(1, cmp.getName());
 			crt = setDateProperly(cmp.getIntroduced(), crt, 2);
 			crt = setDateProperly(cmp.getDiscontinued(), crt, 3);
-			crt.setInt(4, cmp.getCompanyId());
+			crt.setInt(4, cmp.getCompany().getId());
 			crt.executeUpdate();
 			// Ici le out deviendra un log
 			System.out.println("Created:" + cmp);
@@ -155,7 +165,7 @@ public enum ComputerDB {
 			upd.setString(2, cmp.getName());		
 			upd.setDate(2, Date.valueOf(cmp.getIntroduced()));		
 			upd.setDate(2, Date.valueOf(cmp.getDiscontinued()));		
-			upd.setInt(2, cmp.getCompanyId());		
+			upd.setInt(2, cmp.getCompany().getId());		
 			upd.setInt(3, cmp.getId());
 			upd.executeUpdate();
 			

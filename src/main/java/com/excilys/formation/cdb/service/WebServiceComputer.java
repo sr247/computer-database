@@ -38,38 +38,21 @@ public class WebServiceComputer {
 		return cmpDB.getComputerList(from, to);
 	}
 	
-
 	
-	public void createComputer(ArrayList<String> fields) throws IncorrectFieldException, InstanceNotFoundException {
+	public void createComputer(Computer cmp /*ArrayList<String> fields*/) throws IncorrectFieldException, InstanceNotFoundException {
+		
 		ValidateComputer vcmp = ValidateComputer.INSTANCE;
-		ComputerDB cmpDB = ComputerDB.INSTANCE;
-		
-		String name = vcmp.checkName(fields.get(0));
-		LocalDate introduced = vcmp.checkDate(fields.get(1));
-		LocalDate discontinued = vcmp.checkDate(fields.get(2));
-		int company_id = vcmp.checkForeignKey(fields.get(3));
-		Computer cmp = new Computer(cmpDB.getNumComputers()+1, name, introduced, discontinued, company_id);
-		
+		ComputerDB cmpDB = ComputerDB.INSTANCE;		
+		vcmp.validate(cmp);		
 		cmpDB.create(cmp);
 		
 	}
 	
-	public void updateComputer(ArrayList<String> fields, String id) throws IncorrectFieldException, InstanceNotFoundException {
+	public void updateComputer(Computer cmp) throws IncorrectFieldException, InstanceNotFoundException {
 		
 		ValidateComputer vcmp = ValidateComputer.INSTANCE;
 		ComputerDB cmpDB = ComputerDB.INSTANCE;
-		Computer cmp = getComputer(id);
-		
-		String name = vcmp.checkName(fields.get(0));
-		LocalDate introduced = vcmp.checkDate(fields.get(1));
-		LocalDate discontinued = vcmp.checkDate(fields.get(2));
-		int company_id = vcmp.checkForeignKey(fields.get(3));
-		
-		cmp.setName(name);
-		cmp.setIntroduced(introduced);
-		cmp.setDiscontinued(discontinued);
-		cmp.setCompany_id(company_id);
-		
+		vcmp.validate(cmp);		
 		cmpDB.update(cmp);
 	}
 	

@@ -5,6 +5,7 @@ import java.sql.ResultSet;
 import java.time.LocalDate;
 import java.util.Optional;
 
+import com.excilys.formation.cdb.model.Company;
 import com.excilys.formation.cdb.model.Computer;
 
 public enum ComputerMapper {
@@ -25,8 +26,8 @@ public enum ComputerMapper {
 				Date discon = res.getDate("DISCONTINUED");
 				LocalDate introduced = intro == null ? null : intro.toLocalDate();
 				LocalDate discontinued = discon == null ? null : discon.toLocalDate();
-				int company_id = res.getInt("COMPANY_ID");
-				cmp = new Computer(id, name, introduced, discontinued, company_id);
+				Company company = CompanyMapper.map(res).get();
+				cmp = new Computer(id, name, introduced, discontinued, company);
 				
 			}
 		}catch(Exception e) {

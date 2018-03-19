@@ -1,5 +1,8 @@
 package com.excilys.formation.cdb.ui;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -60,30 +63,55 @@ public class CLI_UI {
 		}
 	}
 	
-	public void create(String[] t) {
+	public void checkSyntaxes(List<String> fields) throws IncorrectFieldException {
+		try {
+			DateTimeFormatter fmt = DateTimeFormatter.ofPattern("dd/MM/uuuu");
+			LocalDate.parse(fields.get(1), fmt);
+			LocalDate.parse(fields.get(2), fmt);
+			Integer.parseInt(fields.get(3));
+		}catch (DateTimeParseException|NumberFormatException e) {
+			// TODO: handle exception
+			e.printStackTrace();
+			throw new IncorrectFieldException();
+		}
+		
+	}
+	
+	private List<String> getEntry(){
+		List<String> fields = new ArrayList<String>();
+		System.out.print("Entrez le nom: ");
+		fields.add(sc.nextLine());
+		System.out.print("Entrez la date d'achat:(dd/mm/aaaa) ");
+		fields.add(sc.nextLine());
+		System.out.print("Entrez la date de fin de production:(dd/mm/aaaa) ");
+		fields.add(sc.nextLine());
+		System.out.print("Entrez l'id de l'entreprise propritaire:");			
+		fields.add(sc.nextLine());
+		return fields;
+	}
+	
+	private void create(String[] t) {
 		boolean err = false;
 		boolean exit = false;
 		String table = t[1];
 		
 		do{
 			if("computer".equals(table)) {
-				// Ici il faudra check la forme et les valeurs de chaque ajout
-				// Valeur null, erreur de syntaxe, nombre de champs
-				ArrayList<String> fields = new ArrayList<String>();
-				System.out.print("Entrez le nom: ");
-				fields.add(sc.nextLine());
-				System.out.print("Entrez la date d'achat:(dd/mm/aaaa) ");
-				fields.add(sc.nextLine());
-				System.out.print("Entrez la date de fin de production:(dd/mm/aaaa) ");
-				fields.add(sc.nextLine());
-	
-				// Ici une formulation différente 
-				System.out.print("Entrez l'id de l'entreprise propritaire:");			
-				fields.add(sc.nextLine());
-				err = false;
+				List<String> fields = new ArrayList<String>();
+				fields = getEntry();
+				
 				try {
-					wscmp.createComputer(fields);
-				}catch(IncorrectFieldException e) {
+					checkSyntaxes(fields);
+					LocalDate d1 = null;
+					LocalDate d2 = null;
+					DateTimeFormatter fmt = DateTimeFormatter.ofPattern("dd/MM/uuuu");
+					d1 = LocalDate.parse(fields.get(1), fmt);
+					d2 = LocalDate.parse(fields.get(2), fmt);
+					Company cmpny = wscpy.getCompany(fields.get(3));					
+					Computer cmp = new Computer(fields.get(0), d1, d2, cmpny);
+					wscmp.createComputer(cmp);
+					err = false;
+				}catch(DateTimeParseException|IncorrectFieldException e) {
 					System.err.println("Erreur: Champ invalide");
 					err = true;
 				}catch (InstanceNotFoundException e) {
@@ -108,23 +136,23 @@ public class CLI_UI {
 				// Ici il faudra check la forme et les valeurs de chaque ajout
 				// Valeur null, erreur de syntaxe, nombre de champ
 				
-				ArrayList<String> fields = new ArrayList<String>();
-				System.out.print("Entrez une valeur pour le champ à mettre à jour. Laisser le champ vide pour ne rien modifier: ");
-				System.out.print("Entrez le nom: ");
-				fields.add(sc.nextLine());
-				System.out.print("Entrez la date d'achat:(dd/mm/aaaa) ");
-				fields.add(sc.nextLine());
-				System.out.print("Entrez la date de fin de production:(dd/mm/aaaa) ");
-				fields.add(sc.nextLine());
-	
-				// ici une formulation différente 
-				System.out.print("Entrez l'id de l'entreprise propritaire: ");			
-				fields.add(sc.nextLine());
-				err = false;
+				List<String> fields = new ArrayList<String>();
+				fields = getEntry();
+				
 				try {
-					wscmp.updateComputer(fields, t[2]);
-				}catch(IncorrectFieldException e) {
-					System.out.println("Erreur: Champ invalide");
+					checkSyntaxes(fields);
+					LocalDate d1 = null;
+					LocalDate d2 = null;
+					DateTimeFormatter fmt = DateTimeFormatter.ofPattern("dd/MM/uuuu");
+					d1 = LocalDate.parse(fields.get(1), fmt);
+					d2 = LocalDate.parse(fields.get(2), fmt);
+					Company cmpny = wscpy.getCompany(fields.get(3));					
+					Computer cmp = new Computer(fields.get(0), d1, d2, cmpny);
+					err = false;
+					wscmp.updateComputer(cmp);
+					err = false;
+				}catch(DateTimeParseException|IncorrectFieldException e) {
+					System.err.println("Erreur: Champ invalide");
 					err = true;
 				}catch (InstanceNotFoundException e) {
 					System.err.println("Erreur: Instance inexistante");

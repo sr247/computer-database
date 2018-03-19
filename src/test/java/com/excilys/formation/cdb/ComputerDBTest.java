@@ -51,11 +51,7 @@ class ComputerDBTest {
 	@Test
 	void testGetComputerByID() {
 		ComputerDB connDB = ComputerDB.INSTANCE;
-<<<<<<< HEAD:src/com/excilys/formation/java/test/ComputerDBTest.java
-		Computer expected = new Computer(1, "MacBook Pro 15.4 inch", null, null, 1);
-=======
 		Computer expected = new Computer(1, "MacBook Pro 15.4 inch", null, null, new Company(1, "Apple Inc."));
->>>>>>> 07abdf529dd860bb03aa2f09bf312abe3f167066:src/test/java/com/excilys/formation/cdb/ComputerDBTest.java
 		Computer actual = connDB.getComputerByID(1);
 		assertEquals(expected.getClass(), 
 				actual.getClass());
@@ -75,19 +71,11 @@ class ComputerDBTest {
 	void testGetComputerListIntInt() {
 		ComputerDB connDB = ComputerDB.INSTANCE;
 		List<Computer> expected = new ArrayList<Computer>();
-<<<<<<< HEAD:src/com/excilys/formation/java/test/ComputerDBTest.java
-		expected.add(new Computer(1, "MacBook Pro 15.4 inch", null, null, 1));
-		expected.add(new Computer(2, "CM-2a", null, null, 2));	
-		expected.add(new Computer(3, "CM-200", null, null, 2));
-		expected.add(new Computer(4, "CM-5e", null, null, 2));
-		expected.add(new Computer(5, "CM-5", LocalDate.parse("1991-01-01"), null, 2));
-=======
 		expected.add(new Computer(1, "MacBook Pro 15.4 inch", null, null, new Company(1, "Apple Inc.")));
 		expected.add(new Computer(2, "CM-2a", null, null, new Company(2, "Thinking Machines")));	
 		expected.add(new Computer(3, "CM-200", null, null, new Company(2, "Thinking Machines")));
 		expected.add(new Computer(4, "CM-5e", null, null, new Company(2, "Thinking Machines")));
 		expected.add(new Computer(5, "CM-5", LocalDate.parse("1991-01-01"), null, new Company(2, "Thinking Machines")));
->>>>>>> 07abdf529dd860bb03aa2f09bf312abe3f167066:src/test/java/com/excilys/formation/cdb/ComputerDBTest.java
 		List<Computer> actual = connDB.getComputerList(0, 5);
 				
 		assertTrue(expected.size() == actual.size());

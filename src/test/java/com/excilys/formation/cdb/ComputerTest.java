@@ -94,11 +94,7 @@ class ComputerTest {
 	void testGetIntroduced() {
 		Date d1 = Date.valueOf("1992-10-10");
 		Date d2 = Date.valueOf("1993-10-10");
-<<<<<<< HEAD:src/com/excilys/formation/java/test/ComputerTest.java
-		Computer cmp = new Computer(1, "Lenovo", d1.toLocalDate(), d2.toLocalDate(), 40);
-=======
 		Computer cmp = new Computer(1, "Lenovo", d1.toLocalDate(), d2.toLocalDate(), new Company(40, "HTC Corporation"));
->>>>>>> 07abdf529dd860bb03aa2f09bf312abe3f167066:src/test/java/com/excilys/formation/cdb/ComputerTest.java
 		assertEquals(cmp.getIntroduced(), Date.valueOf("1992-10-10"));
 	}
 
@@ -108,20 +104,12 @@ class ComputerTest {
 		Date d1 = Date.valueOf("1991-10-10");
 		Date d2 = Date.valueOf("1992-10-10");
 		Date d3 = Date.valueOf("1993-10-10");
-<<<<<<< HEAD:src/com/excilys/formation/java/test/ComputerTest.java
-		Computer cmp = new Computer(1, "Lenovo", d2.toLocalDate(), d3.toLocalDate(), 40);
-=======
 		Computer cmp = new Computer(1, "Lenovo", d2.toLocalDate(), d3.toLocalDate(), new Company(40, "HTC Corporation"));
->>>>>>> 07abdf529dd860bb03aa2f09bf312abe3f167066:src/test/java/com/excilys/formation/cdb/ComputerTest.java
 		assertEquals(cmp.getId(), 1);
 		assertEquals(cmp.getName(), "Lenovo");
 		assertEquals(cmp.getIntroduced(), Date.valueOf("1992-10-10"));
 		assertEquals(cmp.getDiscontinued(), Date.valueOf("1993-10-10"));
-<<<<<<< HEAD:src/com/excilys/formation/java/test/ComputerTest.java
-		assertEquals(cmp.getCompanyId(), 40);
-=======
 		assertEquals(cmp.getCompany(), company);
->>>>>>> 07abdf529dd860bb03aa2f09bf312abe3f167066:src/test/java/com/excilys/formation/cdb/ComputerTest.java
 		cmp.setIntroduced(d1.toLocalDate());
 		assertEquals(cmp.getId(), 1);
 		assertEquals(cmp.getName(), "Lenovo");
@@ -134,11 +122,7 @@ class ComputerTest {
 	void testGetDiscontinued() {
 		Date d1 = Date.valueOf("1991-10-10");
 		Date d2 = Date.valueOf("1992-10-10");
-<<<<<<< HEAD:src/com/excilys/formation/java/test/ComputerTest.java
-		Computer cmp = new Computer(1, "Lenovo", d1.toLocalDate(), d2.toLocalDate(), 40);
-=======
 		Computer cmp = new Computer(1, "Lenovo", d1.toLocalDate(), d2.toLocalDate(), new Company(40, "HTC Corporation"));
->>>>>>> 07abdf529dd860bb03aa2f09bf312abe3f167066:src/test/java/com/excilys/formation/cdb/ComputerTest.java
 		assertEquals(cmp.getDiscontinued(), Date.valueOf("1992-10-10"));
 	}
 
@@ -148,20 +132,12 @@ class ComputerTest {
 		Date d1 = Date.valueOf("1991-10-10");
 		Date d2 = Date.valueOf("1992-10-10");
 		Date d3 = Date.valueOf("1993-10-10");
-<<<<<<< HEAD:src/com/excilys/formation/java/test/ComputerTest.java
-		Computer cmp = new Computer(1, "Lenovo", d1.toLocalDate(), d2.toLocalDate(), 40);
-=======
 		Computer cmp = new Computer(1, "Lenovo", d1.toLocalDate(), d2.toLocalDate(), new Company(40, "HTC Corporation"));
->>>>>>> 07abdf529dd860bb03aa2f09bf312abe3f167066:src/test/java/com/excilys/formation/cdb/ComputerTest.java
 		assertEquals(cmp.getId(), 1);
 		assertEquals(cmp.getName(), "Lenovo");
 		assertEquals(cmp.getIntroduced(), Date.valueOf("1991-10-10"));
 		assertEquals(cmp.getDiscontinued(), Date.valueOf("1992-10-10"));
-<<<<<<< HEAD:src/com/excilys/formation/java/test/ComputerTest.java
-		assertEquals(cmp.getCompanyId(), 40);
-=======
 		assertEquals(cmp.getCompany(), company);
->>>>>>> 07abdf529dd860bb03aa2f09bf312abe3f167066:src/test/java/com/excilys/formation/cdb/ComputerTest.java
 		cmp.setDiscontinued(d3.toLocalDate());
 		assertEquals(cmp.getId(), 1);
 		assertEquals(cmp.getName(), "Lenovo");
@@ -175,25 +151,16 @@ class ComputerTest {
 		Company company = new Company(40, "HTC Corporation");
 		Date d1 = Date.valueOf("1991-10-10");
 		Date d2 = Date.valueOf("1992-10-10");
-<<<<<<< HEAD:src/com/excilys/formation/java/test/ComputerTest.java
-		Computer cmp = new Computer(1, "Lenovo", d1.toLocalDate(), d2.toLocalDate(), 40);
-		assertEquals(cmp.getCompanyId(), 40);
-=======
 		Computer cmp = new Computer(1, "Lenovo", d1.toLocalDate(), d2.toLocalDate(), new Company(40, "HTC Corporation"));
 		assertEquals(cmp.getCompany(), company);
->>>>>>> 07abdf529dd860bb03aa2f09bf312abe3f167066:src/test/java/com/excilys/formation/cdb/ComputerTest.java
 	}
 
 	@Test
 	void testSetCompany_id() {
 		Date d1 = Date.valueOf("1991-10-10");
 		Date d2 = Date.valueOf("1992-10-10");
-<<<<<<< HEAD:src/com/excilys/formation/java/test/ComputerTest.java
-		Computer cmp = new Computer(1, "Lenovo", d1.toLocalDate(), d2.toLocalDate(), 40);
-=======
 		Company company = new Company(41, "Research In Motion");
 		Computer cmp = new Computer(1, "Lenovo", d1.toLocalDate(), d2.toLocalDate(), new Company(40, "HTC Corporation"));
->>>>>>> 07abdf529dd860bb03aa2f09bf312abe3f167066:src/test/java/com/excilys/formation/cdb/ComputerTest.java
 		assertEquals(cmp.getId(), 1);
 		assertEquals(cmp.getName(), "Lenovo");
 		assertEquals(cmp.getIntroduced(), Date.valueOf("1991-10-10"));

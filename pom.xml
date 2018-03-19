@@ -33,7 +33,7 @@
 
 		<!-- runtime -->
 		<mysql.version>5.1.38</mysql.version>
-		<myqsl-jdbc.version>6.0.6</myqsl-jdbc.version>
+		<myqsl-jdbc.version>8.0.8-dmr</myqsl-jdbc.version>
 	</properties>
 
 	<build>

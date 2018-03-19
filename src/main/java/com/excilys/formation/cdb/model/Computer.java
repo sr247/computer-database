@@ -15,11 +15,8 @@ public class Computer {
 	 * Fonctionnalité  1 à tester immédiatement 
 	 * vérifier le lien avec JDBC (persitance)
 	 */
-<<<<<<< HEAD:src/com/excilys/formation/java/model/Computer.java
-	public Computer(int id, String name, LocalDate introduced, LocalDate discontinued, int company_id) {
-=======
+
 	public Computer(int id, String name, LocalDate introduced, LocalDate discontinued, Company company) {
->>>>>>> 07abdf529dd860bb03aa2f09bf312abe3f167066:src/main/java/com/excilys/formation/cdb/model/Computer.java
 		this.id = id;
 		this.name = name;
 		this.introduced = introduced;
@@ -27,11 +24,8 @@ public class Computer {
 		this.company = company;
 	}
 	
-<<<<<<< HEAD:src/com/excilys/formation/java/model/Computer.java
-	public Computer(String name, LocalDate introduced, LocalDate discontinued, int company_id) {
-=======
+
 	public Computer(String name, LocalDate introduced, LocalDate discontinued, Company company) {
->>>>>>> 07abdf529dd860bb03aa2f09bf312abe3f167066:src/main/java/com/excilys/formation/cdb/model/Computer.java
 		this.id = 0;
 		this.name = name;
 		this.introduced = introduced;

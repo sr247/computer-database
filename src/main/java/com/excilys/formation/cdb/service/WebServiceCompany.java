@@ -3,9 +3,7 @@ package com.excilys.formation.cdb.service;
 import java.util.List;
 
 import com.excilys.formation.cdb.model.Company;
-import com.excilys.formation.cdb.model.Computer;
 import com.excilys.formation.cdb.persistence.CompanyDB;
-import com.excilys.formation.cdb.persistence.ComputerDB;
 
 public class WebServiceCompany {
 	
@@ -21,7 +19,12 @@ public class WebServiceCompany {
 		}
 		return _instance;
 	}
-
+	
+	public int getNumberOf() {
+		CompanyDB cpyDB = CompanyDB.INSTANCE;
+		return cpyDB.getNumCompanies();
+	}
+	
 	public List<Company> getList(int from, int to){
 		CompanyDB cpnDB = CompanyDB.INSTANCE;
 		if(from == 0 && to == 0) {

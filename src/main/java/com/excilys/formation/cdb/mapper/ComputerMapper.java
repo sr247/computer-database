@@ -7,10 +7,12 @@ import java.util.Optional;
 
 import com.excilys.formation.cdb.model.Company;
 import com.excilys.formation.cdb.model.Computer;
+import com.excilys.formation.cdb.persistence.CompanyDB;
 
 public enum ComputerMapper {
 	
 	INSTANCE;
+	private static org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(ComputerMapper.class);
 	
 	private ComputerMapper() {
 		
@@ -31,8 +33,7 @@ public enum ComputerMapper {
 				
 			}
 		}catch(Exception e) {
-			System.err.println(e.getMessage());
-			e.printStackTrace();
+			logger.warn(e.getMessage());
 		}	
 		return Optional.ofNullable(cmp);
 	}

@@ -2,6 +2,8 @@ package com.excilys.formation.cdb.model;
 
 import java.util.List;
 
+import com.excilys.formation.cdb.exceptions.InstanceNotFoundException;
+
 public abstract class Pages<T> {
 	protected List<T> page;
 	protected int num;
@@ -42,7 +44,7 @@ public abstract class Pages<T> {
 		Pages.pageIndex = 0;
 	}
 	
-	public abstract void next();
+	public abstract void next() throws InstanceNotFoundException;
 	
-	public abstract void preview();
+	public abstract void preview() throws InstanceNotFoundException;
 }

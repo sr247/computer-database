@@ -37,7 +37,13 @@ public class CLI_UI {
 	}
 	
 	public void showDetailComputer(String id) {
-		System.out.println(wscmp.getComputer(id));
+		int i = Integer.valueOf(id);
+		try {
+			System.out.println(wscmp.getComputer(i));
+		} catch (InstanceNotFoundException e) {
+			// TODO Auto-generated catch block
+			System.err.println(e.getMessage());
+		}
 	}
 	
 	private void printList(boolean all, Pages p) {
@@ -55,17 +61,28 @@ public class CLI_UI {
 				System.out.println("Type n for next, p for precedent, q for quit: ");
 				String reponse = sc.nextLine();
 				if(reponse.equals("n")) {
-					p.next();
+					try {
+						p.next();
+					} catch (InstanceNotFoundException e) {
+						// TODO Auto-generated catch block
+						System.err.println(e.getMessage());
+					}
 				}else if(reponse.equals("p")){
-					p.preview();
+					try {
+						p.preview();
+					} catch (InstanceNotFoundException e) {
+						// TODO Auto-generated catch block
+						System.err.println(e.getMessage());
+					}
 				}else if(reponse.equals("q")){
 					still = false;
 				}
 			}
 		}
-		}
+		p.reset();
+	}
 	
-	public void list(String[] t) {
+	public void list(String[] t) throws InstanceNotFoundException {
 		boolean all =  t[1].equals("all");
 		String table = all ? t[2] : t[1];
 		if("computer".equals(table)) {
@@ -81,8 +98,10 @@ public class CLI_UI {
 			PagesCompany p = null;
 			if(all) {
 				p = new PagesCompany(wscpy.getAllList());
+
 			}else {
 				p = new PagesCompany(wscpy.getList(Pages.getFrom(), Pages.getTo()));
+
 			}
 			printList(all, p);
 		}
@@ -146,8 +165,9 @@ public class CLI_UI {
 		}while(err & !exit);
 	}
 	
-	public void delete(String id) {
-		wscmp.deleteComputer(id);
+	public void delete(String id) throws InstanceNotFoundException {
+		int i = Integer.valueOf(id);
+		wscmp.deleteComputer(i);
 	}
 	
 	public void update(String[] t) {
@@ -189,49 +209,51 @@ public class CLI_UI {
 	public void enterCommand() {
 		command = sc.nextLine();
 		String[] target = null;
-		
-		if("exit".equals(command) || "quit".equals(command)){
-			exit = true;
-		} else if("help".equals(command)) {
-			// On peut faire plus propre comme choix d'affichage d'options ( ArgParse )
-			System.out.println("Commandes:");
-			System.out.println("show table_name id:          show details of instance in table_name where ID=id");
-			System.out.println("list [all] table_name:       list (all) instances in table_name");
-			System.out.println("create table_name:           create a instance in table_name."
-					+ "\n\t\t\t     This require you to provide a value for each attribute of the object.");
-			
-			System.out.println("delete [table name] id:      delete the instance in table_name where ID=id");
-			System.out.println("update [table name] id:      update the instance in table_name where ID=id"
-					+ "\n\t\t\t     This require you to provide a value for each attribute of the object.");
-			
-		} else if (command.contains("list")) {
-			target = command.split(" ");
-			if(target.length > 1)
-				list(target);
-			
-		} else if (command.contains("show")) {
-			target = command.split(" ");
-			System.out.println("Command show");
-			if(target.length > 2)
-				showDetailComputer(target[2]);
-			
-		} else if (command.contains("create")) {
-			target = command.split(" ");
-			System.out.println("Command create");
-			if(target.length > 1)
-				create(target);
-			
-		} else if (command.contains("update")) {
-			target = command.split(" ");
-			System.out.println("Command delete");
-			if(target.length > 2)
-				update(target);
-			
-		} else if (command.contains("delete")) {
-			target = command.split(" ");
-			System.out.println("Command delete");
-			if(target.length > 2)
-				delete(target[2]);
+		try {
+			if("exit".equals(command) || "quit".equals(command)){
+				exit = true;
+			} else if("help".equals(command)) {
+				System.out.println("Commandes:");
+				System.out.println("show table_name id:          show details of instance in table_name where ID=id");
+				System.out.println("list [all] table_name:       list (all) instances in table_name");
+				System.out.println("create table_name:           create a instance in table_name."
+						+ "\n\t\t\t     This require you to provide a value for each attribute of the object.");
+				
+				System.out.println("delete [table name] id:      delete the instance in table_name where ID=id");
+				System.out.println("update [table name] id:      update the instance in table_name where ID=id"
+						+ "\n\t\t\t     This require you to provide a value for each attribute of the object.");
+				
+			} else if (command.contains("list")) {
+				target = command.split(" ");
+				if(target.length > 1)
+					list(target);
+				
+			} else if (command.contains("show")) {
+				target = command.split(" ");
+				System.out.println("Command show");
+				if(target.length > 2)
+					showDetailComputer(target[2]);
+				
+			} else if (command.contains("create")) {
+				target = command.split(" ");
+				System.out.println("Command create");
+				if(target.length > 1)
+					create(target);
+				
+			} else if (command.contains("update")) {
+				target = command.split(" ");
+				System.out.println("Command delete");
+				if(target.length > 2)
+					update(target);
+				
+			} else if (command.contains("delete")) {
+				target = command.split(" ");
+				System.out.println("Command delete");
+				if(target.length > 2)
+					delete(target[2]);
+			}
+		}catch(InstanceNotFoundException e) {
+			System.err.println(e.getMessage());
 		}
 	}
 	

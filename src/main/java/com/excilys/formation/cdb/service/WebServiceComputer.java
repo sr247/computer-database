@@ -28,17 +28,17 @@ public class WebServiceComputer {
 		return cmpDB.getNumComputers();
 	}
 	
-	public Computer getComputer(String id) {
+	public Computer getComputer(int id) throws InstanceNotFoundException {
 		ComputerDB cmpDB = ComputerDB.INSTANCE;
-		return cmpDB.getComputerByID(Integer.valueOf(id));
+		return cmpDB.getComputerByID(id);
 	}
 	
-	public List<Computer> getAllList() {
+	public List<Computer> getAllList() throws InstanceNotFoundException {
 		ComputerDB cmpDB = ComputerDB.INSTANCE;
 		return cmpDB.getComputerList();
 	}
 	
-	public List<Computer> getList(int from, int to) {
+	public List<Computer> getList(int from, int to) throws InstanceNotFoundException {
 		ComputerDB cmpDB = ComputerDB.INSTANCE;
 		return cmpDB.getComputerList(from, to);
 	}
@@ -60,7 +60,7 @@ public class WebServiceComputer {
 		cmpDB.update(cmp);
 	}
 	
-	public void deleteComputer(String id) {
+	public void deleteComputer(int id) throws InstanceNotFoundException {
 		ComputerDB cmpDB = ComputerDB.INSTANCE;
 		Computer cmp = getComputer(id);
 		cmpDB.delete(cmp);

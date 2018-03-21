@@ -11,34 +11,35 @@ import java.time.LocalDate;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 
+import com.excilys.formation.cdb.exceptions.InstanceNotFoundException;
 import com.excilys.formation.cdb.mapper.ComputerMapper;
 import com.excilys.formation.cdb.model.Computer;
 
 public enum ComputerDB {
 	
 	INSTANCE;
+	private static org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(CompanyDB.class);
 	
-	private static int numComputers = -1;
-	
+	private static int numComputers = -1;	
 	private final static String COUNT_NUMBER_OF = "SELECT COUNT(*) AS NUM FROM computer;";
-	private final static String SELECT_ONE = "SELECT computer.id as cmpId, computer.name as cmpName, introduced, discontinued, " + 
-			"company.id as caId, company.name as caName " + 
-			"FROM computer " + 
-			"LEFT JOIN company ON company.id = ?;";
-	
-	// Il y a surement moyen de faire une seul requete avec les deux suivantes 
+	private final static String SELECT_ONE = 
+			"SELECT computer.id as cmpId, computer.name as cmpName, introduced, discontinued, company_id, " 
+			+ "company.id as caId, company.name as caName "
+			+ "FROM computer "
+			+ "LEFT JOIN company ON company.id = computer.company_id "
+			+ "WHERE computer.id = ?;"; 
 	private final static String SELECT_UNLIMITED_LIST = "SELECT computer.id as cmpId, computer.name as cmpName, introduced, discontinued, " 
 			+ "company.id as caId, company.name as caName "
 			+ "FROM computer "
 			+ "LEFT JOIN company ON company.id = computer.company_id "
-			+ "ORDER BY ID;";
-	private final static String SELECT_LIMIT_LIST = "SELECT computer.id as cmpId, computer.name as cmpName, introduced, discontinued, " 
+			+ "ORDER BY computer.id;";
+	private final static String SELECT_LIMITED_LIST = "SELECT computer.id as cmpId, computer.name as cmpName, introduced, discontinued, " 
 			+ "company.id as caId, company.name as caName "
 			+ "FROM computer "
 			+ "LEFT JOIN company ON company.id = computer.company_id "
-			+ "ORDER BY ID LIMIT ? OFFSET ?;";
-	
+			+ "ORDER BY computer.id LIMIT ? OFFSET ?;";
 	private final static String CREATE_REQUEST  = "INSERT INTO computer (NAME, INTRODUCED, DISCONTINUED, COMPANY_ID) VALUES (?, ?, ?, ?);";
 	private final static String UPDTATE_REQUEST = "UPDATE computer SET NAME=?, INTRODUCED=?, DISCONTINUED=?, COMPANY_ID=? WHERE ID=?;";
 	private final static String DELETE_REQUEST  = "DELETE FROM computer WHERE ID=?;";
@@ -58,12 +59,12 @@ public enum ComputerDB {
 			numComputers = res.getInt("NUM");
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.warn("Warning: " + e.getMessage());
 		}
 		return numComputers;
 	}
 	
-	public Computer getComputerByID(int id) {
+	public Computer getComputerByID(int id) throws InstanceNotFoundException {
 		PreparedStatement ps = null;
 		ResultSet res = null;
 		Computer cmp = null;
@@ -74,14 +75,15 @@ public enum ComputerDB {
 			res = ps.executeQuery();
 			res.next();
 			cmp = ComputerMapper.map(res).get();
-		} catch (SQLException e) {
+		} catch (SQLException|NoSuchElementException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.warn("Warning: " + e.getMessage());
+			throw new InstanceNotFoundException("Erreur: ordinateur introuvable");
 		}
 		return cmp;
 	}
 	
-	public List<Computer> getComputerList() {
+	public List<Computer> getComputerList() throws InstanceNotFoundException {
 		
 		List<Computer> computers = new ArrayList<Computer>();
 		try (Connection conn = (Connection) ConnexionDB.INSTANCE.getConnection();){
@@ -92,16 +94,17 @@ public enum ComputerDB {
 				computers.add(ComputerMapper.map(res).get());
 			
 		} catch(Exception e) {
-			e.printStackTrace();
+			logger.warn("Warning: " + e.getMessage());
+			throw new InstanceNotFoundException("Erreur: ordinateur introuvable");
 		}	
 		return computers;
 	}
 	
-	public List<Computer> getComputerList(int from, int to) {		
+	public List<Computer> getComputerList(int from, int to) throws InstanceNotFoundException {		
 		List<Computer> computers = new ArrayList<Computer>();
 		try (Connection conn = (Connection) ConnexionDB.INSTANCE.getConnection();){
 			PreparedStatement ps = (PreparedStatement) 
-					conn.prepareStatement(SELECT_LIMIT_LIST);
+					conn.prepareStatement(SELECT_LIMITED_LIST);
 			ps.setInt(1, to-from);
 			ps.setInt(2, from);
 			ResultSet res = ps.executeQuery();
@@ -109,9 +112,9 @@ public enum ComputerDB {
 				computers.add(ComputerMapper.map(res).get());
 			
 		}catch(Exception e) {
-			e.printStackTrace();
+			logger.warn("Warning: " + e.getMessage());
+			throw new InstanceNotFoundException("Erreur: ordinateur introuvable");
 		}
-	
 		return computers;
 	}
 	
@@ -139,18 +142,11 @@ public enum ComputerDB {
 			crt.setInt(4, cmp.getCompany().getId());
 			crt.executeUpdate();
 			// Ici le out deviendra un log
-			System.out.println("Created:" + cmp);
-//		} catch (SQLException e) {
-//			// TODO Auto-generated catch block
-//			// System.err.println(e.getMessage());
-//			System.err.println("Erreur: clé de company inexistante");
-//		
+			logger.warn("Created:" + cmp);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
-			System.out.println(e.getMessage());
-			e.printStackTrace();
+			logger.warn("Warning: " + e.getMessage());
 		} 
-		
 	}
 	
 	/*
@@ -160,8 +156,7 @@ public enum ComputerDB {
 	public void update(Computer cmp) {
 		PreparedStatement upd;
 		try (Connection conn = (Connection) ConnexionDB.INSTANCE.getConnection();){
-			upd = (PreparedStatement) conn.prepareStatement(UPDTATE_REQUEST);		
-
+			upd = (PreparedStatement) conn.prepareStatement(UPDTATE_REQUEST);
 			upd.setString(2, cmp.getName());		
 			upd.setDate(2, Date.valueOf(cmp.getIntroduced()));		
 			upd.setDate(2, Date.valueOf(cmp.getDiscontinued()));		
@@ -170,13 +165,12 @@ public enum ComputerDB {
 			upd.executeUpdate();
 			
 			// Ici le out deviendra un log
-			System.out.println("Updated:" + cmp);
+			logger.info("Updated:" + cmp);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.warn("Warning: " + e.getMessage());
 		}
-	}
-	
+	}	
 	
 	// Pour le moment on recoit juste l'id
 	public void delete(Computer cmp) {
@@ -184,13 +178,11 @@ public enum ComputerDB {
 			PreparedStatement del = (PreparedStatement) conn.prepareStatement(DELETE_REQUEST);
 			del.setInt(1, cmp.getId());
 			del.executeUpdate();
-			
-			// Ici le out deviendra un log
-			System.out.println("Deleted:" + cmp);
+			logger.info("Deleted:" + cmp);
 			
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.warn("Warning: " + e.getMessage());
 		}
 	}
 }

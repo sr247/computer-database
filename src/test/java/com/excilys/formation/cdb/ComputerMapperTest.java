@@ -12,6 +12,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import com.excilys.formation.cdb.exceptions.InstanceNotFoundException;
 import com.excilys.formation.cdb.model.Company;
 import com.excilys.formation.cdb.model.Computer;
 import com.excilys.formation.cdb.persistence.ComputerDB;
@@ -49,7 +50,7 @@ class ComputerMapperTest {
 	}
 	
 	@Test
-	void testMap() throws SQLException {
+	void testMap() throws SQLException, InstanceNotFoundException {
 		String SELECT_ONE = "SELECT * FROM computer WHERE ID=?;";
 		Connection conn = (Connection) ConnexionDB.INSTANCE.getConnection();
 		PreparedStatement ps = null;

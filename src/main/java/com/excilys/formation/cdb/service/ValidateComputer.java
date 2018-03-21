@@ -18,8 +18,7 @@ public enum ValidateComputer {
 	
 	private ValidateComputer() {
 		
-	}
-	
+	}	
 	
 	public void validate(Computer cmp) throws IncorrectFieldException, InstanceNotFoundException {
 		checkName(cmp.getName());

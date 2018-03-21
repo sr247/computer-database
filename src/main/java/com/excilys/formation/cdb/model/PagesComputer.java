@@ -20,7 +20,7 @@ public class PagesComputer extends Pages<Computer> {
 	@Override
 	public void next() throws InstanceNotFoundException {
 		// TODO Auto-generated method stub
-		WebServiceComputer webcmp = WebServiceComputer.getInstance();
+		WebServiceComputer webcmp = WebServiceComputer.INSTANCE;
 		int max = webcmp.getNumberOf();
 		pageIndex += PAGE_STRIDE;
 		if( (max - pageIndex) < PAGE_STRIDE) {
@@ -34,7 +34,7 @@ public class PagesComputer extends Pages<Computer> {
 	@Override
 	public void preview() throws InstanceNotFoundException {
 		// TODO Auto-generated method stub
-		WebServiceComputer webcmp = WebServiceComputer.getInstance();
+		WebServiceComputer webcmp = WebServiceComputer.INSTANCE;
 		pageIndex -= PAGE_STRIDE;
 		if(pageIndex < 0) {
 			pageIndex = 0;

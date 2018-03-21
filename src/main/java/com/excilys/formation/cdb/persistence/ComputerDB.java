@@ -11,6 +11,7 @@ import java.time.LocalDate;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import com.excilys.formation.cdb.exceptions.InstanceNotFoundException;
 import com.excilys.formation.cdb.mapper.ComputerMapper;
@@ -23,10 +24,12 @@ public enum ComputerDB {
 	
 	private static int numComputers = -1;	
 	private final static String COUNT_NUMBER_OF = "SELECT COUNT(*) AS NUM FROM computer;";
-	private final static String SELECT_ONE = "SELECT computer.id as cmpId, computer.name as cmpName, introduced, discontinued, " + 
-			"company.id as caId, company.name as caName " + 
-			"FROM computer " + 
-			"LEFT JOIN company ON company.id = ?;";
+	private final static String SELECT_ONE = 
+			"SELECT computer.id as cmpId, computer.name as cmpName, introduced, discontinued, company_id, " 
+			+ "company.id as caId, company.name as caName "
+			+ "FROM computer "
+			+ "LEFT JOIN company ON company.id = computer.company_id "
+			+ "WHERE computer.id = ?;"; 
 	private final static String SELECT_UNLIMITED_LIST = "SELECT computer.id as cmpId, computer.name as cmpName, introduced, discontinued, " 
 			+ "company.id as caId, company.name as caName "
 			+ "FROM computer "
@@ -72,7 +75,7 @@ public enum ComputerDB {
 			res = ps.executeQuery();
 			res.next();
 			cmp = ComputerMapper.map(res).get();
-		} catch (SQLException e) {
+		} catch (SQLException|NoSuchElementException e) {
 			// TODO Auto-generated catch block
 			logger.warn("Warning: " + e.getMessage());
 			throw new InstanceNotFoundException("Erreur: ordinateur introuvable");

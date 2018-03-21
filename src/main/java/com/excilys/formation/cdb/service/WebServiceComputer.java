@@ -8,20 +8,15 @@ import com.excilys.formation.cdb.model.Computer;
 import com.excilys.formation.cdb.persistence.ComputerDB;
 
 
-public class WebServiceComputer {
-	private static WebServiceComputer _instance = null;
+public enum WebServiceComputer {
+	
+	INSTANCE;
 	
 
 	private WebServiceComputer() {
 	
 	}	
 	
-	synchronized public static WebServiceComputer getInstance() {
-		if(_instance == null) {
-			_instance = new WebServiceComputer();
-		}
-		return _instance;
-	}
 	
 	public int getNumberOf() {
 		ComputerDB cmpDB = ComputerDB.INSTANCE;

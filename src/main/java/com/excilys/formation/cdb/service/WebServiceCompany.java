@@ -8,21 +8,14 @@ import com.excilys.formation.cdb.model.Computer;
 import com.excilys.formation.cdb.persistence.CompanyDB;
 import com.excilys.formation.cdb.persistence.ComputerDB;
 
-public class WebServiceCompany {
+public enum WebServiceCompany {
 	
-	private static WebServiceCompany _instance = null;
+	INSTANCE;
 
 	private WebServiceCompany() {
 		
 	}
-	
-	public static WebServiceCompany getInstance() {
-		if(_instance == null) {
-			_instance = new WebServiceCompany();
-		}
-		return _instance;
-	}
-	
+
 	public int getNumberOf() {
 		CompanyDB cpyDB = CompanyDB.INSTANCE;
 		return cpyDB.getNumCompanies();

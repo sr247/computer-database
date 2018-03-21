@@ -27,8 +27,8 @@ public class CLI_UI {
 	public CLI_UI() {
 		this.exit = false;
 		this.command = "";
-		this.wscmp = WebServiceComputer.getInstance();
-		this.wscpy = WebServiceCompany.getInstance();
+		this.wscmp = WebServiceComputer.INSTANCE;
+		this.wscpy = WebServiceCompany.INSTANCE;
 		this.sc = new Scanner(System.in);
 	}
 	

@@ -21,7 +21,7 @@ public class PagesCompany extends Pages<Company> {
 	@Override
 	public void next() throws InstanceNotFoundException {
 		// TODO Auto-generated method stub
-		WebServiceCompany webcpy = WebServiceCompany.getInstance();
+		WebServiceCompany webcpy = WebServiceCompany.INSTANCE;
 		int max = webcpy.getNumberOf();
 		pageIndex += PAGE_STRIDE;
 		if( (max - pageIndex) < PAGE_STRIDE) {
@@ -36,7 +36,7 @@ public class PagesCompany extends Pages<Company> {
 	@Override
 	public void preview() throws InstanceNotFoundException {
 		// TODO Auto-generated method stub
-		WebServiceCompany webcpy = WebServiceCompany.getInstance();
+		WebServiceCompany webcpy = WebServiceCompany.INSTANCE;
 		pageIndex -= PAGE_STRIDE;
 		if(pageIndex < 0) {
 			pageIndex = 0;

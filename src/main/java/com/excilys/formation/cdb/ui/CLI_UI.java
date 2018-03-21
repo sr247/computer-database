@@ -12,6 +12,7 @@ import com.excilys.formation.cdb.exceptions.InstanceNotFoundException;
 import com.excilys.formation.cdb.model.Company;
 import com.excilys.formation.cdb.model.Computer;
 import com.excilys.formation.cdb.model.Pages;
+import com.excilys.formation.cdb.model.PagesCompany;
 import com.excilys.formation.cdb.model.PagesComputer;
 import com.excilys.formation.cdb.service.WebServiceCompany;
 import com.excilys.formation.cdb.service.WebServiceComputer;
@@ -40,16 +41,13 @@ public class CLI_UI {
 	}
 	
 	private void printList(boolean all, Pages p) {
-		
 		if(all) {
-			p.setPage(wscmp.getAllList());
 			for(Object c : p.getPage()) {
 				System.out.println(c);
 			}
 		} else {
 			boolean still = true;
 			while(still) {
-				p.setPage(wscmp.getList(pageIndex, pageIndex+PAGE_STRIDE));
 				for(Object c : p.getPage()) {
 					System.out.println(c);
 				}
@@ -65,26 +63,28 @@ public class CLI_UI {
 				}
 			}
 		}
-		
-	}
+		}
 	
 	public void list(String[] t) {
-		boolean listAll =  t[1].equals("all");
-		String table = listAll ? t[2] : t[1];
+		boolean all =  t[1].equals("all");
+		String table = all ? t[2] : t[1];
 		if("computer".equals(table)) {
-			PagesComputer p = new PagesComputer();
-			printList(listAll, p);
+			PagesComputer p = null;
+			if(all) {
+				p = new PagesComputer(wscmp.getAllList());
+			}else {
+				p = new PagesComputer(wscmp.getList(Pages.getFrom(), Pages.getTo()));
+			}			
+			printList(all, p);
 			
 		} else if("company".equals(table)){
-			List<Company> cpyList = null;
-			if(listAll) {
-				cpyList = wscpy.getList(0, 0);
-			} else {
-				cpyList = wscpy.getList(0, 10);
+			PagesCompany p = null;
+			if(all) {
+				p = new PagesCompany(wscpy.getAllList());
+			}else {
+				p = new PagesCompany(wscpy.getList(Pages.getFrom(), Pages.getTo()));
 			}
-			for(Company cpn : cpyList) {
-				System.out.println(cpn);
-			}
+			printList(all, p);
 		}
 	}
 	
@@ -99,7 +99,6 @@ public class CLI_UI {
 			e.printStackTrace();
 			throw new IncorrectFieldException();
 		}
-		
 	}
 	
 	private List<String> getEntry(){

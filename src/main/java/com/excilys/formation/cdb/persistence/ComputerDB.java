@@ -26,19 +26,17 @@ public enum ComputerDB {
 			"company.id as caId, company.name as caName " + 
 			"FROM computer " + 
 			"LEFT JOIN company ON company.id = ?;";
-	
 	// Il y a surement moyen de faire une seul requete avec les deux suivantes 
 	private final static String SELECT_UNLIMITED_LIST = "SELECT computer.id as cmpId, computer.name as cmpName, introduced, discontinued, " 
 			+ "company.id as caId, company.name as caName "
 			+ "FROM computer "
 			+ "LEFT JOIN company ON company.id = computer.company_id "
-			+ "ORDER BY ID;";
+			+ "ORDER BY computer.id;";
 	private final static String SELECT_LIMITED_LIST = "SELECT computer.id as cmpId, computer.name as cmpName, introduced, discontinued, " 
 			+ "company.id as caId, company.name as caName "
 			+ "FROM computer "
 			+ "LEFT JOIN company ON company.id = computer.company_id "
 			+ "ORDER BY computer.id LIMIT ? OFFSET ?;";
-	
 	private final static String CREATE_REQUEST  = "INSERT INTO computer (NAME, INTRODUCED, DISCONTINUED, COMPANY_ID) VALUES (?, ?, ?, ?);";
 	private final static String UPDTATE_REQUEST = "UPDATE computer SET NAME=?, INTRODUCED=?, DISCONTINUED=?, COMPANY_ID=? WHERE ID=?;";
 	private final static String DELETE_REQUEST  = "DELETE FROM computer WHERE ID=?;";

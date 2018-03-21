@@ -19,9 +19,9 @@ public enum CompanyDB {
 	private static int numCompanies = -1;	
 	
 	private final static String COUNT_NUMBER_OF = "SELECT COUNT(*) AS NUM FROM company;";
-	private final static String SELECT_ONE = "SELECT ID, NAME FROM company WHERE ID=?;";
-	private final static String SELECT_UNLIMITED_LIST = "SELECT ID, NAME FROM company ORDER BY ID;";
-	private final static String SELECT_LIMITED_LIST = "SELECT ID, NAME FROM company ORDER BY ID LIMIT ? OFFSET ?;";
+	private final static String SELECT_ONE = "SELECT ID as caId, NAME as caName FROM company WHERE ID=?;";
+	private final static String SELECT_UNLIMITED_LIST = "SELECT ID as caId, NAME as caName FROM company ca ORDER BY ID;";
+	private final static String SELECT_LIMITED_LIST = "SELECT ID as caId, NAME as caName FROM company ORDER BY ID LIMIT ? OFFSET ?;";
 	private final static String CREATE_REQUEST  = "INSERT INTO company NAME VALUES ?;";
 	private final static String UPDTATE_REQUEST = "UPDATE company SET ?=? WHERE ID=?;";
 	private final static String DELETE_REQUEST  = "DELETE FROM company WHERE ID=?";

@@ -33,11 +33,11 @@ public enum ComputerDB {
 			+ "FROM computer "
 			+ "LEFT JOIN company ON company.id = computer.company_id "
 			+ "ORDER BY ID;";
-	private final static String SELECT_LIMIT_LIST = "SELECT computer.id as cmpId, computer.name as cmpName, introduced, discontinued, " 
+	private final static String SELECT_LIMITED_LIST = "SELECT computer.id as cmpId, computer.name as cmpName, introduced, discontinued, " 
 			+ "company.id as caId, company.name as caName "
 			+ "FROM computer "
 			+ "LEFT JOIN company ON company.id = computer.company_id "
-			+ "ORDER BY ID LIMIT ? OFFSET ?;";
+			+ "ORDER BY computer.id LIMIT ? OFFSET ?;";
 	
 	private final static String CREATE_REQUEST  = "INSERT INTO computer (NAME, INTRODUCED, DISCONTINUED, COMPANY_ID) VALUES (?, ?, ?, ?);";
 	private final static String UPDTATE_REQUEST = "UPDATE computer SET NAME=?, INTRODUCED=?, DISCONTINUED=?, COMPANY_ID=? WHERE ID=?;";
@@ -101,7 +101,7 @@ public enum ComputerDB {
 		List<Computer> computers = new ArrayList<Computer>();
 		try (Connection conn = (Connection) ConnexionDB.INSTANCE.getConnection();){
 			PreparedStatement ps = (PreparedStatement) 
-					conn.prepareStatement(SELECT_LIMIT_LIST);
+					conn.prepareStatement(SELECT_LIMITED_LIST);
 			ps.setInt(1, to-from);
 			ps.setInt(2, from);
 			ResultSet res = ps.executeQuery();

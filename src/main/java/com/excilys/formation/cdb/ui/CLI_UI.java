@@ -11,6 +11,8 @@ import com.excilys.formation.cdb.exceptions.IncorrectFieldException;
 import com.excilys.formation.cdb.exceptions.InstanceNotFoundException;
 import com.excilys.formation.cdb.model.Company;
 import com.excilys.formation.cdb.model.Computer;
+import com.excilys.formation.cdb.model.Pages;
+import com.excilys.formation.cdb.model.PagesComputer;
 import com.excilys.formation.cdb.service.WebServiceCompany;
 import com.excilys.formation.cdb.service.WebServiceComputer;
 
@@ -37,19 +39,42 @@ public class CLI_UI {
 		System.out.println(wscmp.getComputer(id));
 	}
 	
+	private void printList(boolean all, Pages p) {
+		
+		if(all) {
+			p.setPage(wscmp.getAllList());
+			for(Object c : p.getPage()) {
+				System.out.println(c);
+			}
+		} else {
+			boolean still = true;
+			while(still) {
+				p.setPage(wscmp.getList(pageIndex, pageIndex+PAGE_STRIDE));
+				for(Object c : p.getPage()) {
+					System.out.println(c);
+				}
+				System.out.println("Page " + p.getNum());
+				System.out.println("Type n for next, p for precedent, q for quit: ");
+				String reponse = sc.nextLine();
+				if(reponse.equals("n")) {
+					p.next();
+				}else if(reponse.equals("p")){
+					p.preview();
+				}else if(reponse.equals("q")){
+					still = false;
+				}
+			}
+		}
+		
+	}
+	
 	public void list(String[] t) {
 		boolean listAll =  t[1].equals("all");
 		String table = listAll ? t[2] : t[1];
 		if("computer".equals(table)) {
-			List<Computer> cmpList = null;
-			if(listAll) {
-				cmpList = wscmp.getList(0, 0);
-			} else {
-				cmpList = wscmp.getList(0, 10);
-			}
-			for(Computer cmp : cmpList) {
-				System.out.println(cmp);
-			}
+			PagesComputer p = new PagesComputer();
+			printList(listAll, p);
+			
 		} else if("company".equals(table)){
 			List<Company> cpyList = null;
 			if(listAll) {

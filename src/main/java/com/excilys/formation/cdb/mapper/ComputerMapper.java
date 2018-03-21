@@ -20,8 +20,8 @@ public enum ComputerMapper {
 		Computer cmp = null;		
 		try {
 			if(!res.equals(null)) {
-				int id = res.getInt("ID");
-				String name = res.getString("NAME");
+				int id = res.getInt("cmpId");
+				String name = res.getString("cmpName");
 				Date intro = res.getDate("INTRODUCED");
 				Date discon = res.getDate("DISCONTINUED");
 				LocalDate introduced = intro == null ? null : intro.toLocalDate();

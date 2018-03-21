@@ -27,8 +27,8 @@ public enum CompanyMapper {
 		Company cpn = null;		
 		try {
             if (!res.equals(null)) {
-				int id = res.getInt("ID");
-				String name = res.getString("NAME");
+				int id = res.getInt("caId");
+				String name = res.getString("caName");
 				cpn = new Company(id, name);
 			}
 		} catch (Exception e) {

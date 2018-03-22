@@ -11,9 +11,9 @@ import com.excilys.formation.cdb.exceptions.IncorrectFieldException;
 import com.excilys.formation.cdb.exceptions.InstanceNotFoundException;
 import com.excilys.formation.cdb.model.Company;
 import com.excilys.formation.cdb.model.Computer;
-import com.excilys.formation.cdb.model.Pages;
-import com.excilys.formation.cdb.model.PagesCompany;
-import com.excilys.formation.cdb.model.PagesComputer;
+import com.excilys.formation.cdb.pages.Pages;
+import com.excilys.formation.cdb.pages.PagesCompany;
+import com.excilys.formation.cdb.pages.PagesComputer;
 import com.excilys.formation.cdb.service.WebServiceCompany;
 import com.excilys.formation.cdb.service.WebServiceComputer;
 

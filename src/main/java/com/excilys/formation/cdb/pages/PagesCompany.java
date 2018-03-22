@@ -1,8 +1,9 @@
-package com.excilys.formation.cdb.model;
+package com.excilys.formation.cdb.pages;
 
 import java.util.List;
 
 import com.excilys.formation.cdb.exceptions.InstanceNotFoundException;
+import com.excilys.formation.cdb.model.Company;
 import com.excilys.formation.cdb.service.WebServiceCompany;
 
 public class PagesCompany extends Pages<Company> {

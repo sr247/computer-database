@@ -1,4 +1,4 @@
-package com.excilys.formation.cdb.model;
+package com.excilys.formation.cdb.pages;
 
 import java.util.List;
 

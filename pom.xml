@@ -15,6 +15,7 @@
 		<!-- sets the projects encoding to UTF-8 -->
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<java.version>1.8</java.version>
+		<javax.version>4.0.0</javax.version>
 		<mojo.version>1.2.1</mojo.version>
 
 		<!-- checkstyle -->
@@ -33,6 +34,7 @@
 		<!-- runtime -->
 		<mysql.version>5.1.38</mysql.version>
 		<myqsl-jdbc.version>8.0.8-dmr</myqsl-jdbc.version>
+		
 	</properties>
 
 	<build>
@@ -48,7 +50,6 @@
 					<target>${java.version}</target>
 				</configuration>
 			</plugin>
-
 
 			<!-- plugin maven for sunfire test -->
 			<plugin>
@@ -111,6 +112,12 @@
 			<version>${junit.version}</version>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-all</artifactId>
+			<version>${mockito.version}</version>
+			<scope>test</scope>
+		</dependency>
 
 		<!-- logging -->
         <dependency>
@@ -129,19 +136,29 @@
             <version>${logback.version}</version>
         </dependency>
 		
-		<dependency>
-			<groupId>org.mockito</groupId>
-			<artifactId>mockito-all</artifactId>
-			<version>${mockito.version}</version>
-			<scope>test</scope>
-		</dependency>
-
 		<!-- database -->
 		<dependency>
 			<groupId>mysql</groupId>
 			<artifactId>mysql-connector-java</artifactId>
 			<version>${myqsl-jdbc.version}</version>
 		</dependency>
+		
+		<!-- httpServlet -->
+		<dependency>
+		    <groupId>javax.servlet</groupId>
+		    <artifactId>javax.servlet-api</artifactId>
+		    <version>${javax.version}</version>
+		    <scope>provided</scope>
+		</dependency>
+		
+		<!-- jstl -->
+		<dependency>
+    		<groupId>jstl</groupId>
+    		<artifactId>jstl</artifactId>
+    		<version>1.2</version>
+		</dependency>		
 	</dependencies>
+	
+	
 
 </project>

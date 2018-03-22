@@ -11,7 +11,8 @@ import java.util.Properties;
 public enum ConnexionDB {
 	
 	INSTANCE;
-	
+	// getClass().getClassLoader().getResourceAsStream("db.properties")
+	private static final String path = "config/db/config.properties";
 	private Connection conn;
 	
 	private ConnexionDB () {
@@ -20,9 +21,7 @@ public enum ConnexionDB {
 	
 	public Connection getConnection() {
 		Properties prop = new Properties();
-		String fileConf = "config/db/config.properties";
-				
-		try(FileInputStream fis = new FileInputStream(fileConf);){
+		try(FileInputStream fis = new FileInputStream(path);){
 			prop.load(fis);
 			
 		} catch (FileNotFoundException e1) {

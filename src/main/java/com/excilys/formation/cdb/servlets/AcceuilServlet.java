@@ -7,6 +7,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.excilys.formation.cdb.persistence.ComputerDB;
+import com.excilys.formation.cdb.service.WebServiceComputer;
+
 /**
  * Servlet implementation class AcceuilServlet
  */
@@ -28,8 +31,10 @@ public class AcceuilServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		// response.getWriter().append("Served at: ").append(request.getContextPath());
+		int numComputer = WebServiceComputer.INSTANCE.getNumberOf();
+		request.setAttribute("numComputer", numComputer);
 		this.getServletContext().getRequestDispatcher("/WEB-INF/dashboard.jsp").forward(request, response);
-	}
+	}	
 
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)

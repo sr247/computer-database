@@ -8,7 +8,7 @@ public abstract class Pages<T> {
 	protected List<T> page;
 	protected int num;
 	protected static int pageIndex;
-	protected static final int PAGE_STRIDE = 20;
+	protected static int PAGE_STRIDE = 5;
 	
 	public Pages() {
 		
@@ -19,7 +19,7 @@ public abstract class Pages<T> {
 		
 	}
 	
-	public List<T> getPage() {
+	public List<T> getContent() {
 		return page;
 	}
 	
@@ -42,6 +42,10 @@ public abstract class Pages<T> {
 		this.page = null;
 		this.num = 0;
 		Pages.pageIndex = 0;
+	}
+	
+	public static void setStride(int stride) {
+		PAGE_STRIDE = stride;
 	}
 	
 	public abstract void next() throws InstanceNotFoundException;

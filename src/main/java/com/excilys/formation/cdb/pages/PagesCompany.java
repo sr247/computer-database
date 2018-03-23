@@ -6,7 +6,7 @@ import com.excilys.formation.cdb.exceptions.InstanceNotFoundException;
 import com.excilys.formation.cdb.model.Company;
 import com.excilys.formation.cdb.service.WebServiceCompany;
 
-public class PagesCompany extends Pages<Company> {
+public class PagesCompany<T> extends Pages<T> {
 
 	
 	public PagesCompany() {
@@ -14,7 +14,7 @@ public class PagesCompany extends Pages<Company> {
 		// TODO Auto-generated constructor stub
 	}
 
-	public PagesCompany(List<Company> page) {
+	public PagesCompany(List<T> page) {
 		super(page);
 		// TODO Auto-generated constructor stub
 	}
@@ -31,7 +31,7 @@ public class PagesCompany extends Pages<Company> {
 			num++;
 		}
 		
-		this.page = webcpy.getList(pageIndex, pageIndex+PAGE_STRIDE);
+		this.page = (List<T>) webcpy.getList(pageIndex, pageIndex+PAGE_STRIDE);
 	}
 
 	@Override
@@ -45,7 +45,7 @@ public class PagesCompany extends Pages<Company> {
 			num--;
 		}
 		
-		this.page = webcpy.getList(pageIndex, pageIndex+PAGE_STRIDE);
+		this.page = (List<T>) webcpy.getList(pageIndex, pageIndex+PAGE_STRIDE);
 	}
 	
 

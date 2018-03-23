@@ -5,15 +5,9 @@ public class ComputerDTO {
 	private String name;
 	private String introduced;
 	private String discontinued;
-
-	// Ce champ deviendra un objet company à part entière.
-	private Company company;
-	/*
-	 * Fonctionnalité  1 à tester immédiatement 
-	 * vérifier le lien avec JDBC (persitance)
-	 */
-
-	public ComputerDTO(int id, String name, String introduced, String discontinued, Company company) {
+	private String company;
+	
+	public ComputerDTO(int id, String name, String introduced, String discontinued, String company) {
 		this.id = id;
 		this.name = name;
 		this.introduced = introduced;
@@ -22,7 +16,7 @@ public class ComputerDTO {
 	}
 	
 
-	public ComputerDTO(String name, String introduced, String discontinued, Company company) {
+	public ComputerDTO(String name, String introduced, String discontinued, String company) {
 		this.id = 0;
 		this.name = name;
 		this.introduced = introduced;
@@ -105,7 +99,7 @@ public class ComputerDTO {
 	/**
 	 * @return the company_id
 	 */
-	public Company getCompany() {
+	public String getCompany() {
 		return company;
 	}
 
@@ -114,7 +108,7 @@ public class ComputerDTO {
 	/**
 	 * @param company_id the company_id to set
 	 */
-	public void setCompany(Company company) {
+	public void setCompany(String company) {
 		this.company = company;
 	}
 	

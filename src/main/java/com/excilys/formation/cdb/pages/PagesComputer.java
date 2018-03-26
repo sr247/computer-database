@@ -3,17 +3,16 @@ package com.excilys.formation.cdb.pages;
 import java.util.List;
 
 import com.excilys.formation.cdb.exceptions.InstanceNotFoundException;
-import com.excilys.formation.cdb.model.Computer;
 import com.excilys.formation.cdb.service.WebServiceComputer;
 
-public class PagesComputer extends Pages<Computer> {
+public class PagesComputer<T> extends Pages<T> {
 
 	public PagesComputer() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
 
-	public PagesComputer(List<Computer> page) {
+	public PagesComputer(List<T> page) {
 		super(page);
 		// TODO Auto-generated constructor stub
 	}
@@ -29,7 +28,7 @@ public class PagesComputer extends Pages<Computer> {
 		} else {
 			num++;
 		}
-		this.page = webcmp.getList(pageIndex, pageIndex+PAGE_STRIDE);
+		this.page = (List<T>) webcmp.getList(pageIndex, pageIndex+PAGE_STRIDE);
 	}
 
 	@Override
@@ -42,7 +41,7 @@ public class PagesComputer extends Pages<Computer> {
 		}else {
 			num--;
 		}
-		this.page = webcmp.getList(pageIndex, pageIndex+PAGE_STRIDE);
+		this.page = (List<T>) webcmp.getList(pageIndex, pageIndex+PAGE_STRIDE);
 	}
 	
 	

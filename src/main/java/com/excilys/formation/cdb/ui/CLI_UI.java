@@ -48,13 +48,13 @@ public class CLI_UI {
 	
 	private void printList(boolean all, Pages p) {
 		if(all) {
-			for(Object c : p.getPage()) {
+			for(Object c : p.getContent()) {
 				System.out.println(c);
 			}
 		} else {
 			boolean still = true;
 			while(still) {
-				for(Object c : p.getPage()) {
+				for(Object c : p.getContent()) {
 					System.out.println(c);
 				}
 				System.out.println("Page " + p.getNum());
@@ -177,8 +177,6 @@ public class CLI_UI {
 		
 		do{
 			if("computer".equals(table)) {
-				// Ici il faudra check la forme et les valeurs de chaque ajout
-				// Valeur null, erreur de syntaxe, nombre de champ
 				
 				List<String> fields = new ArrayList<String>();
 				fields = getEntry();

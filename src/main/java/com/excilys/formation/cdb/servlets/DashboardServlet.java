@@ -20,16 +20,16 @@ import com.excilys.formation.cdb.service.WebServiceComputer;
 /**
  * Servlet implementation class AcceuilServlet
  */
-@WebServlet("")
-public class AcceuilServlet extends HttpServlet {
+@WebServlet("/dashboard")
+public class DashboardServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	
-	private static org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(AcceuilServlet.class);
+	private static org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(DashboardServlet.class);
 	
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public AcceuilServlet() {
+    public DashboardServlet() {
         super();
         // TODO Auto-generated constructor stub
     }
@@ -48,8 +48,7 @@ public class AcceuilServlet extends HttpServlet {
 		try {
 			
 			String s = null;
-			if((s = request.getParameter("stride")) != null) {
-				
+			if((s = request.getParameter("stride")) != null) {				
 				Pages.setStride(Integer.valueOf(s));			
 			}else {
 				logger.debug("ERROR !");
@@ -59,8 +58,11 @@ public class AcceuilServlet extends HttpServlet {
 			request.setAttribute("computers", computerPage.getContent());
 		} catch (InstanceNotFoundException e) {
 			// TODO Auto-generated catch block
-			logger.warn("[WARN] (Dashboard): " + e.getMessage());
+			logger.warn("[WARN] (Dashboard): {}", e.getMessage(), e);
 		}
+		request.setAttribute("pageFrom", Pages.getFrom());
+		request.setAttribute("pageTo", Pages.getTo());
+		
 		this.getServletContext().getRequestDispatcher("/WEB-INF/dashboard.jsp").forward(request, response);
 	}	
 

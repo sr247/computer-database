@@ -177,8 +177,6 @@ public class CLI_UI {
 		
 		do{
 			if("computer".equals(table)) {
-				// Ici il faudra check la forme et les valeurs de chaque ajout
-				// Valeur null, erreur de syntaxe, nombre de champ
 				
 				List<String> fields = new ArrayList<String>();
 				fields = getEntry();

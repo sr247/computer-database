@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Scanner;
 
 import com.excilys.formation.cdb.exceptions.IncorrectFieldException;
-import com.excilys.formation.cdb.exceptions.InstanceNotFoundException;
+import com.excilys.formation.cdb.exceptions.InstanceNotInDatabaseException;
 import com.excilys.formation.cdb.model.Company;
 import com.excilys.formation.cdb.model.Computer;
 import com.excilys.formation.cdb.pages.Pages;
@@ -40,7 +40,7 @@ public class CLI_UI {
 		int i = Integer.valueOf(id);
 		try {
 			System.out.println(wscmp.getComputer(i));
-		} catch (InstanceNotFoundException e) {
+		} catch (InstanceNotInDatabaseException e) {
 			// TODO Auto-generated catch block
 			System.err.println(e.getMessage());
 		}
@@ -63,14 +63,14 @@ public class CLI_UI {
 				if(reponse.equals("n")) {
 					try {
 						p.next();
-					} catch (InstanceNotFoundException e) {
+					} catch (InstanceNotInDatabaseException e) {
 						// TODO Auto-generated catch block
 						System.err.println(e.getMessage());
 					}
 				}else if(reponse.equals("p")){
 					try {
 						p.preview();
-					} catch (InstanceNotFoundException e) {
+					} catch (InstanceNotInDatabaseException e) {
 						// TODO Auto-generated catch block
 						System.err.println(e.getMessage());
 					}
@@ -82,7 +82,7 @@ public class CLI_UI {
 		p.reset();
 	}
 	
-	public void list(String[] t) throws InstanceNotFoundException {
+	public void list(String[] t) throws InstanceNotInDatabaseException {
 		boolean all =  t[1].equals("all");
 		String table = all ? t[2] : t[1];
 		if("computer".equals(table)) {
@@ -157,7 +157,7 @@ public class CLI_UI {
 				}catch(DateTimeParseException|IncorrectFieldException e) {
 					System.err.println("Erreur: Champ invalide");
 					err = true;
-				}catch (InstanceNotFoundException e) {
+				}catch (InstanceNotInDatabaseException e) {
 					System.err.println("Erreur: Instance inexistante");
 					err = true;
 				}
@@ -165,7 +165,7 @@ public class CLI_UI {
 		}while(err & !exit);
 	}
 	
-	public void delete(String id) throws InstanceNotFoundException {
+	public void delete(String id) throws InstanceNotInDatabaseException {
 		int i = Integer.valueOf(id);
 		wscmp.deleteComputer(i);
 	}
@@ -196,7 +196,7 @@ public class CLI_UI {
 				}catch(DateTimeParseException|IncorrectFieldException e) {
 					System.err.println("Erreur: Champ invalide");
 					err = true;
-				}catch (InstanceNotFoundException e) {
+				}catch (InstanceNotInDatabaseException e) {
 					System.err.println("Erreur: Instance inexistante");
 					err = true;
 				}
@@ -250,7 +250,7 @@ public class CLI_UI {
 				if(target.length > 2)
 					delete(target[2]);
 			}
-		}catch(InstanceNotFoundException e) {
+		}catch(InstanceNotInDatabaseException e) {
 			System.err.println(e.getMessage());
 		}
 	}

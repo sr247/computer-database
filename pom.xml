@@ -14,9 +14,12 @@
 	<properties>
 		<!-- sets the projects encoding to UTF-8 -->
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		
+		<!-- compile -->
 		<java.version>1.8</java.version>
 		<javax.version>4.0.0</javax.version>
 		<mojo.version>1.2.1</mojo.version>
+		<jstl-version>1.2</jstl-version>
 
 		<!-- checkstyle -->
 		<checkstyle.version>3.0.0</checkstyle.version>
@@ -24,8 +27,8 @@
 		<!-- test -->
 		<junit.version>5.0.1</junit.version>
 		<mockito.version>1.9.5</mockito.version>
+		<sunfire-version>2.19.1</sunfire-version>
 
-		<!-- compile -->
 		<!-- logs -->
 		<log4j.version>1.2.17</log4j.version>
 		<slf4j.version>1.7.25</slf4j.version>
@@ -55,7 +58,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
-				<version>2.19.1</version>
+				<version>${sunfire-version}</version>
 				<dependencies>
 					<dependency>
 						<groupId>org.junit.platform</groupId>
@@ -155,7 +158,7 @@
 		<dependency>
     		<groupId>jstl</groupId>
     		<artifactId>jstl</artifactId>
-    		<version>1.2</version>
+    		<version>${jstl-version}</version>
 		</dependency>		
 	</dependencies>
 	

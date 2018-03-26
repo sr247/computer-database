@@ -13,7 +13,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-import com.excilys.formation.cdb.exceptions.InstanceNotFoundException;
+import com.excilys.formation.cdb.exceptions.InstanceNotInDatabaseException;
+import com.excilys.formation.cdb.exceptions.ModifyDatabaseException;
+import com.excilys.formation.cdb.exceptions.NumberOfInstanceException;
 import com.excilys.formation.cdb.mapper.ComputerMapper;
 import com.excilys.formation.cdb.model.Computer;
 
@@ -48,7 +50,7 @@ public enum ComputerDB {
 		
 	}
 
-	public int getNumComputers() {
+	public int getNumComputers() throws NumberOfInstanceException {
 		Statement s;
 		try (Connection conn = ConnexionDB.INSTANCE.getConnection();)
 		{
@@ -59,12 +61,13 @@ public enum ComputerDB {
 			numComputers = res.getInt("NUM");
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
-			logger.warn("Warning: " + e.getMessage());
+			logger.error("NumberOfInstanceError: ", e.getMessage(), e);
+			throw new NumberOfInstanceException("NumberOfInstanceError: " + e.getMessage(), e);
 		}
 		return numComputers;
 	}
 	
-	public Computer getComputerByID(int id) throws InstanceNotFoundException {
+	public Computer getComputerByID(int id) throws InstanceNotInDatabaseException {
 		PreparedStatement ps = null;
 		ResultSet res = null;
 		Computer cmp = null;
@@ -77,13 +80,13 @@ public enum ComputerDB {
 			cmp = ComputerMapper.map(res).get();
 		} catch (SQLException|NoSuchElementException e) {
 			// TODO Auto-generated catch block
-			logger.warn("Warning: " + e.getMessage());
-			throw new InstanceNotFoundException("Erreur: ordinateur introuvable");
+			logger.error("InstanceNotInDatabaseError: {}", e.getMessage(), e);
+			throw new InstanceNotInDatabaseException("InstanceNotInDatabaseError: computer not found.");
 		}
 		return cmp;
 	}
 	
-	public List<Computer> getComputerList() throws InstanceNotFoundException {
+	public List<Computer> getComputerList() throws InstanceNotInDatabaseException {
 		
 		List<Computer> computers = new ArrayList<Computer>();
 		try (Connection conn = (Connection) ConnexionDB.INSTANCE.getConnection();){
@@ -95,12 +98,12 @@ public enum ComputerDB {
 			
 		} catch(Exception e) {
 			logger.warn("Warning: " + e.getMessage());
-			throw new InstanceNotFoundException("Erreur: ordinateur introuvable");
+			throw new InstanceNotInDatabaseException("InstanceNotInDatabaseError: computers not found");
 		}	
 		return computers;
 	}
 	
-	public List<Computer> getComputerList(int from, int to) throws InstanceNotFoundException {		
+	public List<Computer> getComputerList(int from, int to) throws InstanceNotInDatabaseException {		
 		List<Computer> computers = new ArrayList<Computer>();
 		try (Connection conn = (Connection) ConnexionDB.INSTANCE.getConnection();){
 			PreparedStatement ps = (PreparedStatement) 
@@ -113,7 +116,7 @@ public enum ComputerDB {
 			
 		}catch(Exception e) {
 			logger.warn("Warning: " + e.getMessage());
-			throw new InstanceNotFoundException("Erreur: ordinateur introuvable");
+			throw new InstanceNotInDatabaseException("Erreur: ordinateur introuvable");
 		}
 		return computers;
 	}
@@ -130,7 +133,7 @@ public enum ComputerDB {
 	}
 	
 	
-	public void create(Computer cmp) {
+	public void create(Computer cmp) throws ModifyDatabaseException {
 		//Can't call commit, when autocommit:true
 		PreparedStatement crt;
 		try (Connection conn = (Connection) ConnexionDB.INSTANCE.getConnection();){
@@ -145,7 +148,8 @@ public enum ComputerDB {
 			logger.warn("Created:" + cmp);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
-			logger.warn("Warning: " + e.getMessage());
+			logger.error("CreationOfInstanceError: " + e.getMessage());
+			throw new ModifyDatabaseException("CreationOfInstanceError: computer couldn't be created", e);
 		} 
 	}
 	
@@ -153,7 +157,7 @@ public enum ComputerDB {
 	 * Ici on update forcément tout.. Bonne ou mauvaise solution ?
 	 * Essayer une version qui update seulement x champs.
 	 */
-	public void update(Computer cmp) {
+	public void update(Computer cmp) throws ModifyDatabaseException {
 		PreparedStatement upd;
 		try (Connection conn = (Connection) ConnexionDB.INSTANCE.getConnection();){
 			upd = (PreparedStatement) conn.prepareStatement(UPDTATE_REQUEST);
@@ -168,12 +172,13 @@ public enum ComputerDB {
 			logger.info("Updated:" + cmp);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
-			logger.warn("Warning: " + e.getMessage());
+			logger.error("UpdateOfInstanceError: " + e.getMessage());
+			throw new ModifyDatabaseException("UpdateOfInstanceError: computer couldn't be updated", e);
 		}
 	}	
 	
 	// Pour le moment on recoit juste l'id
-	public void delete(Computer cmp) {
+	public void delete(Computer cmp) throws ModifyDatabaseException {
 		try (Connection conn = (Connection) ConnexionDB.INSTANCE.getConnection();){
 			PreparedStatement del = (PreparedStatement) conn.prepareStatement(DELETE_REQUEST);
 			del.setInt(1, cmp.getId());
@@ -182,7 +187,8 @@ public enum ComputerDB {
 			
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
-			logger.warn("Warning: " + e.getMessage());
+			logger.error("DeletionOfInstanceError: " + e.getMessage());
+			throw new ModifyDatabaseException("DeletionOfInstanceError: computer couldn't be deleted", e);
 		}
 	}
 }

@@ -9,7 +9,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import com.excilys.formation.cdb.exceptions.InstanceNotFoundException;
+import com.excilys.formation.cdb.exceptions.InstanceNotInDatabaseException;
+import com.excilys.formation.cdb.exceptions.ModifyDatabaseException;
+import com.excilys.formation.cdb.exceptions.NumberOfInstanceException;
 import com.excilys.formation.cdb.mapper.CompanyMapper;
 import com.excilys.formation.cdb.model.Company;
 
@@ -31,25 +33,24 @@ public enum CompanyDB {
 		
 	}
 	
-	public int getNumCompanies() {
+	public int getNumCompanies() throws NumberOfInstanceException {
 		
-		if (numCompanies == -1) {
-			Statement s;
-			try (Connection conn = (Connection) ConnexionDB.INSTANCE.getConnection();){
-				s = conn.createStatement();
-				ResultSet res = s
-						.executeQuery(COUNT_NUMBER_OF);
-				res.next();
-				numCompanies = res.getInt("NUM");
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				logger.warn("Waring: " + e.getMessage());
-			}
-		}		
+		Statement s;
+		try (Connection conn = (Connection) ConnexionDB.INSTANCE.getConnection();){
+			s = conn.createStatement();
+			ResultSet res = s
+					.executeQuery(COUNT_NUMBER_OF);
+			res.next();
+			numCompanies = res.getInt("NUM");
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			logger.error("{}", e.getMessage(), e);
+			throw new NumberOfInstanceException("NumberOfInstanceError: " + e.getMessage(), e);
+		}
 		return numCompanies;
 	}
 	
-	public Optional <Company> getCompanyByID(int id) throws InstanceNotFoundException {
+	public Optional <Company> getCompanyByID(int id) throws InstanceNotInDatabaseException {
 			PreparedStatement sel = null;
 			ResultSet res = null;
 			Company cpy = null;
@@ -62,13 +63,13 @@ public enum CompanyDB {
 				cpy = CompanyMapper.map(res).get();
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
-				logger.warn("Warning: " + e.getMessage());
-				throw new InstanceNotFoundException("Erreur: entreprise introuvable");
+				logger.error("InstanceNotInDatabaseError: {}", e.getMessage(), e);
+				throw new InstanceNotInDatabaseException("NumberOfInstanceError: company not found", e);
 			}
 			return Optional.ofNullable(cpy);
 	}
 	
-	public List<Company> getCompanyList() throws InstanceNotFoundException {
+	public List<Company> getCompanyList() throws InstanceNotInDatabaseException {
 		List<Company> companies = new ArrayList<Company>();
 		// Solutionner pour les preperedStatement plutot : Plus sécuritaire au niveau des injection sql.
 		try (Connection conn = (Connection) ConnexionDB.INSTANCE.getConnection();){
@@ -78,15 +79,15 @@ public enum CompanyDB {
 			while (res.next())
 				companies.add(CompanyMapper.map(res).get());
 			
-		}catch (Exception e) {
+		}catch (SQLException e) {
 			// TODO Auto-generated catch block
-			logger.warn("Warning: " + e.getMessage());
-			throw new InstanceNotFoundException("Erreur: entreprise introuvable");
+			logger.error("InstanceNotInDatabaseError: {}", e.getMessage(), e);
+			throw new InstanceNotInDatabaseException("InstanceNotInDatabaseError: companies not found", e);
 		}		
 		return companies;
 	}
 	
-	public List<Company> getCompanyList(int from, int to) throws InstanceNotFoundException {
+	public List<Company> getCompanyList(int from, int to) throws InstanceNotInDatabaseException {
 		List<Company> companies = new ArrayList<Company>();
 		// Solutionner pour les preperedStatement plutot : Plus sécuritaire au niveau des injection sql.
 		try (Connection conn = (Connection) ConnexionDB.INSTANCE.getConnection();){
@@ -99,38 +100,38 @@ public enum CompanyDB {
 			while (res.next())
 				companies.add(CompanyMapper.map(res).get());
 			
-		}catch (Exception e) {
+		}catch (SQLException e) {
 			// TODO Auto-generated catch block
-			logger.warn("Warning: " + e.getMessage());
-			throw new InstanceNotFoundException("Erreur: entreprise introuvable");
+			logger.error("InstanceNotInDatabaseError: ", e.getMessage(), e);
+			throw new InstanceNotInDatabaseException("InstanceNotInDatabaseError: companies not found", e);
 		}
 	
 		return companies;
 	}
 	
 
-	private void create(Company cpy) {
+	private void create(Company cpy) throws NumberOfInstanceException, ModifyDatabaseException {
 		PreparedStatement crt;
 		ResultSet generatedKey = null;
-		int id = getNumCompanies()+1;
 		try (Connection conn = (Connection) ConnexionDB.INSTANCE.getConnection();){
 			crt = (PreparedStatement) conn.prepareStatement(CREATE_REQUEST);			
-			crt.setInt(1, id);
 			crt.setString(2, cpy.getName());			
 			crt.executeUpdate();
-			// Can't call commit, when autocommit:true
-			// conn.commit();
+			
 			generatedKey = crt.getGeneratedKeys();
-			cpy.setId(generatedKey.getInt("ID"));
+			int id = generatedKey.getInt("ID");
+			
+			cpy.setId(id);
 			logger.info("Created: " + cpy);		
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
-			logger.warn("Warning: " + e.getMessage());
+			logger.error("CreationOfInstanceError: ", e.getMessage(), e);
+			throw new ModifyDatabaseException("CreationOfInstanceError: company couldn't be created", e);
 		}
 	}
 
 	
-	private void update(String field, Company cmp) {
+	private void update(String field, Company cmp) throws ModifyDatabaseException {
 		PreparedStatement upd;
 		try (Connection conn = (Connection) ConnexionDB.INSTANCE.getConnection();){
 			upd = (PreparedStatement) conn.prepareStatement(UPDTATE_REQUEST);
@@ -145,18 +146,20 @@ public enum CompanyDB {
 			// conn.commit();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
-			logger.warn("Warning: " + e.getMessage());
+			logger.error("UpdateOfInstanceError: ", e.getMessage(), e);
+			throw new ModifyDatabaseException("UpdatenOfInstanceError: company couldn't be updated", e);
 		}
 		
 	}
 	
-	private void delete(Company cmp) {
+	private void delete(Company cmp) throws ModifyDatabaseException {
 		try (Connection conn = (Connection) ConnexionDB.INSTANCE.getConnection();){
 			PreparedStatement upd = (PreparedStatement) conn.prepareStatement(DELETE_REQUEST);
 			upd.setInt(1, cmp.getId());
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
-			logger.warn("Warning: " + e.getMessage());
+			logger.error("DeletionOfInstanceError: ", e.getMessage(), e);
+			throw new ModifyDatabaseException("DeletionOfInstanceError: company couldn't be deleted", e);
 		}
 	}
 	

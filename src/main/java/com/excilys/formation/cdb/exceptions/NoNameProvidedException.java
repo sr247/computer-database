@@ -1,6 +1,6 @@
 package com.excilys.formation.cdb.exceptions;
 
-public class NoNameProvidedException extends Exception {
+public class NoNameProvidedException extends ValidateException {
 
 	public NoNameProvidedException() {
 		super();

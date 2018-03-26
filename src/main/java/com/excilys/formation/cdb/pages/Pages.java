@@ -2,7 +2,7 @@ package com.excilys.formation.cdb.pages;
 
 import java.util.List;
 
-import com.excilys.formation.cdb.exceptions.InstanceNotFoundException;
+import com.excilys.formation.cdb.exceptions.InstanceNotInDatabaseException;
 import com.excilys.formation.cdb.utils.Pair;
 
 public abstract class Pages<T> {
@@ -55,7 +55,7 @@ public abstract class Pages<T> {
 		PAGE_STRIDE = stride;
 	}
 	
-	public abstract void next() throws InstanceNotFoundException;
+	public abstract void next() throws InstanceNotInDatabaseException;
 	
-	public abstract void preview() throws InstanceNotFoundException;
+	public abstract void preview() throws InstanceNotInDatabaseException;
 }

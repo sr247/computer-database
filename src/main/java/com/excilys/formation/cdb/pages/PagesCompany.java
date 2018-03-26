@@ -2,7 +2,7 @@ package com.excilys.formation.cdb.pages;
 
 import java.util.List;
 
-import com.excilys.formation.cdb.exceptions.InstanceNotFoundException;
+import com.excilys.formation.cdb.exceptions.InstanceNotInDatabaseException;
 import com.excilys.formation.cdb.model.Company;
 import com.excilys.formation.cdb.service.WebServiceCompany;
 
@@ -20,7 +20,7 @@ public class PagesCompany<T> extends Pages<T> {
 	}
 
 	@Override
-	public void next() throws InstanceNotFoundException {
+	public void next() throws InstanceNotInDatabaseException {
 		// TODO Auto-generated method stub
 		WebServiceCompany webcpy = WebServiceCompany.INSTANCE;
 		int max = webcpy.getNumberOf();
@@ -35,7 +35,7 @@ public class PagesCompany<T> extends Pages<T> {
 	}
 
 	@Override
-	public void preview() throws InstanceNotFoundException {
+	public void preview() throws InstanceNotInDatabaseException {
 		// TODO Auto-generated method stub
 		WebServiceCompany webcpy = WebServiceCompany.INSTANCE;
 		pageIndex -= PAGE_STRIDE;

@@ -9,7 +9,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.excilys.formation.cdb.exceptions.InstanceNotFoundException;
+import com.excilys.formation.cdb.exceptions.InstanceNotInDatabaseException;
 import com.excilys.formation.cdb.mapper.ComputerMapperDTO;
 import com.excilys.formation.cdb.model.ComputerDTO;
 import com.excilys.formation.cdb.pages.Pages;
@@ -56,7 +56,7 @@ public class DashboardServlet extends HttpServlet {
 			PagesComputer<ComputerDTO> computerPage = 
 					new PagesComputer<ComputerDTO>(ComputerMapperDTO.map(webServComp.getList(Pages.getFrom(), Pages.getTo())));
 			request.setAttribute("computers", computerPage.getContent());
-		} catch (InstanceNotFoundException e) {
+		} catch (InstanceNotInDatabaseException e) {
 			// TODO Auto-generated catch block
 			logger.warn("[WARN] (Dashboard): {}", e.getMessage(), e);
 		}

@@ -15,6 +15,7 @@
 		<!-- sets the projects encoding to UTF-8 -->
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<java.version>1.8</java.version>
+		<javax.version>4.0.0</javax.version>
 		<mojo.version>1.2.1</mojo.version>
 
 		<!-- checkstyle -->
@@ -29,11 +30,11 @@
 		<log4j.version>1.2.17</log4j.version>
 		<slf4j.version>1.7.25</slf4j.version>
 		<logback.version>1.2.3</logback.version>
-		<groovy.version>2.3.5</groovy.version>
 
 		<!-- runtime -->
 		<mysql.version>5.1.38</mysql.version>
-		<myqsl-jdbc.version>6.0.6</myqsl-jdbc.version>
+		<myqsl-jdbc.version>8.0.8-dmr</myqsl-jdbc.version>
+		
 	</properties>
 
 	<build>
@@ -49,7 +50,6 @@
 					<target>${java.version}</target>
 				</configuration>
 			</plugin>
-
 
 			<!-- plugin maven for sunfire test -->
 			<plugin>
@@ -85,7 +85,6 @@
 				<configuration>
 					<mainClass>com.excilys.formation.java.ui.CLI_UI</mainClass>
 				</configuration>
-
 			</plugin>
 		</plugins>
 	</build>
@@ -113,9 +112,6 @@
 			<version>${junit.version}</version>
 			<scope>test</scope>
 		</dependency>
-
-
-
 		<dependency>
 			<groupId>org.mockito</groupId>
 			<artifactId>mockito-all</artifactId>
@@ -123,12 +119,46 @@
 			<scope>test</scope>
 		</dependency>
 
+		<!-- logging -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>${slf4j.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>${logback.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-core</artifactId>
+            <version>${logback.version}</version>
+        </dependency>
+		
 		<!-- database -->
 		<dependency>
 			<groupId>mysql</groupId>
 			<artifactId>mysql-connector-java</artifactId>
 			<version>${myqsl-jdbc.version}</version>
 		</dependency>
+		
+		<!-- httpServlet -->
+		<dependency>
+		    <groupId>javax.servlet</groupId>
+		    <artifactId>javax.servlet-api</artifactId>
+		    <version>${javax.version}</version>
+		    <scope>provided</scope>
+		</dependency>
+		
+		<!-- jstl -->
+		<dependency>
+    		<groupId>jstl</groupId>
+    		<artifactId>jstl</artifactId>
+    		<version>1.2</version>
+		</dependency>		
 	</dependencies>
+	
+	
 
 </project>

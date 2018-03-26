@@ -7,8 +7,7 @@ public class Company {
 	public Company(int id, String name) {
 		this.id = id;
 		this.name = name;
-	}
-	
+	}	
 	
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()

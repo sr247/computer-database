@@ -1,22 +1,13 @@
 package com.excilys.formation.cdb.model;
 
-import java.time.LocalDate;
-
-public class Computer {
-	
+public class ComputerDTO {
 	private int id;
 	private String name;
-	private LocalDate introduced;
-	private LocalDate discontinued;
-
-	// Ce champ deviendra un objet company à part entière.
-	private Company company;
-	/*
-	 * Fonctionnalité  1 à tester immédiatement 
-	 * vérifier le lien avec JDBC (persitance)
-	 */
-
-	public Computer(int id, String name, LocalDate introduced, LocalDate discontinued, Company company) {
+	private String introduced;
+	private String discontinued;
+	private String company;
+	
+	public ComputerDTO(int id, String name, String introduced, String discontinued, String company) {
 		this.id = id;
 		this.name = name;
 		this.introduced = introduced;
@@ -25,7 +16,7 @@ public class Computer {
 	}
 	
 
-	public Computer(String name, LocalDate introduced, LocalDate discontinued, Company company) {
+	public ComputerDTO(String name, String introduced, String discontinued, String company) {
 		this.id = 0;
 		this.name = name;
 		this.introduced = introduced;
@@ -72,7 +63,7 @@ public class Computer {
 	/**
 	 * @return the introduced
 	 */
-	public LocalDate getIntroduced() {
+	public String getIntroduced() {
 		return introduced;
 	}
 
@@ -81,7 +72,7 @@ public class Computer {
 	/**
 	 * @param introduced the introduced to set
 	 */
-	public void setIntroduced(LocalDate introduced) {
+	public void setIntroduced(String introduced) {
 		this.introduced = introduced;
 	}
 
@@ -90,7 +81,7 @@ public class Computer {
 	/**
 	 * @return the discontinued
 	 */
-	public LocalDate getDiscontinued() {
+	public String getDiscontinued() {
 		return discontinued;
 	}
 
@@ -99,7 +90,7 @@ public class Computer {
 	/**
 	 * @param discontinued the discontinued to set
 	 */
-	public void setDiscontinued(LocalDate discontinued) {
+	public void setDiscontinued(String discontinued) {
 		this.discontinued = discontinued;
 	}
 
@@ -108,7 +99,7 @@ public class Computer {
 	/**
 	 * @return the company_id
 	 */
-	public Company getCompany() {
+	public String getCompany() {
 		return company;
 	}
 
@@ -117,7 +108,7 @@ public class Computer {
 	/**
 	 * @param company_id the company_id to set
 	 */
-	public void setCompany(Company company) {
+	public void setCompany(String company) {
 		this.company = company;
 	}
 	
@@ -129,12 +120,11 @@ public class Computer {
 				+ "introduced=" + introduced + ", "
 				+ "discontinued=" + discontinued + ", "
 				+ "company=" + company + ")";
-		
 	}
 	
 	@Override
 	public boolean equals(Object  o) {
-		Computer cmp = (Computer) o;
+		ComputerDTO cmp = (ComputerDTO) o;
 		return this.id == cmp.id
 				&& this.name.equals(cmp.name)
 				&& this.introduced == cmp.introduced

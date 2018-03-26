@@ -10,6 +10,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+
 import com.excilys.formation.cdb.model.Company;
 import com.excilys.formation.cdb.persistence.CompanyDB;
 import com.excilys.formation.cdb.persistence.ConnexionDB;
@@ -23,6 +24,7 @@ class CompanyMapperTest {
 	
 	@BeforeAll
 	static void setUpBeforeClass() throws Exception {
+		
 		CompanyDB cmpDB = CompanyDB.INSTANCE;		
 		expected = cmpDB.getCompanyByID(1).get();		
 		PreparedStatement ps = null;

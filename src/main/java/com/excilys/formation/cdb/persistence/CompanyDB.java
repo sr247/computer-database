@@ -9,19 +9,20 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import com.excilys.formation.cdb.exceptions.InstanceNotFoundException;
 import com.excilys.formation.cdb.mapper.CompanyMapper;
 import com.excilys.formation.cdb.model.Company;
 
 public enum CompanyDB {
 	
 	INSTANCE;
-		
-	private static int numCompanies = -1;	
+	private static org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(CompanyDB.class);
 	
+	private static int numCompanies = -1;	
 	private final static String COUNT_NUMBER_OF = "SELECT COUNT(*) AS NUM FROM company;";
-	private final static String SELECT_ONE = "SELECT ID, NAME FROM company WHERE ID=?;";
-	private final static String SELECT_UNLIMITED_LIST = "SELECT ID, NAME FROM company ORDER BY ID;";
-	private final static String SELECT_LIMITED_LIST = "SELECT ID, NAME FROM company ORDER BY ID LIMIT ? OFFSET ?;";
+	private final static String SELECT_ONE = "SELECT ID as caId, NAME as caName FROM company WHERE ID=?;";
+	private final static String SELECT_UNLIMITED_LIST = "SELECT ID as caId, NAME as caName FROM company ca ORDER BY ID;";
+	private final static String SELECT_LIMITED_LIST = "SELECT ID as caId, NAME as caName FROM company ORDER BY ID LIMIT ? OFFSET ?;";
 	private final static String CREATE_REQUEST  = "INSERT INTO company NAME VALUES ?;";
 	private final static String UPDTATE_REQUEST = "UPDATE company SET ?=? WHERE ID=?;";
 	private final static String DELETE_REQUEST  = "DELETE FROM company WHERE ID=?";
@@ -42,13 +43,13 @@ public enum CompanyDB {
 				numCompanies = res.getInt("NUM");
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
-				e.printStackTrace();
+				logger.warn("Waring: " + e.getMessage());
 			}
 		}		
 		return numCompanies;
 	}
 	
-	public Optional <Company> getCompanyByID(int id) {
+	public Optional <Company> getCompanyByID(int id) throws InstanceNotFoundException {
 			PreparedStatement sel = null;
 			ResultSet res = null;
 			Company cpy = null;
@@ -61,12 +62,13 @@ public enum CompanyDB {
 				cpy = CompanyMapper.map(res).get();
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
-				e.printStackTrace();
+				logger.warn("Warning: " + e.getMessage());
+				throw new InstanceNotFoundException("Erreur: entreprise introuvable");
 			}
 			return Optional.ofNullable(cpy);
 	}
 	
-	public List<Company> getCompanyList() {
+	public List<Company> getCompanyList() throws InstanceNotFoundException {
 		List<Company> companies = new ArrayList<Company>();
 		// Solutionner pour les preperedStatement plutot : Plus sécuritaire au niveau des injection sql.
 		try (Connection conn = (Connection) ConnexionDB.INSTANCE.getConnection();){
@@ -77,12 +79,14 @@ public enum CompanyDB {
 				companies.add(CompanyMapper.map(res).get());
 			
 		}catch (Exception e) {
-			e.printStackTrace();
+			// TODO Auto-generated catch block
+			logger.warn("Warning: " + e.getMessage());
+			throw new InstanceNotFoundException("Erreur: entreprise introuvable");
 		}		
 		return companies;
 	}
 	
-	public List<Company> getCompanyList(int from, int to) {
+	public List<Company> getCompanyList(int from, int to) throws InstanceNotFoundException {
 		List<Company> companies = new ArrayList<Company>();
 		// Solutionner pour les preperedStatement plutot : Plus sécuritaire au niveau des injection sql.
 		try (Connection conn = (Connection) ConnexionDB.INSTANCE.getConnection();){
@@ -96,7 +100,9 @@ public enum CompanyDB {
 				companies.add(CompanyMapper.map(res).get());
 			
 		}catch (Exception e) {
-			e.printStackTrace();
+			// TODO Auto-generated catch block
+			logger.warn("Warning: " + e.getMessage());
+			throw new InstanceNotFoundException("Erreur: entreprise introuvable");
 		}
 	
 		return companies;
@@ -108,26 +114,19 @@ public enum CompanyDB {
 		ResultSet generatedKey = null;
 		int id = getNumCompanies()+1;
 		try (Connection conn = (Connection) ConnexionDB.INSTANCE.getConnection();){
-			crt = (PreparedStatement) conn.prepareStatement(CREATE_REQUEST);
-			
+			crt = (PreparedStatement) conn.prepareStatement(CREATE_REQUEST);			
 			crt.setInt(1, id);
-			crt.setString(2, cpy.getName());
-			
+			crt.setString(2, cpy.getName());			
 			crt.executeUpdate();
 			// Can't call commit, when autocommit:true
 			// conn.commit();
 			generatedKey = crt.getGeneratedKeys();
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		try {
 			cpy.setId(generatedKey.getInt("ID"));
+			logger.info("Created: " + cpy);		
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.warn("Warning: " + e.getMessage());
 		}
-		System.out.println("Created:" + cpy);		
 	}
 
 	
@@ -146,7 +145,7 @@ public enum CompanyDB {
 			// conn.commit();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.warn("Warning: " + e.getMessage());
 		}
 		
 	}
@@ -157,7 +156,7 @@ public enum CompanyDB {
 			upd.setInt(1, cmp.getId());
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.warn("Warning: " + e.getMessage());
 		}
 	}
 	

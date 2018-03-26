@@ -14,6 +14,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import com.excilys.formation.cdb.exceptions.InstanceNotFoundException;
 import com.excilys.formation.cdb.model.Company;
 import com.excilys.formation.cdb.model.Computer;
 import com.excilys.formation.cdb.persistence.ComputerDB;
@@ -49,7 +50,7 @@ class ComputerDBTest {
 	}
 
 	@Test
-	void testGetComputerByID() {
+	void testGetComputerByID() throws InstanceNotFoundException {
 		ComputerDB connDB = ComputerDB.INSTANCE;
 		Computer expected = new Computer(1, "MacBook Pro 15.4 inch", null, null, new Company(1, "Apple Inc."));
 		Computer actual = connDB.getComputerByID(1);
@@ -68,7 +69,7 @@ class ComputerDBTest {
 	}
 
 	@Test
-	void testGetComputerListIntInt() {
+	void testGetComputerListIntInt() throws InstanceNotFoundException {
 		ComputerDB connDB = ComputerDB.INSTANCE;
 		List<Computer> expected = new ArrayList<Computer>();
 		expected.add(new Computer(1, "MacBook Pro 15.4 inch", null, null, new Company(1, "Apple Inc.")));

@@ -2,6 +2,8 @@ package com.excilys.formation.cdb.exceptions;
 
 public class NumberOfInstanceException extends DAOException {
 
+	private static final long serialVersionUID = -2979893325048940969L;
+
 	public NumberOfInstanceException() {
 		super();
 		// TODO Auto-generated constructor stub

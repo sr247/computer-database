@@ -1,6 +1,8 @@
 package com.excilys.formation.cdb.exceptions;
 
-public class IncorrectFieldException extends Exception {
+public class IncorrectFieldException extends ValidateException {
+
+	private static final long serialVersionUID = 7061341174505257036L;
 
 	public IncorrectFieldException() {
 		super();
@@ -27,6 +29,5 @@ public class IncorrectFieldException extends Exception {
 		super(cause);
 		// TODO Auto-generated constructor stub
 	}
-
 	
 }

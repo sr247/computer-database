@@ -1,6 +1,8 @@
 package com.excilys.formation.cdb.exceptions;
 
-public class ValidateException extends Exception{
+public class ValidateException extends Exception {
+
+	private static final long serialVersionUID = -4266732324638974667L;
 
 	public ValidateException() {
 		super();

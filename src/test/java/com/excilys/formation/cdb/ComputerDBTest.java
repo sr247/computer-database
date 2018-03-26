@@ -15,6 +15,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import com.excilys.formation.cdb.exceptions.InstanceNotInDatabaseException;
+import com.excilys.formation.cdb.exceptions.NumberOfInstanceException;
 import com.excilys.formation.cdb.model.Company;
 import com.excilys.formation.cdb.model.Computer;
 import com.excilys.formation.cdb.persistence.ComputerDB;
@@ -43,7 +44,7 @@ class ComputerDBTest {
 	}
 
 	@Test
-	void testGetNumComputers() {
+	void testGetNumComputers() throws NumberOfInstanceException {
 		ComputerDB connDB = ComputerDB.INSTANCE;
 		int expected = 574;
 		assertEquals(expected, connDB.getNumComputers());

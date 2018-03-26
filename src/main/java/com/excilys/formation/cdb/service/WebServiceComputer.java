@@ -3,9 +3,8 @@ package com.excilys.formation.cdb.service;
 import java.util.List;
 
 import com.excilys.formation.cdb.exceptions.DAOException;
-import com.excilys.formation.cdb.exceptions.IncorrectFieldException;
-import com.excilys.formation.cdb.exceptions.InstanceNotInDatabaseException;
 import com.excilys.formation.cdb.exceptions.ServiceManagerException;
+import com.excilys.formation.cdb.exceptions.ValidateException;
 import com.excilys.formation.cdb.model.Computer;
 import com.excilys.formation.cdb.persistence.ComputerDB;
 
@@ -18,54 +17,96 @@ public enum WebServiceComputer {
 	private WebServiceComputer() {
 	
 	}	
-	
-	
+		
 	public int getNumberOf() throws ServiceManagerException{
 		ComputerDB cmpDB = ComputerDB.INSTANCE;
 		try {
 			return cmpDB.getNumComputers();
 		}catch(DAOException e) {
-			logger.error("WebServiceError: {}", e.getMessage(), e);
+			logger.error("{}: {}", e.getClass().getSimpleName(), e.getMessage(), e);
 			throw new ServiceManagerException("WebServiceError: " + e.getMessage(), e);
 		}
 	}
 	
-	public Computer getComputer(int id) throws ServiceManagerException, InstanceNotInDatabaseException {
+	public Computer getComputer(int id) throws ServiceManagerException {
 		ComputerDB cmpDB = ComputerDB.INSTANCE;
-		return cmpDB.getComputerByID(id);
+		try {
+			return cmpDB.getComputerByID(id);
+		} catch (DAOException e) {
+			// TODO Auto-generated catch block
+			logger.error("{}: {}", e.getClass().getSimpleName(), e.getMessage(), e);
+			throw new ServiceManagerException("WebServiceError: " + e.getMessage(), e);
+		}
 	}
 	
-	public List<Computer> getAllList() throws InstanceNotInDatabaseException {
+	public List<Computer> getAllList() throws ServiceManagerException {
 		ComputerDB cmpDB = ComputerDB.INSTANCE;
-		return cmpDB.getComputerList();
+		try {
+			return cmpDB.getComputerList();
+		} catch (DAOException e) {
+			// TODO Auto-generated catch block
+			logger.error("{}: {}", e.getClass().getSimpleName(), e.getMessage(), e);
+			throw new ServiceManagerException("WebServiceError: " + e.getMessage(), e);
+		}
 	}
 	
-	public List<Computer> getList(int from, int to) throws InstanceNotInDatabaseException {
+	public List<Computer> getList(int from, int to) throws ServiceManagerException {
 		ComputerDB cmpDB = ComputerDB.INSTANCE;
-		return cmpDB.getComputerList(from, to);
+		try {
+			return cmpDB.getComputerList(from, to);
+		} catch (DAOException e) {
+			// TODO Auto-generated catch block
+			logger.error("{}: {}", e.getClass().getSimpleName(), e.getMessage(), e);
+			throw new ServiceManagerException("WebServiceError: " + e.getMessage(), e);
+		}
 	}
 	
 	
-	public void createComputer(Computer cmp) throws IncorrectFieldException, InstanceNotInDatabaseException {
+	public void createComputer(Computer cmp) throws ServiceManagerException {
 		
 		ValidateComputer vcmp = ValidateComputer.INSTANCE;
 		ComputerDB cmpDB = ComputerDB.INSTANCE;		
-		vcmp.validate(cmp);		
-		cmpDB.create(cmp);
+		try {
+			vcmp.validate(cmp);		
+			cmpDB.create(cmp);
+		} catch (DAOException e) {
+			// TODO Auto-generated catch block
+			logger.error("{}: {}", e.getClass().getSimpleName(), e.getMessage(), e);
+			throw new ServiceManagerException("WebServiceError: " + e.getMessage(), e);
+		} catch (ValidateException e) {
+			logger.error("{}: {}", e.getClass().getSimpleName(), e.getMessage(), e);
+			throw new ServiceManagerException("WebServiceError: " + e.getMessage(), e);
+		}
 	}
 	
-	public void updateComputer(Computer cmp) throws IncorrectFieldException, InstanceNotInDatabaseException {
+	public void updateComputer(Computer cmp) throws ServiceManagerException {
 		
 		ValidateComputer vcmp = ValidateComputer.INSTANCE;
 		ComputerDB cmpDB = ComputerDB.INSTANCE;
-		vcmp.validate(cmp);		
-		cmpDB.update(cmp);
+		try {
+			vcmp.validate(cmp);	
+			cmpDB.update(cmp);
+		} catch (DAOException e) {
+			// TODO Auto-generated catch block
+			logger.error("{}: {}", e.getClass().getSimpleName(), e.getMessage(), e);
+			throw new ServiceManagerException("WebServiceError: " + e.getMessage(), e);
+		} catch (ValidateException e) {
+			logger.error("{}: {}", e.getClass().getSimpleName(), e.getMessage(), e);
+			throw new ServiceManagerException("WebServiceError: " + e.getMessage(), e);
+		}
 	}
 	
-	public void deleteComputer(int id) throws InstanceNotInDatabaseException {
+	public void deleteComputer(int id) throws ServiceManagerException {
 		ComputerDB cmpDB = ComputerDB.INSTANCE;
-		Computer cmp = getComputer(id);
-		cmpDB.delete(cmp);
+		Computer cmp;
+		try {
+			cmp = cmpDB.getComputerByID(id);
+			cmpDB.delete(cmp);
+		} catch (DAOException e) {
+			// TODO Auto-generated catch block
+			logger.error("{}: {}", e.getClass().getSimpleName(), e.getMessage(), e);
+			throw new ServiceManagerException("WebServiceError: " + e.getMessage(), e);
+		}
 	}
 
 	

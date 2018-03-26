@@ -2,6 +2,7 @@ package com.excilys.formation.cdb.exceptions;
 
 public class InstanceNotInDatabaseException extends DAOException {
 
+	private static final long serialVersionUID = 4984658391421858630L;
 
 	public InstanceNotInDatabaseException() {
 		super();

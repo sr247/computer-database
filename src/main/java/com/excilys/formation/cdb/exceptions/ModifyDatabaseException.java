@@ -2,6 +2,8 @@ package com.excilys.formation.cdb.exceptions;
 
 public class ModifyDatabaseException extends DAOException {
 
+	private static final long serialVersionUID = -7961167233580926877L;
+
 	public ModifyDatabaseException() {
 		super();
 		// TODO Auto-generated constructor stub

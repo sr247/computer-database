@@ -2,7 +2,7 @@ package com.excilys.formation.cdb.pages;
 
 import java.util.List;
 
-import com.excilys.formation.cdb.exceptions.InstanceNotFoundException;
+import com.excilys.formation.cdb.exceptions.ServiceManagerException;
 import com.excilys.formation.cdb.service.WebServiceComputer;
 
 public class PagesComputer<T> extends Pages<T> {
@@ -17,8 +17,9 @@ public class PagesComputer<T> extends Pages<T> {
 		// TODO Auto-generated constructor stub
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public void next() throws InstanceNotFoundException {
+	public void next() throws ServiceManagerException {
 		// TODO Auto-generated method stub
 		WebServiceComputer webcmp = WebServiceComputer.INSTANCE;
 		int max = webcmp.getNumberOf();
@@ -31,8 +32,9 @@ public class PagesComputer<T> extends Pages<T> {
 		this.page = (List<T>) webcmp.getList(pageIndex, pageIndex+PAGE_STRIDE);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public void preview() throws InstanceNotFoundException {
+	public void preview() throws ServiceManagerException  {
 		// TODO Auto-generated method stub
 		WebServiceComputer webcmp = WebServiceComputer.INSTANCE;
 		pageIndex -= PAGE_STRIDE;

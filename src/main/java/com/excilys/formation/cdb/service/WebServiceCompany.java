@@ -1,42 +1,65 @@
 package com.excilys.formation.cdb.service;
 
 import java.util.List;
+import java.util.Optional;
 
-import com.excilys.formation.cdb.exceptions.InstanceNotFoundException;
+import com.excilys.formation.cdb.exceptions.DAOException;
+import com.excilys.formation.cdb.exceptions.ServiceManagerException;
 import com.excilys.formation.cdb.model.Company;
-import com.excilys.formation.cdb.model.Computer;
 import com.excilys.formation.cdb.persistence.CompanyDB;
-import com.excilys.formation.cdb.persistence.ComputerDB;
 
 public enum WebServiceCompany {
 	
 	INSTANCE;
+	private static org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(WebServiceCompany.class);
 
 	private WebServiceCompany() {
 		
 	}
 
-	public int getNumberOf() {
+	public int getNumberOf() throws ServiceManagerException {
 		CompanyDB cpyDB = CompanyDB.INSTANCE;
-		return cpyDB.getNumCompanies();
+		try {
+			return cpyDB.getNumCompanies();			
+		}catch(DAOException e) {
+			logger.error("WebServiceError: {}", e.getMessage(), e);
+			throw new ServiceManagerException("WebServiceError: " + e.getMessage(), e);
+		}
 	}
 
-	public List<Company> getAllList() throws InstanceNotFoundException {
+	public List<Company> getAllList() throws ServiceManagerException {
 		CompanyDB cmpDB = CompanyDB.INSTANCE;
-		return cmpDB.getCompanyList();
-	}
-	
-	public List<Company> getList(int from, int to) throws InstanceNotFoundException{
-		CompanyDB cpnDB = CompanyDB.INSTANCE;
-		if(from == 0 && to == 0) {
-			return cpnDB.getCompanyList();
+		try {
+			return cmpDB.getCompanyList();			
+		}catch(DAOException e) {
+			logger.error("WebServiceError: {}", e.getMessage(), e);
+			throw new ServiceManagerException("WebServiceError: " + e.getMessage(), e);
 		}
-		return cpnDB.getCompanyList(from, to);
 	}
 	
-	public Company getCompany(String id) throws NumberFormatException, InstanceNotFoundException {
+	public List<Company> getList(int from, int to) throws ServiceManagerException{
+		CompanyDB cpnDB = CompanyDB.INSTANCE;
+		try {
+			if(from == 0 && to == 0) {
+				return cpnDB.getCompanyList();
+			}
+			return cpnDB.getCompanyList(from, to);			
+		}catch (DAOException e) {
+			logger.error("WebServiceError: {}", e.getMessage(), e);
+			throw new ServiceManagerException("WebServiceError: " + e.getMessage(), e);
+		}
+	}
+	
+	public Company getCompany(String id) throws ServiceManagerException {
 		CompanyDB cpyDB = CompanyDB.INSTANCE;
-		return cpyDB.getCompanyByID(Integer.valueOf(id)).get();
+		Optional<Company> optCompany = Optional.empty();
+		try {
+			optCompany = cpyDB.getCompanyByID(Integer.valueOf(id));
+		}catch(NumberFormatException|DAOException e) {
+			logger.error("WebServiceError: {}", e.getMessage(), e);
+			throw new ServiceManagerException("WebServiceError: " + e.getMessage(), e);
+		}
+		return optCompany.get();
 	}
 
 	

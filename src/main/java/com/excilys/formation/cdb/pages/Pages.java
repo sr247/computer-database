@@ -2,7 +2,7 @@ package com.excilys.formation.cdb.pages;
 
 import java.util.List;
 
-import com.excilys.formation.cdb.exceptions.InstanceNotFoundException;
+import com.excilys.formation.cdb.exceptions.ServiceManagerException;
 import com.excilys.formation.cdb.utils.Pair;
 
 public abstract class Pages<T> {
@@ -10,7 +10,7 @@ public abstract class Pages<T> {
 	protected int num;
 	protected static int pageIndex;
 	protected static Pair<Integer, Integer> pageRange;
-	protected static int PAGE_STRIDE = 5;
+	protected static int PAGE_STRIDE = 10;
 	
 	public Pages() {
 		
@@ -55,7 +55,7 @@ public abstract class Pages<T> {
 		PAGE_STRIDE = stride;
 	}
 	
-	public abstract void next() throws InstanceNotFoundException;
+	public abstract void next() throws ServiceManagerException;
 	
-	public abstract void preview() throws InstanceNotFoundException;
+	public abstract void preview() throws ServiceManagerException;
 }

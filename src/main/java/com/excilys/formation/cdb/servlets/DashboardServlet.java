@@ -9,12 +9,11 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.excilys.formation.cdb.exceptions.InstanceNotFoundException;
+import com.excilys.formation.cdb.exceptions.ServiceManagerException;
 import com.excilys.formation.cdb.mapper.ComputerMapperDTO;
 import com.excilys.formation.cdb.model.ComputerDTO;
 import com.excilys.formation.cdb.pages.Pages;
 import com.excilys.formation.cdb.pages.PagesComputer;
-import com.excilys.formation.cdb.persistence.CompanyDB;
 import com.excilys.formation.cdb.service.WebServiceComputer;
 
 /**
@@ -22,8 +21,8 @@ import com.excilys.formation.cdb.service.WebServiceComputer;
  */
 @WebServlet("/dashboard")
 public class DashboardServlet extends HttpServlet {
-	private static final long serialVersionUID = 1L;
 	
+	private static final long serialVersionUID = 7292200966426509099L;
 	private static org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(DashboardServlet.class);
 	
     /**
@@ -41,27 +40,35 @@ public class DashboardServlet extends HttpServlet {
 		// TODO Auto-generated method stub
 		response.getWriter().append("Served at: ").append(request.getContextPath());
 		WebServiceComputer webServComp = WebServiceComputer.INSTANCE;
-		int numComputer = webServComp.getNumberOf();
-		request.setAttribute("numComputer", numComputer);		
 		
-		List<ComputerDTO> computers = null;
+		int numComputer = 0;
 		try {
-			
-			String s = null;
-			if((s = request.getParameter("stride")) != null) {				
-				Pages.setStride(Integer.valueOf(s));			
-			}else {
-				logger.debug("ERROR !");
-			}
-			PagesComputer<ComputerDTO> computerPage = 
-					new PagesComputer<ComputerDTO>(ComputerMapperDTO.map(webServComp.getList(Pages.getFrom(), Pages.getTo())));
-			request.setAttribute("computers", computerPage.getContent());
-		} catch (InstanceNotFoundException e) {
+			numComputer = webServComp.getNumberOf();
+			request.setAttribute("numComputer", numComputer);		
+		} catch (ServiceManagerException e) {
 			// TODO Auto-generated catch block
-			logger.warn("[WARN] (Dashboard): {}", e.getMessage(), e);
+			logger.debug("DashBoardServletInfo: {}", e.getMessage(), e);
+			throw new ServletException(e.getMessage(), e);
 		}
-		request.setAttribute("pageFrom", Pages.getFrom());
-		request.setAttribute("pageTo", Pages.getTo());
+		
+		String stride = null;
+		if((stride = request.getParameter("stride")) != null) {				
+			Pages.setStride(Integer.valueOf(stride));			
+		}else {
+			logger.debug("DashBoardServletInfo: No stride provided");
+		}
+		
+		PagesComputer<ComputerDTO> computerPage = null;
+		try {
+			computerPage = new PagesComputer<ComputerDTO>(ComputerMapperDTO.map(webServComp.getList(Pages.getFrom(), Pages.getTo())));
+			request.setAttribute("computers", computerPage.getContent());
+			request.setAttribute("pageFrom", Pages.getFrom());
+			request.setAttribute("pageTo", Pages.getTo());
+		} catch (ServiceManagerException e) {
+			// TODO Auto-generated catch block
+			logger.debug("DashBoardServletInfo: {}", e.getMessage(), e);
+			throw new ServletException(e.getMessage(), e);
+		}
 		
 		this.getServletContext().getRequestDispatcher("/WEB-INF/dashboard.jsp").forward(request, response);
 	}	

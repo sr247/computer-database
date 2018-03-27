@@ -16,7 +16,7 @@
 <body>
     <header class="navbar navbar-inverse navbar-fixed-top">
         <div class="container">
-            <a class="navbar-brand" href="Dashboard"> Application - Computer Database </a>
+            <a class="navbar-brand" href="dashboard"> Application - Computer Database </a>
         </div>
     </header>
 
@@ -34,7 +34,7 @@
                     </form>
                 </div>
                 <div class="pull-right">
-                    <a class="btn btn-success" id="addComputer" href="addComputer">Add Computer</a> 
+                    <a class="btn btn-success" id="addComputer" href="addComputer?submit=false">Add Computer</a> 
                     <a class="btn btn-default" id="editComputer" href="#" onclick="$.fn.toggleEditMode();">Edit</a>
                 </div>
             </div>
@@ -104,7 +104,7 @@
                     	<span aria-hidden="true">&laquo;</span>
 					</a>
 				</li>
-				<c:forEach var="i" begin="${pageFrom+1}" end="${pageTo}" step="1">
+				<c:forEach var="i" begin="${pageFrom+1}" end="${pageFrom+5}" step="1">
             		<li><a href="#">${pageFrom+i}</a></li>				
 				</c:forEach>
 				<li>
@@ -116,9 +116,9 @@
         	
         <div class="btn-group btn-group-sm pull-right" role="group" >
 	        <!-- Gérer les url via tag lib -->
-            <button type="button" class="btn btn-default" onclick="location.href='Dashboard?stride=10'">10</button>
-            <button type="button" class="btn btn-default" onclick="location.href='Dashboard?stride=50'">50</button>
-            <button type="button" class="btn btn-default" onclick="location.href='Dashboard?stride=100'">100</button>
+            <button type="button" class="btn btn-default" onclick="location.href='dashboard?stride=10'">10</button>
+            <button type="button" class="btn btn-default" onclick="location.href='dashboard?stride=50'">50</button>
+            <button type="button" class="btn btn-default" onclick="location.href='dashboard?stride=100'">100</button>
         </div>
 
     </footer>

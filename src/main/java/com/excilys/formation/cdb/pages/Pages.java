@@ -10,7 +10,7 @@ public abstract class Pages<T> {
 	protected int num;
 	protected static int pageIndex;
 	protected static Pair<Integer, Integer> pageRange;
-	protected static int PAGE_STRIDE = 5;
+	protected static int PAGE_STRIDE = 10;
 	
 	public Pages() {
 		

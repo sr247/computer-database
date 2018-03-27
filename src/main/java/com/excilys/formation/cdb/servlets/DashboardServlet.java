@@ -21,8 +21,8 @@ import com.excilys.formation.cdb.service.WebServiceComputer;
  */
 @WebServlet("/dashboard")
 public class DashboardServlet extends HttpServlet {
-	private static final long serialVersionUID = 1L;
 	
+	private static final long serialVersionUID = 7292200966426509099L;
 	private static org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(DashboardServlet.class);
 	
     /**
@@ -44,29 +44,31 @@ public class DashboardServlet extends HttpServlet {
 		int numComputer = 0;
 		try {
 			numComputer = webServComp.getNumberOf();
+			request.setAttribute("numComputer", numComputer);		
 		} catch (ServiceManagerException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.debug("DashBoardServletInfo: {}", e.getMessage(), e);
+			throw new ServletException(e.getMessage(), e);
 		}
-		request.setAttribute("numComputer", numComputer);		
 		
-		List<ComputerDTO> computers = null;
-		String s = null;
-		if((s = request.getParameter("stride")) != null) {				
-			Pages.setStride(Integer.valueOf(s));			
+		String stride = null;
+		if((stride = request.getParameter("stride")) != null) {				
+			Pages.setStride(Integer.valueOf(stride));			
 		}else {
-			logger.debug("ERROR !");
+			logger.debug("DashBoardServletInfo: No stride provided");
 		}
+		
 		PagesComputer<ComputerDTO> computerPage = null;
 		try {
 			computerPage = new PagesComputer<ComputerDTO>(ComputerMapperDTO.map(webServComp.getList(Pages.getFrom(), Pages.getTo())));
+			request.setAttribute("computers", computerPage.getContent());
+			request.setAttribute("pageFrom", Pages.getFrom());
+			request.setAttribute("pageTo", Pages.getTo());
 		} catch (ServiceManagerException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.debug("DashBoardServletInfo: {}", e.getMessage(), e);
+			throw new ServletException(e.getMessage(), e);
 		}
-		request.setAttribute("computers", computerPage.getContent());
-		request.setAttribute("pageFrom", Pages.getFrom());
-		request.setAttribute("pageTo", Pages.getTo());
 		
 		this.getServletContext().getRequestDispatcher("/WEB-INF/dashboard.jsp").forward(request, response);
 	}	

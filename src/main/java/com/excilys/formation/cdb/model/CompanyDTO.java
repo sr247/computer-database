@@ -14,7 +14,7 @@ public class CompanyDTO {
 		/**
 		 * @return the id
 		 */
-		public int getId() {
+		public long getId() {
 			return id;
 		}
 
@@ -51,7 +51,7 @@ public class CompanyDTO {
 		@Override
 		public int hashCode() {
 			int hash = this.getClass().getMethods().length;
-			hash = hash * 7 + id;
+			hash = hash * 7 + (int) id;
 			hash = hash * 11 + name.hashCode();
 			
 			return hash;

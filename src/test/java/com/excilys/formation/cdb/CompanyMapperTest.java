@@ -22,6 +22,7 @@ class CompanyMapperTest {
 	private static Company actual;
 	private static ResultSet res;
 	
+	
 	@BeforeAll
 	static void setUpBeforeClass() throws Exception {
 		

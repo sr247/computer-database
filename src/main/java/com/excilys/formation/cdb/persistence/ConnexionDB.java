@@ -7,10 +7,13 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Properties;
 
+import com.excilys.formation.cdb.mapper.CompanyMapperDTO;
+
 public enum ConnexionDB {
 	
 	INSTANCE;
 	private Connection conn;
+	private static org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(ConnexionDB.class);
 	
 	private ConnexionDB () {
 
@@ -22,9 +25,9 @@ public enum ConnexionDB {
 			
 		try {
 			prop.load(pathDB);
-		} catch (IOException e1) {
+		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			e1.printStackTrace();
+			logger.error("ConnexionDBError: {}", e.getMessage(), e);
 		}	
 		
 		try {
@@ -33,13 +36,10 @@ public enum ConnexionDB {
 			String user = prop.getProperty("mysql.user");
 			String passwd = prop.getProperty("mysql.passwd");
 			conn = DriverManager.getConnection(urlDB, user, passwd);
-		}catch(SQLException e) {
+		}catch(SQLException | ClassNotFoundException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error("ConnexionDBError: {}", e.getMessage(), e);
 			
-		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
 		return conn;
 	}

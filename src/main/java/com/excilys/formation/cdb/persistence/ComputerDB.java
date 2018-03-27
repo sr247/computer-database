@@ -12,6 +12,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 
 import com.excilys.formation.cdb.exceptions.InstanceNotInDatabaseException;
 import com.excilys.formation.cdb.exceptions.ModifyDatabaseException;
@@ -122,11 +123,11 @@ public enum ComputerDB {
 	}
 	
 	
-	public PreparedStatement setDateProperly(LocalDate date, PreparedStatement ps, int i) throws SQLException {
-		if(date == null) {
+	public PreparedStatement setDateProperly(Optional<LocalDate> date, PreparedStatement ps, int i) throws SQLException {
+		if(!date.isPresent()) {
 			ps.setNull(i, java.sql.Types.DATE);
 		} else {
-			Date dt = Date.valueOf(date);
+			Date dt = Date.valueOf(date.get());
 			ps.setDate(i, dt);				
 		} 
 		return ps;
@@ -140,8 +141,8 @@ public enum ComputerDB {
 			crt = (PreparedStatement) 
 					conn.prepareStatement(CREATE_REQUEST);				
 			crt.setString(1, cmp.getName());
-			crt = setDateProperly(cmp.getIntroduced(), crt, 2);
-			crt = setDateProperly(cmp.getDiscontinued(), crt, 3);
+			crt = setDateProperly(Optional.ofNullable(cmp.getIntroduced()), crt, 2);
+			crt = setDateProperly(Optional.ofNullable(cmp.getDiscontinued()), crt, 3);
 			crt.setInt(4, cmp.getCompany().getId());
 			crt.executeUpdate();
 			// Ici le out deviendra un log

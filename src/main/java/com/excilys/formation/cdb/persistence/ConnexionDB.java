@@ -7,8 +7,6 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Properties;
 
-import com.excilys.formation.cdb.mapper.CompanyMapperDTO;
-
 public enum ConnexionDB {
 	
 	INSTANCE;

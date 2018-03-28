@@ -44,8 +44,8 @@ public enum CompanyDB {
 			numCompanies = res.getInt("NUM");
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
-			logger.error("{}", e.getMessage(), e);
-			throw new NumberOfInstanceException("NumberOfInstanceError: " + e.getMessage(), e);
+			logger.error("NumberOfInstanceException: {}", e.getMessage(), e);
+			throw new NumberOfInstanceException("NumberOfInstanceException: " + e.getMessage(), e);
 		}
 		return numCompanies;
 	}

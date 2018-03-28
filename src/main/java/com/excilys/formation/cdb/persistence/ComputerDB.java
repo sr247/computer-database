@@ -104,7 +104,7 @@ public enum ComputerDB {
 		return computers;
 	}
 	
-	public List<Computer> getComputerList(int from, int to) throws InstanceNotInDatabaseException {		
+	public List<Computer> getComputerList(int from, int to) throws InstanceNotInDatabaseException {
 		List<Computer> computers = new ArrayList<Computer>();
 		try (Connection conn = (Connection) ConnexionDB.INSTANCE.getConnection();){
 			PreparedStatement ps = (PreparedStatement) 

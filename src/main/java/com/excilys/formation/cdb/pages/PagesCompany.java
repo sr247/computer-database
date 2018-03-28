@@ -24,14 +24,17 @@ public class PagesCompany<T> extends Pages<T> {
 		// TODO Auto-generated method stub
 		WebServiceCompany webcpy = WebServiceCompany.INSTANCE;
 		int max = webcpy.getNumberOf();
-		pageIndex += PAGE_STRIDE;
-		if( (max - pageIndex) < PAGE_STRIDE) {
-			pageIndex = max - PAGE_STRIDE;
+		pageRange.setFst(pageRange.getFst() + PAGE_STRIDE);
+		pageRange.setSnd(pageRange.getSnd() + PAGE_STRIDE);
+		
+		if((max - pageRange.getFst()) < PAGE_STRIDE) {
+			pageRange.setFst(max - PAGE_STRIDE);
+			pageRange.setSnd(max);
 		} else {
-			num++;
+			numero++;
 		}
 		
-		this.page = (List<T>) webcpy.getList(pageIndex, pageIndex+PAGE_STRIDE);
+		this.content = (List<T>) webcpy.getList(pageRange.getFst(), pageRange.getSnd());
 	}
 
 	@SuppressWarnings("unchecked")
@@ -39,15 +42,31 @@ public class PagesCompany<T> extends Pages<T> {
 	public void preview() throws ServiceManagerException  {
 		// TODO Auto-generated method stub
 		WebServiceCompany webcpy = WebServiceCompany.INSTANCE;
-		pageIndex -= PAGE_STRIDE;
-		if(pageIndex < 0) {
-			pageIndex = 0;
+		
+		pageRange.setFst(pageRange.getFst() - PAGE_STRIDE);
+		pageRange.setSnd(pageRange.getSnd() - PAGE_STRIDE);
+		
+		if(pageRange.getFst() < 0) {
+			pageRange.setFst(0);
+			pageRange.setSnd(PAGE_STRIDE);
 		}else {
-			num--;
+			numero--;
 		}
 		
-		this.page = (List<T>) webcpy.getList(pageIndex, pageIndex+PAGE_STRIDE);
+		this.content = (List<T>) webcpy.getList(numero, numero+PAGE_STRIDE);
 	}
+
+	public static void update() throws ServiceManagerException {
+		// TODO Auto-generated method stub
+		WebServiceCompany webcpy = WebServiceCompany.INSTANCE;
+		int max = webcpy.getNumberOf();
+		pageRange.setSnd(pageRange.getFst() + PAGE_STRIDE);
+		if(pageRange.getSnd() > max) {
+			pageRange.setFst(max - PAGE_STRIDE);
+			pageRange.setSnd(max);
+		}		
+	}
+
 	
 
 }

@@ -25,7 +25,7 @@ public enum ValidateComputer {
 	}
 	
 	private void checkName(Optional<String> name) throws IncorrectFieldException {
-		if(!name.isPresent()) {
+		if(!name.isPresent() || name.get().equals("")) {
 			throw new IncorrectFieldException("ValidateError: Computer must have a name.");
 		}
 	}

@@ -23,7 +23,7 @@
     <section id="main">
         <div class="container">
             <h1 id="homeTitle">
-               ${numComputer} Computers found
+               ${numComputers} Computers found
             </h1>
             <div id="actions" class="form-horizontal">
                 <div class="pull-left">
@@ -34,8 +34,8 @@
                     </form>
                 </div>
                 <div class="pull-right">
-                    <a class="btn btn-success" id="addComputer" href="addComputer?submit=false">Add Computer</a> 
-                    <a class="btn btn-default" id="editComputer" href="#" onclick="$.fn.toggleEditMode();">Edit</a>
+                    <a class="btn btn-success" id="addComputer" href="addComputer">Add Computer</a> 
+                    <a class="btn btn-default" id="editComputer" href="#" onclick="$.fn.toggleEditMode();">Delete</a>
                 </div>
             </div>
         </div>
@@ -77,17 +77,17 @@
                 </thead>
                 <!-- Browse attribute computers -->
 	            <tbody id="results">
-	            	<c:forEach var="computer" items="${computers}">
+	            	<c:forEach var="computer" items="${pageComputers.content}">
     	                <tr>
 	                        <td class="editMode">
 	                            <input type="checkbox" name="cb" class="cb" value="0">
 	                        </td>
 	                        <td>
-	                            <a href="editComputer" onclick=""> ${computer.getName()} </a>
+	                            <a href="#" onclick="location.href='editComputer?id=${computer.id}'"> ${computer.name} </a>
 	                        </td>
-	                        <td> ${computer.getIntroduced()}   </td>
-	                        <td> ${computer.getDiscontinued()} </td>
-	                        <td> ${computer.getCompany()}      </td>
+	                        <td> ${computer.introduced}   </td>
+	                        <td> ${computer.discontinued} </td>
+	                        <td> ${computer.company}      </td>
     	                </tr>
                     </c:forEach>
                 </tbody>
@@ -95,23 +95,26 @@
             </table>
         </div>
     </section>
-
     <footer class="navbar-fixed-bottom">
         <div class="container text-center">
             <ul class="pagination">
                 <li>
-                    <a href="#" aria-label="Previous">
+					<c:set var="way" value="prev" scope="request"/>
+                    <a href="#" aria-label="Previous" onclick="location.href='dashboard?page=${pageComputers.numero-1}&sens=prev'">
                     	<span aria-hidden="true">&laquo;</span>
 					</a>
 				</li>
-				<c:forEach var="i" begin="${pageFrom+1}" end="${pageFrom+5}" step="1">
-            		<li><a href="#">${pageFrom+i}</a></li>				
+				
+				<!-- Focus de Pages -->
+				<c:forEach var="i" items="${pages}">
+            		<li><a href="#">${i}</a></li>				
 				</c:forEach>
 				<li>
-                	<a href="#" aria-label="Next">
+                	<a href="#" aria-label="Next" onclick="location.href='dashboard?page=${pageComputers.numero+1}&sens=next'">
                     	<span aria-hidden="true">&raquo;</span>
                 	</a>
             	</li>
+            	
         	</ul>
         	
         <div class="btn-group btn-group-sm pull-right" role="group" >

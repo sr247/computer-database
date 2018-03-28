@@ -1,7 +1,6 @@
 package com.excilys.formation.cdb.servlets;
 
 import java.io.IOException;
-import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -15,6 +14,7 @@ import com.excilys.formation.cdb.model.ComputerDTO;
 import com.excilys.formation.cdb.pages.Pages;
 import com.excilys.formation.cdb.pages.PagesComputer;
 import com.excilys.formation.cdb.service.WebServiceComputer;
+import com.excilys.formation.cdb.utils.Pair;
 
 /**
  * Servlet implementation class AcceuilServlet
@@ -41,38 +41,55 @@ public class DashboardServlet extends HttpServlet {
 		response.getWriter().append("Served at: ").append(request.getContextPath());
 		WebServiceComputer webServComp = WebServiceComputer.INSTANCE;
 		
-		int numComputer = 0;
+		int numComputers = 0;
 		try {
-			numComputer = webServComp.getNumberOf();
-			request.setAttribute("numComputer", numComputer);		
+			numComputers = webServComp.getNumberOf();
+			request.setAttribute("numComputers", numComputers);
 		} catch (ServiceManagerException e) {
 			// TODO Auto-generated catch block
-			logger.debug("DashBoardServletInfo: {}", e.getMessage(), e);
+			logger.debug("DashBoardServletException: {}", e.getMessage(), e);
 			throw new ServletException(e.getMessage(), e);
 		}
 		
-		String stride = null;
-		if((stride = request.getParameter("stride")) != null) {				
-			Pages.setStride(Integer.valueOf(stride));			
-		}else {
-			logger.debug("DashBoardServletInfo: No stride provided");
+		String parameter = null;
+		if((parameter = request.getParameter("stride")) != null) {				
+			try {
+				Pages.setStride(Integer.valueOf(parameter));
+			} catch (NumberFormatException | ServiceManagerException e) {
+				// TODO Auto-generated catch block
+				logger.debug("DashBoardServletException: {}", e.getMessage(), e);
+			}			
+		} else {
+			logger.debug("DashBoardServletException: No stride provided");
 		}
 		
-		PagesComputer<ComputerDTO> computerPage = null;
+		PagesComputer<ComputerDTO> pageComputers = new PagesComputer<>();
 		try {
-			computerPage = new PagesComputer<ComputerDTO>(ComputerMapperDTO.map(webServComp.getList(Pages.getFrom(), Pages.getTo())));
-			request.setAttribute("computers", computerPage.getContent());
-			request.setAttribute("pageFrom", Pages.getFrom());
-			request.setAttribute("pageTo", Pages.getTo());
+			if((parameter = request.getParameter("way")) != null){
+				System.out.println(String.format("Page Suivante: {}", (PagesComputer.getNumberOfPages().toString())));
+				if(parameter.equals("next")) {
+					pageComputers.next();
+				}else if(parameter.equals("prev")) {
+					pageComputers.preview();
+				}
+			}else {
+				logger.debug("DashBoardServletException: No page provided");
+			}			
+			PagesComputer.update();
+			Pair<Integer, Integer> range = Pages.getPageRange();
+			pageComputers = 
+					new PagesComputer<ComputerDTO>(ComputerMapperDTO.map(webServComp.getList(range.getFst(), range.getSnd())));
+			request.setAttribute("pages", PagesComputer.getNumberOfPages());
+			request.setAttribute("pageComputers", pageComputers);
 		} catch (ServiceManagerException e) {
 			// TODO Auto-generated catch block
-			logger.debug("DashBoardServletInfo: {}", e.getMessage(), e);
+			logger.debug("DashBoardServletException: {}", e.getMessage(), e);
 			throw new ServletException(e.getMessage(), e);
 		}
-		
 		this.getServletContext().getRequestDispatcher("/WEB-INF/dashboard.jsp").forward(request, response);
-	}	
+	}
 
+	
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */

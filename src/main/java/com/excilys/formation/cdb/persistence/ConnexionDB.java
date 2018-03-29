@@ -32,7 +32,7 @@ public enum ConnexionDB {
 			Class.forName(prop.getProperty("mysql.driver"));
 			String urlDB = prop.getProperty("mysql.url");
 			String user = prop.getProperty("mysql.user");
-			String passwd = prop.getProperty("mysql.passwd");
+			String passwd = prop.getProperty("mysql.password");
 			conn = DriverManager.getConnection(urlDB, user, passwd);
 		}catch(SQLException | ClassNotFoundException e) {
 			// TODO Auto-generated catch block

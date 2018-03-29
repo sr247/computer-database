@@ -36,16 +36,26 @@
                             </div>
                             <div class="form-group">
                                 <label for="introduced">Introduced date</label>
-                                <input type="date" class="form-control" id="introduced" placeholder="${computer.introduced}">
+                                <input type="date" class="form-control" id="introduced" placeholder="${computer.introduced.toString()}">
                             </div>
                             <div class="form-group">
                                 <label for="discontinued">Discontinued date</label>
-                                <input type="date" class="form-control" id="discontinued" placeholder="${computer.discontinued}">
+                                <input type="date" class="form-control" id="discontinued" placeholder="${computer.discontinued.toString()}">
                             </div>
                             <div class="form-group">
                                 <label for="companyId">Company</label>
                                 <select class="form-control" id="companyId" >
-                                    <option value="0">--</option>
+                                    <c:forEach var="company" items="${companies}">
+                                        <c:choose>
+                                            <c:when test="${company.name eq computer.company}">
+                                                <option value="${company.id}" selected="selected">${company.name}</option>
+                                            </c:when>
+                                            <c:when test="${company.name ne computer.company}">
+                                                <option value="${company.id}">${company.name}</option>
+                                            </c:when>
+                                        </c:choose>
+                                        <option value="${company.id}">${company.name}</option>
+                                    </c:forEach>
                                 </select>
                             </div>            
                         </fieldset>

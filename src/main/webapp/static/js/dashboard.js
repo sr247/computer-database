@@ -59,6 +59,7 @@ $(function() {
 }( jQuery ));
 
 
+
 // Function delete selected: Asks for confirmation to delete selected computers, then submits it to the deleteForm
 (function ( $ ) {
     $.fn.deleteSelected = function() {
@@ -89,5 +90,13 @@ $(document).keydown(function(e) {
             }
             break;
     }
+});
+
+// Post Request for pages Links
+$(function ( $ ) {
+    $.fn.submitByLinks = function() {
+        $(document).forms["way"].submit();
+    };
+
 });
 

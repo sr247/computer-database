@@ -108,6 +108,15 @@ public class DashboardServlet extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
+		int current = Pages.getCURRENT_PAGE().get();
+		System.out.println(String.format("Page: %s {%s, %s}", current, Pages.getPAGE_LIMIT(), Pages.getPAGE_OFFSET()));
+		String parameter = null;
+		if((parameter = (String) request.getParameter("way")) != null){
+
+			request.setAttribute("way", parameter);
+		}else {
+			logger.debug("DashBoardServletException: No page provided");
+		}
 		doGet(request, response);
 	}
 

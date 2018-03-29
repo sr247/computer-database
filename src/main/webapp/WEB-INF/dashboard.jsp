@@ -100,7 +100,7 @@
             <ul class="pagination">
                 <li>
 					<c:set var="way" value="prev" scope="request"/>
-                    <a href="#" aria-label="Previous" onclick="location.href='dashboard?page=${current}'">
+                    <a href="#" aria-label="Previous" id="way" onclick="$.fn.submitByLinks('prev');">
                     	<span aria-hidden="true">&laquo;</span>
 					</a>
 				</li>
@@ -117,17 +117,18 @@
 					</c:choose>
 				</c:forEach>
 				<li>
-                	<a href="#" aria-label="Next" onclick="location.href='dashboard?page=${current}'">
+                	<a href="#" aria-label="Next" id="way" onclick="$.fn.submitByLinks('next');">
                     	<span aria-hidden="true">&raquo;</span>
                 	</a>
             	</li> 
         	</ul>
         	
-        <div class="btn-group btn-group-sm pull-right" role="group" >
-	        <!-- Gérer les url via tag lib -->
-            <button type="button" class="btn btn-default" onclick="location.href='dashboard?stride=10'">10</button>
-            <button type="button" class="btn btn-default" onclick="location.href='dashboard?stride=50'">50</button>
-            <button type="button" class="btn btn-default" onclick="location.href='dashboard?stride=100'">100</button>
+            <div class="btn-group btn-group-sm pull-right" role="group" >
+	            <!-- Gérer les url via tag lib -->
+                <button type="button" class="btn btn-default" onclick="location.href='dashboard?stride=10'">10</button>
+                <button type="button" class="btn btn-default" onclick="location.href='dashboard?stride=50'">50</button>
+                <button type="button" class="btn btn-default" onclick="location.href='dashboard?stride=100'">100</button>
+            </div>
         </div>
     </footer>
 <script src="static/js/jquery.min.js"></script>

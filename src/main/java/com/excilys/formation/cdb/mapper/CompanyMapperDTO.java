@@ -22,7 +22,7 @@ public enum CompanyMapperDTO {
 	}
 
 	/** 
-	 * @param res Un ResultSet contenant les résultats des requêtes DAOs.
+	 * @param company Un ResultSet contenant les résultats des requêtes DAOs.
 	 * @return Un object Optional<Company> qui est vide si res est vide. 
 	 */
     public static CompanyDTO map(Company company) {
@@ -32,10 +32,8 @@ public enum CompanyMapperDTO {
     
     public static List<CompanyDTO> map(List<Company> companyList) {
     	List<CompanyDTO> cmpDTOList = new ArrayList<CompanyDTO>();
-		for(Company c : companyList) {
-			int id = c.getId();
-			String name = c.getName();
-			CompanyDTO cpyDTO = new CompanyDTO(id, name);
+		for(Company company : companyList) {
+			CompanyDTO cpyDTO = map(company);
 			cmpDTOList.add(cpyDTO);
 		}
 		return cmpDTOList;

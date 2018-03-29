@@ -24,7 +24,7 @@ public enum CompanyDB {
 	private final static String COUNT_NUMBER_OF = "SELECT COUNT(*) AS NUM FROM company;";
 	private final static String SELECT_ONE = "SELECT ID as caId, NAME as caName FROM company WHERE ID=?;";
 	private final static String SELECT_UNLIMITED_LIST = "SELECT ID as caId, NAME as caName FROM company ca ORDER BY ID;";
-	private final static String SELECT_LIMITED_LIST = "SELECT ID as caId, NAME as caName FROM company ORDER BY ID LIMIT ? OFFSET ?;";
+	private final static String SELECT_LIMITED_LIST = "SELECT ID as caId, NAME as caName FROM company ORDER BY ID LIMIT ?, ?;";
 	private final static String CREATE_REQUEST  = "INSERT INTO company NAME VALUES ?;";
 	private final static String UPDTATE_REQUEST = "UPDATE company SET ?=? WHERE ID=?;";
 	private final static String DELETE_REQUEST  = "DELETE FROM company WHERE ID=?";
@@ -87,14 +87,14 @@ public enum CompanyDB {
 		return companies;
 	}
 	
-	public List<Company> getCompanyList(int from, int to) throws InstanceNotInDatabaseException {
+	public List<Company> getCompanyList(int limit, int offset) throws InstanceNotInDatabaseException {
 		List<Company> companies = new ArrayList<Company>();
 		// Solutionner pour les preperedStatement plutot : Plus sécuritaire au niveau des injection sql.
 		try (Connection conn = (Connection) ConnexionDB.INSTANCE.getConnection();){
 			PreparedStatement ps = (PreparedStatement) 
 					conn.prepareStatement(SELECT_LIMITED_LIST);
-			ps.setInt(1, to-from);
-			ps.setInt(2, from);
+			ps.setInt(1, limit);
+			ps.setInt(2, offset);
 			ResultSet res = ps.executeQuery();
 			
 			while (res.next())

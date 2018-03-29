@@ -7,13 +7,21 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.excilys.formation.cdb.exceptions.ServiceManagerException;
+import com.excilys.formation.cdb.mapper.ComputerMapperDTO;
+import com.excilys.formation.cdb.model.ComputerDTO;
+import com.excilys.formation.cdb.service.WebServiceComputer;
+
+import ch.qos.logback.classic.Logger;
+
 /**
  * Servlet implementation class EditComputerServlet
  */
 @WebServlet("/editComputer")
 public class EditComputerServlet extends HttpServlet {
+	
 	private static final long serialVersionUID = 1L;
-       
+	private static org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(EditComputerServlet.class);
     /**
      * @see HttpServlet#HttpServlet()
      */
@@ -29,8 +37,20 @@ public class EditComputerServlet extends HttpServlet {
 		// TODO Auto-generated method stub
 		response.getWriter().append("Served at: ").append(request.getContextPath());
 		
-		String id = request.getParameter("id");
-		request.setAttribute("idComputer", id);
+		WebServiceComputer webServComp = WebServiceComputer.INSTANCE;
+		String parameter = null;
+		if((parameter = (String) request.getParameter("id")) != null){
+			ComputerDTO computer = null;
+			try {
+				int id = Integer.valueOf(parameter);
+				computer = ComputerMapperDTO.map(webServComp.getComputer(id));
+				request.setAttribute("idComputer", id);
+				request.setAttribute("computer", computer);
+			} catch (ServiceManagerException e) {
+				// TODO Auto-generated catch block
+				logger.debug("EditComputerServletException: {}", e.getMessage(), e);
+			}
+		}
 		this.getServletContext().getRequestDispatcher("/WEB-INF/editComputer.jsp").forward(request, response);
 	}
 

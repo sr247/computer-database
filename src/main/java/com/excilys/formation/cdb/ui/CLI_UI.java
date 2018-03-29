@@ -16,7 +16,6 @@ import com.excilys.formation.cdb.pages.PagesCompany;
 import com.excilys.formation.cdb.pages.PagesComputer;
 import com.excilys.formation.cdb.service.WebServiceCompany;
 import com.excilys.formation.cdb.service.WebServiceComputer;
-import com.excilys.formation.cdb.utils.Pair;
 
 public class CLI_UI {
 	private boolean exit;
@@ -59,7 +58,7 @@ public class CLI_UI {
 				for(Object c : p.getContent()) {
 					System.out.println(c);
 				}
-				System.out.println("Page " + p.getNumero());
+				System.out.println("Page " + Pages.getCURRENT_PAGE().get());
 				System.out.println("Type n for next, p for precedent, q for quit: ");
 				String reponse = sc.nextLine();
 				try {
@@ -87,8 +86,9 @@ public class CLI_UI {
 			if(all) {
 				p = new PagesComputer<>(wscmp.getAllList());
 			}else {
-				Pair<Integer, Integer> range = Pages.getPageRange();
-				p = new PagesComputer<>(wscmp.getList(range.getFst(), range.getSnd()));
+				int offset = Pages.getPAGE_OFFSET();
+				int stride = Pages.getPAGE_LIMIT();
+				p = new PagesComputer<>(wscmp.getList(offset, stride));
 			}			
 			printList(all, p);
 			
@@ -97,8 +97,9 @@ public class CLI_UI {
 			if(all) {
 				p = new PagesCompany<>(wscpy.getAllList());
 			}else {
-				Pair<Integer, Integer> range = Pages.getPageRange();
-				p = new PagesCompany<>(wscpy.getList(range.getFst(), range.getSnd()));
+				int offset = Pages.getPAGE_OFFSET();
+				int stride = Pages.getPAGE_LIMIT();
+				p = new PagesCompany<>(wscpy.getList(offset, stride));
 			}
 			printList(all, p);
 		}

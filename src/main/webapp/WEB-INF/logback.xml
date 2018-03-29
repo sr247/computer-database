@@ -17,8 +17,7 @@
   </appender>
 
   <appender name="FILE" class="ch.qos.logback.core.FileAppender">
-    <file>cdb.log</file>
-
+    <file>../cdb.log</file>
     <encoder>
       <pattern>%date %level [%thread] %logger{10} [%file:%line] %msg%n</pattern>
     </encoder>
@@ -50,11 +49,11 @@
   There are a few ways you can change logging levels on the fly in a running app.
   This could be a better solution than over logging.
   -->
-  <root level="WARN">
+  <root>
     <!--
     If you want async logging just use ref="ASYNC" instead.
     We will favor synchronous logging for simplicity. -->
-    <!-- <appender-ref ref="STDOUT" /> -->
-    <appender-ref ref="FILE" />
+	<logger name="cout" level="DEBUG" />
+	<logger name="file" level="FILE" />
   </root>
 </configuration>

@@ -1,20 +1,20 @@
 package com.excilys.formation.cdb.pages;
 
 import java.util.List;
+import java.util.Optional;
 
 import com.excilys.formation.cdb.exceptions.ServiceManagerException;
-import com.excilys.formation.cdb.utils.Pair;
 
 public abstract class Pages<T> {
 	
-	protected List<T> content;
-	protected int numero = 1;
+	// Déterminer quel variables dointt etre static ou pas.
+	protected static int PAGE_LIMIT = 10;
+	protected static int PAGE_OFFSET = 0;
+	protected static Optional<Integer> CURRENT_PAGE = Optional.of(1);
 	
-	// Envisager une liste
-	protected static int[] numberOfPages = {1,2,3,4,5};
-	
-	protected static int PAGE_STRIDE = 10;
-	protected static Pair<Integer, Integer> pageRange = new Pair<Integer, Integer>(0, PAGE_STRIDE);
+	protected int numberOfElements;
+	protected int numberOfPages;
+	protected List<T> content;	
 	
 	public Pages() {
 	}
@@ -22,7 +22,22 @@ public abstract class Pages<T> {
 	public Pages(List<T> page) {
 		this.content = page;
 	}
-	
+
+
+	/**
+	 * @return the numberOfElements
+	 */
+	public int getNumberOfElements() {
+		return numberOfElements;
+	}
+
+	/**
+	 * @return the numberOfPage
+	 */
+	public int getNumberOfPages() {
+		return numberOfPages;
+	}
+
 	/**
 	 * @return the content
 	 */
@@ -31,67 +46,58 @@ public abstract class Pages<T> {
 	}
 
 	/**
-	 * @return the numero
+	 * @return the pAGE_OFFSET
 	 */
-	public int getNumero() {
-		return numero;
+	public static int getPAGE_OFFSET() {
+		return PAGE_OFFSET;
+	}
+	
+	/**
+	 * @return the pAGE_STRIDE
+	 */
+	public static int getPAGE_LIMIT() {
+		return PAGE_LIMIT;
+	}
+	
+	/**
+	 * @param pAGE_STRIDE the pAGE_STRIDE to set
+	 */
+	public static void setPAGE_LIMIT(int pAGE_LIMIT) {
+		PAGE_LIMIT = pAGE_LIMIT;
 	}
 
 	/**
-	 * @return the numberOfPages
+	 * @param pAGE_OFFSET the pAGE_OFFSET to set
 	 */
-	public static int[] getNumberOfPages() {
-		return numberOfPages;
-	}
-
-	/**
-	 * @return the pageRange
-	 */
-	public static Pair<Integer, Integer> getPageRange() {
-		return pageRange;
-	}
-
-	/**
-	 * @param content the content to set
-	 */
-	public void setContent(List<T> content) {
-		this.content = content;
-	}
-
-	/**
-	 * @param numero the numero to set
-	 */
-	public void setNumero(int numero) {
-		this.numero = numero;
-	}
-
-	/**
-	 * @param numberOfPages the numberOfPages to set
-	 */
-	public static void setNumberOfPages(int[] numberOfPages) {
-		Pages.numberOfPages = numberOfPages;
-	}
-
-	/**
-	 * @param pageRange the pageRange to set
-	 */
-	public static void setPageRange(Pair<Integer, Integer> pageRange) {
-		Pages.pageRange = pageRange;
+	public static void setPAGE_OFFSET(int pAGE_OFFSET) {
+		PAGE_OFFSET = pAGE_OFFSET;
 	}
 
 	public void reset() {
-		this.content = null;
-		this.numero = 1;
-		numberOfPages = new int[]{1,2,3,4,5};
-		Pages.pageRange = new Pair<Integer, Integer>(0, PAGE_STRIDE);
+		PAGE_LIMIT = 10;
+		PAGE_OFFSET = 0;
+		CURRENT_PAGE = Optional.of(1);
+		
+		numberOfElements = 0;
+		numberOfPages = 0;
+		content = null;
+	}	
+	
+	/**
+	 * @return the cURRENT_PAGE
+	 */
+	public static Optional<Integer> getCURRENT_PAGE() {
+		return CURRENT_PAGE;
 	}
-	
-	
-	public static void setStride(int pAGE_STRIDE) throws ServiceManagerException {
-		PAGE_STRIDE = pAGE_STRIDE;
+
+	public static void setStride(int pAGE_LIMIT) throws ServiceManagerException {
+		PAGE_LIMIT = pAGE_LIMIT;
 	};
+	
+	public abstract void goTo() throws ServiceManagerException;
 	
 	public abstract void next() throws ServiceManagerException;
 	
 	public abstract void preview() throws ServiceManagerException;
+	
 }

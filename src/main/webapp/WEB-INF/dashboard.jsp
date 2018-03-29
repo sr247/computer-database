@@ -100,21 +100,27 @@
             <ul class="pagination">
                 <li>
 					<c:set var="way" value="prev" scope="request"/>
-                    <a href="#" aria-label="Previous" onclick="location.href='dashboard?page=${pageComputers.numero-1}&sens=prev'">
+                    <a href="#" aria-label="Previous" onclick="location.href='dashboard?page=${current}'">
                     	<span aria-hidden="true">&laquo;</span>
 					</a>
 				</li>
 				
 				<!-- Focus de Pages -->
-				<c:forEach var="i" items="${pages}">
-            		<li><a href="#">${i}</a></li>				
+				<c:forEach var="i" begin="${mid-2}" end="${mid+2}" step="1">
+					<c:choose>
+						<c:when test="${i == current}">
+						<li><a style="background-color:LightGray;" href="#">${i}</a></li>
+						</c:when>						
+						<c:when test="${i != current}">
+						<li><a href="#">${i}</a></li>
+						</c:when>
+					</c:choose>
 				</c:forEach>
 				<li>
-                	<a href="#" aria-label="Next" onclick="location.href='dashboard?page=${pageComputers.numero+1}&sens=next'">
+                	<a href="#" aria-label="Next" onclick="location.href='dashboard?page=${current}'">
                     	<span aria-hidden="true">&raquo;</span>
                 	</a>
-            	</li>
-            	
+            	</li> 
         	</ul>
         	
         <div class="btn-group btn-group-sm pull-right" role="group" >
@@ -123,7 +129,6 @@
             <button type="button" class="btn btn-default" onclick="location.href='dashboard?stride=50'">50</button>
             <button type="button" class="btn btn-default" onclick="location.href='dashboard?stride=100'">100</button>
         </div>
-
     </footer>
 <script src="static/js/jquery.min.js"></script>
 <script src="static/js/bootstrap.min.js"></script>

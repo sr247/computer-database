@@ -14,7 +14,9 @@ import com.excilys.formation.cdb.model.ComputerDTO;
 import com.excilys.formation.cdb.pages.Pages;
 import com.excilys.formation.cdb.pages.PagesComputer;
 import com.excilys.formation.cdb.service.WebServiceComputer;
-import com.excilys.formation.cdb.utils.Pair;
+
+// StringUtils, lib interessant
+// Methode isBlank = test: (isNull && isEmpty && hasNoCharacters)
 
 /**
  * Servlet implementation class AcceuilServlet
@@ -40,6 +42,7 @@ public class DashboardServlet extends HttpServlet {
 		// TODO Auto-generated method stub
 		response.getWriter().append("Served at: ").append(request.getContextPath());
 		WebServiceComputer webServComp = WebServiceComputer.INSTANCE;
+		String parameter = null;
 		
 		int numComputers = 0;
 		try {
@@ -51,7 +54,6 @@ public class DashboardServlet extends HttpServlet {
 			throw new ServletException(e.getMessage(), e);
 		}
 		
-		String parameter = null;
 		if((parameter = request.getParameter("stride")) != null) {				
 			try {
 				Pages.setStride(Integer.valueOf(parameter));
@@ -65,8 +67,7 @@ public class DashboardServlet extends HttpServlet {
 		
 		PagesComputer<ComputerDTO> pageComputers = new PagesComputer<>();
 		try {
-			if((parameter = request.getParameter("way")) != null){
-				System.out.println(String.format("Page Suivante: {}", (PagesComputer.getNumberOfPages().toString())));
+			if((parameter = (String) request.getAttribute("way")) != null){
 				if(parameter.equals("next")) {
 					pageComputers.next();
 				}else if(parameter.equals("prev")) {
@@ -74,13 +75,25 @@ public class DashboardServlet extends HttpServlet {
 				}
 			}else {
 				logger.debug("DashBoardServletException: No page provided");
-			}			
-			PagesComputer.update();
-			Pair<Integer, Integer> range = Pages.getPageRange();
+			}
+			int offset = Pages.getPAGE_OFFSET();
+			int limit = Pages.getPAGE_LIMIT();
 			pageComputers = 
-					new PagesComputer<ComputerDTO>(ComputerMapperDTO.map(webServComp.getList(range.getFst(), range.getSnd())));
-			request.setAttribute("pages", PagesComputer.getNumberOfPages());
+					new PagesComputer<ComputerDTO>(ComputerMapperDTO.map(webServComp.getList(offset, limit)));
+			
+			pageComputers.update();
+			int maxNbPages = pageComputers.getNumberOfPages();
+			int current = Pages.getCURRENT_PAGE().get();
+			int mid = current < 3  ? 3 : (current >= 3 && current <= (maxNbPages-2) ? current : maxNbPages-2);
+			
+//			System.out.println(String.format("Page: %s {%s, %s}", current, Pages.getPAGE_LIMIT(), Pages.getPAGE_OFFSET()));
+//			System.out.println(String.format("mid: {%s} maxPages:{%s}", mid, maxNbPages));
+			logger.debug(String.format("Page: %s {%s, %s}", current, Pages.getPAGE_LIMIT(), Pages.getPAGE_OFFSET()));
+			logger.debug(String.format("mid: {%s} maxPages:{%s}", mid, maxNbPages));
 			request.setAttribute("pageComputers", pageComputers);
+			request.setAttribute("current", current);
+			request.setAttribute("mid", mid);
+			
 		} catch (ServiceManagerException e) {
 			// TODO Auto-generated catch block
 			logger.debug("DashBoardServletException: {}", e.getMessage(), e);

@@ -1,6 +1,7 @@
 package com.excilys.formation.cdb.pages;
 
 import java.util.List;
+import java.util.Optional;
 
 import com.excilys.formation.cdb.exceptions.ServiceManagerException;
 import com.excilys.formation.cdb.service.WebServiceCompany;
@@ -18,23 +19,29 @@ public class PagesCompany<T> extends Pages<T> {
 		// TODO Auto-generated constructor stub
 	}
 
+	@Override
+	public void goTo() throws ServiceManagerException {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	
+	
 	@SuppressWarnings("unchecked")
 	@Override
 	public void next() throws ServiceManagerException  {
 		// TODO Auto-generated method stub
 		WebServiceCompany webcpy = WebServiceCompany.INSTANCE;
-		int max = webcpy.getNumberOf();
-		pageRange.setFst(pageRange.getFst() + PAGE_STRIDE);
-		pageRange.setSnd(pageRange.getSnd() + PAGE_STRIDE);
-		
-		if((max - pageRange.getFst()) < PAGE_STRIDE) {
-			pageRange.setFst(max - PAGE_STRIDE);
-			pageRange.setSnd(max);
-		} else {
-			numero++;
+		numberOfElements = webcpy.getNumberOf();
+		numberOfPages = (int) Math.ceil((double)numberOfElements / (double) PAGE_LIMIT);
+				
+		if(CURRENT_PAGE.isPresent()) {
+			CURRENT_PAGE = Optional.of(CURRENT_PAGE.get()+1);
+			if(CURRENT_PAGE.get() > numberOfPages) 
+				CURRENT_PAGE = Optional.of(numberOfPages);
 		}
-		
-		this.content = (List<T>) webcpy.getList(pageRange.getFst(), pageRange.getSnd());
+		PAGE_OFFSET = (CURRENT_PAGE.get()-1) * PAGE_LIMIT;
+		this.content = (List<T>) webcpy.getList(PAGE_OFFSET, PAGE_LIMIT);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -42,30 +49,27 @@ public class PagesCompany<T> extends Pages<T> {
 	public void preview() throws ServiceManagerException  {
 		// TODO Auto-generated method stub
 		WebServiceCompany webcpy = WebServiceCompany.INSTANCE;
+		numberOfElements = webcpy.getNumberOf();
+		numberOfPages = (int) Math.ceil((double)numberOfElements / (double) PAGE_LIMIT);
 		
-		pageRange.setFst(pageRange.getFst() - PAGE_STRIDE);
-		pageRange.setSnd(pageRange.getSnd() - PAGE_STRIDE);
-		
-		if(pageRange.getFst() < 0) {
-			pageRange.setFst(0);
-			pageRange.setSnd(PAGE_STRIDE);
-		}else {
-			numero--;
+		if(CURRENT_PAGE.isPresent()) {
+			CURRENT_PAGE = Optional.of(CURRENT_PAGE.get()-1);
+			if(CURRENT_PAGE.get() < 2 ) 
+				CURRENT_PAGE = Optional.of(1);
 		}
-		
-		this.content = (List<T>) webcpy.getList(numero, numero+PAGE_STRIDE);
+		PAGE_OFFSET = (CURRENT_PAGE.get()-1) * PAGE_LIMIT;
+		this.content = (List<T>) webcpy.getList(PAGE_OFFSET, PAGE_LIMIT);
 	}
 
-	public static void update() throws ServiceManagerException {
+	public void update() throws ServiceManagerException {
 		// TODO Auto-generated method stub
 		WebServiceCompany webcpy = WebServiceCompany.INSTANCE;
-		int max = webcpy.getNumberOf();
-		pageRange.setSnd(pageRange.getFst() + PAGE_STRIDE);
-		if(pageRange.getSnd() > max) {
-			pageRange.setFst(max - PAGE_STRIDE);
-			pageRange.setSnd(max);
-		}		
+		numberOfElements = webcpy.getNumberOf();
+		numberOfPages = (int) Math.ceil((double)numberOfElements / (double) PAGE_LIMIT);
+
 	}
+
+	
 
 	
 

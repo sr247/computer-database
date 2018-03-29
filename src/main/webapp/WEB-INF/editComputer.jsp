@@ -32,15 +32,15 @@
                         <fieldset>
                             <div class="form-group">
                                 <label for="computerName">Computer name</label>
-                                <input type="text" class="form-control" id="computerName" placeholder="Computer name">
+                                <input type="text" class="form-control" id="computerName" placeholder="${computer.name}">
                             </div>
                             <div class="form-group">
                                 <label for="introduced">Introduced date</label>
-                                <input type="date" class="form-control" id="introduced" placeholder="Introduced date">
+                                <input type="date" class="form-control" id="introduced" placeholder="${computer.introduced}">
                             </div>
                             <div class="form-group">
                                 <label for="discontinued">Discontinued date</label>
-                                <input type="date" class="form-control" id="discontinued" placeholder="Discontinued date">
+                                <input type="date" class="form-control" id="discontinued" placeholder="${computer.discontinued}">
                             </div>
                             <div class="form-group">
                                 <label for="companyId">Company</label>

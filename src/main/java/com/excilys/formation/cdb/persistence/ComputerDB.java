@@ -42,7 +42,7 @@ public enum ComputerDB {
 			+ "company.id as caId, company.name as caName "
 			+ "FROM computer "
 			+ "LEFT JOIN company ON company.id = computer.company_id "
-			+ "ORDER BY computer.id LIMIT ? OFFSET ?;";
+			+ "ORDER BY computer.id LIMIT ?, ?;";
 	private final static String CREATE_REQUEST  = "INSERT INTO computer (NAME, INTRODUCED, DISCONTINUED, COMPANY_ID) VALUES (?, ?, ?, ?);";
 	private final static String UPDTATE_REQUEST = "UPDATE computer SET NAME=?, INTRODUCED=?, DISCONTINUED=?, COMPANY_ID=? WHERE ID=?;";
 	private final static String DELETE_REQUEST  = "DELETE FROM computer WHERE ID=?;";
@@ -104,13 +104,13 @@ public enum ComputerDB {
 		return computers;
 	}
 	
-	public List<Computer> getComputerList(int from, int to) throws InstanceNotInDatabaseException {
+	public List<Computer> getComputerList(int limit, int offset) throws InstanceNotInDatabaseException {
 		List<Computer> computers = new ArrayList<Computer>();
 		try (Connection conn = (Connection) ConnexionDB.INSTANCE.getConnection();){
 			PreparedStatement ps = (PreparedStatement) 
 					conn.prepareStatement(SELECT_LIMITED_LIST);
-			ps.setInt(1, to-from);
-			ps.setInt(2, from);
+			ps.setInt(1, limit);
+			ps.setInt(2, offset);
 			ResultSet res = ps.executeQuery();
 			while (res.next())
 				computers.add(ComputerMapper.map(res).get());

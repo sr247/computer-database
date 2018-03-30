@@ -53,7 +53,7 @@
     <!--
     If you want async logging just use ref="ASYNC" instead.
     We will favor synchronous logging for simplicity. -->
-	<logger name="cout" level="DEBUG" />
-	<logger name="file" level="FILE" />
+	<logger name="com.excilys.formation.cdb" level="DEBUG" />
+	<logger name="com.excilys.formation.cdb" level="FILE" />
   </root>
 </configuration>

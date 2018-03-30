@@ -43,7 +43,6 @@ public class DashboardServlet extends HttpServlet {
 		response.getWriter().append("Served at: ").append(request.getContextPath());
 		WebServiceComputer webServComp = WebServiceComputer.INSTANCE;
 		String parameter = null;
-		
 		int numComputers = 0;
 		try {
 			numComputers = webServComp.getNumberOf();
@@ -67,27 +66,24 @@ public class DashboardServlet extends HttpServlet {
 		
 		PagesComputer<ComputerDTO> pageComputers = new PagesComputer<>();
 		try {
-			if((parameter = (String) request.getAttribute("way")) != null){
-				if(parameter.equals("next")) {
-					pageComputers.next();
-				}else if(parameter.equals("prev")) {
-					pageComputers.preview();
-				}
+			if((parameter = (String) request.getParameter("page")) != null){
+				int page = Integer.valueOf(parameter);
+				pageComputers.goTo(page);
+				System.out.println("Page: " + page);
 			}else {
 				logger.debug("DashBoardServletException: No page provided");
 			}
 			int offset = Pages.getPAGE_OFFSET();
 			int limit = Pages.getPAGE_LIMIT();
 			pageComputers = 
-					new PagesComputer<ComputerDTO>(ComputerMapperDTO.map(webServComp.getList(offset, limit)));
-			
-			pageComputers.update();
+					new PagesComputer<ComputerDTO>
+						(ComputerMapperDTO.map(webServComp.getList(offset, limit)));
 			int maxNbPages = pageComputers.getNumberOfPages();
 			int current = Pages.getCURRENT_PAGE().get();
-			int mid = current < 3  ? 3 : (current >= 3 && current <= (maxNbPages-2) ? current : maxNbPages-2);
+			int mid = current < 3 ? 3 : (current >= 3 && current <= (maxNbPages-2) ? current : maxNbPages-2);
 			
-//			System.out.println(String.format("Page: %s {%s, %s}", current, Pages.getPAGE_LIMIT(), Pages.getPAGE_OFFSET()));
-//			System.out.println(String.format("mid: {%s} maxPages:{%s}", mid, maxNbPages));
+			System.out.println(String.format("Page: %s {%s, %s}", current, Pages.getPAGE_LIMIT(), Pages.getPAGE_OFFSET()));
+			System.out.println(String.format("mid: {%s}, maxPages:{%s}", mid, maxNbPages));
 			logger.debug(String.format("Page: %s {%s, %s}", current, Pages.getPAGE_LIMIT(), Pages.getPAGE_OFFSET()));
 			logger.debug(String.format("mid: {%s} maxPages:{%s}", mid, maxNbPages));
 			request.setAttribute("pageComputers", pageComputers);
@@ -100,23 +96,13 @@ public class DashboardServlet extends HttpServlet {
 			throw new ServletException(e.getMessage(), e);
 		}
 		this.getServletContext().getRequestDispatcher("/WEB-INF/dashboard.jsp").forward(request, response);
-	}
-	
+	}	
 	
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		int current = Pages.getCURRENT_PAGE().get();
-		System.out.println(String.format("Page: %s {%s, %s}", current, Pages.getPAGE_LIMIT(), Pages.getPAGE_OFFSET()));
-		String parameter = null;
-		if((parameter = (String) request.getParameter("way")) != null){
-
-			request.setAttribute("way", parameter);
-		}else {
-			logger.debug("DashBoardServletException: No page provided");
-		}
 		doGet(request, response);
 	}
 

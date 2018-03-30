@@ -64,6 +64,9 @@ public enum ComputerDB {
 			// TODO Auto-generated catch block
 			logger.error("NumberOfInstanceError: ", e.getMessage(), e);
 			throw new NumberOfInstanceException("NumberOfInstanceError: " + e.getMessage(), e);
+		} catch (NullPointerException e) {
+			logger.error("CreateStatement: ", e.getMessage(), e);
+			throw new NumberOfInstanceException("CreateStatement: " + e.getMessage(), e);
 		}
 		return numComputers;
 	}

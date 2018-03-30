@@ -94,7 +94,7 @@ public abstract class Pages<T> {
 		PAGE_LIMIT = pAGE_LIMIT;
 	};
 	
-	public abstract void goTo() throws ServiceManagerException;
+	public abstract void goTo(int index) throws ServiceManagerException;
 	
 	public abstract void next() throws ServiceManagerException;
 	

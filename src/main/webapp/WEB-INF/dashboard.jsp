@@ -87,7 +87,7 @@
 	                        </td>
 	                        <td> ${computer.introduced}   </td>
 	                        <td> ${computer.discontinued} </td>
-	                        <td> ${computer.company}      </td>
+	                        <td> ${computer.companyName}  </td>
     	                </tr>
                     </c:forEach>
                 </tbody>
@@ -100,24 +100,23 @@
             <ul class="pagination">
                 <li>
 					<c:set var="way" value="prev" scope="request"/>
-                    <a href="#" aria-label="Previous" id="way" onclick="$.fn.submitByLinks('prev');">
+                    <a href="#" aria-label="Previous" onclick="location.href='dashboard?page=${current-1}'">
                     	<span aria-hidden="true">&laquo;</span>
 					</a>
-				</li>
-				
+				</li>				
 				<!-- Focus de Pages -->
 				<c:forEach var="i" begin="${mid-2}" end="${mid+2}" step="1">
 					<c:choose>
 						<c:when test="${i == current}">
-						<li><a style="background-color:LightGray;" href="#">${i}</a></li>
+						<li><a style="background-color:LightGray;" href="#" onclick="location.href='dashboard?page=${i}'">${i}</a></li>
 						</c:when>						
 						<c:when test="${i != current}">
-						<li><a href="#">${i}</a></li>
+						<li><a href="#" onclick="location.href='dashboard?page=${i}'">${i}</a></li>
 						</c:when>
 					</c:choose>
 				</c:forEach>
 				<li>
-                	<a href="#" aria-label="Next" id="way" onclick="$.fn.submitByLinks('next');">
+                	<a href="#" aria-label="Next" onclick="location.href='dashboard?page=${current+1}'">
                     	<span aria-hidden="true">&raquo;</span>
                 	</a>
             	</li> 

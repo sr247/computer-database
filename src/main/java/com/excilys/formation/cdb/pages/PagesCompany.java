@@ -19,15 +19,21 @@ public class PagesCompany<T> extends Pages<T> {
 		// TODO Auto-generated constructor stub
 	}
 
+	
 	@Override
-	public void goTo() throws ServiceManagerException {
+	public void goTo(int index) throws ServiceManagerException {
 		// TODO Auto-generated method stub
-		
+		WebServiceCompany webcpy = WebServiceCompany.INSTANCE;
+		numberOfElements = webcpy.getNumberOf();
+		numberOfPages = (int) Math.ceil((double)numberOfElements / (double) PAGE_LIMIT);
+		if(index > 1 && index < numberOfPages-1) {
+			CURRENT_PAGE = Optional.of(index);			
+		}
+		PAGE_OFFSET = (CURRENT_PAGE.get()-1) * PAGE_LIMIT;
+		this.content = (List<T>) webcpy.getList(PAGE_OFFSET, PAGE_LIMIT);
 	}
 	
 	
-	
-	@SuppressWarnings("unchecked")
 	@Override
 	public void next() throws ServiceManagerException  {
 		// TODO Auto-generated method stub
@@ -43,6 +49,7 @@ public class PagesCompany<T> extends Pages<T> {
 		PAGE_OFFSET = (CURRENT_PAGE.get()-1) * PAGE_LIMIT;
 		this.content = (List<T>) webcpy.getList(PAGE_OFFSET, PAGE_LIMIT);
 	}
+	
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -68,8 +75,6 @@ public class PagesCompany<T> extends Pages<T> {
 		numberOfPages = (int) Math.ceil((double)numberOfElements / (double) PAGE_LIMIT);
 
 	}
-
-	
 
 	
 

@@ -34,9 +34,10 @@
                                 <label for="computerName">Computer name</label>
                                 <input type="text" class="form-control" id="computerName" 
                                 		placeholder="" 
-                                		value="<c:out value="${computer.name}"/>"
+                                		value="<c:out value="${computer.name}"/>">
+                                		<!--  data-validation="required"
                                 		data-validation="alphanumeric" 
-                                		data-validation-allowing="-_/+">
+                                		data-validation-allowing="- _/+">-->
                             </div>
                             <div class="form-group">
                                 <label for="introduced">Introduced date</label>

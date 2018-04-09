@@ -50,7 +50,6 @@
                     <tr>
                         <!-- Variable declarations for passing labels as parameters -->
                         <!-- Table header for Computer Name -->
-
                         <th class="editMode" style="width: 60px; height: 22px;">
                             <input type="checkbox" id="selectall" /> 
                             <span style="vertical-align: top;">
@@ -108,7 +107,7 @@
 				<c:forEach var="i" begin="${mid-2}" end="${mid+2}" step="1">
 					<c:choose>
 						<c:when test="${i == current}">
-						<li><a style="background-color:LightGray;" href="#" onclick="location.href='dashboard?page=${i}'">${i}</a></li>
+						<li><a style="background-color:WhiteSmoke;" href="#" onclick="location.href='dashboard?page=${i}'">${i}</a></li>
 						</c:when>						
 						<c:when test="${i != current}">
 						<li><a href="#" onclick="location.href='dashboard?page=${i}'">${i}</a></li>

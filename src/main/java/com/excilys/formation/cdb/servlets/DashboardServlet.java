@@ -69,7 +69,6 @@ public class DashboardServlet extends HttpServlet {
 			if((parameter = (String) request.getParameter("page")) != null){
 				int page = Integer.valueOf(parameter);
 				pageComputers.goTo(page);
-				System.out.println("Page: " + page);
 			}else {
 				logger.debug("DashBoardServletException: No page provided");
 			}
@@ -80,10 +79,10 @@ public class DashboardServlet extends HttpServlet {
 						(ComputerMapperDTO.map(webServComp.getList(offset, limit)));
 			int maxNbPages = pageComputers.getNumberOfPages();
 			int current = Pages.getCURRENT_PAGE().get();
-			int mid = current < 3 ? 3 : (current >= 3 && current <= (maxNbPages-2) ? current : maxNbPages-2);
+			int mid = current < 3 ? 3 : ( current >= 3 && current <= (maxNbPages-2) ? current : maxNbPages-2 );
 			
 			System.out.println(String.format("Page: %s {%s, %s}", current, Pages.getPAGE_LIMIT(), Pages.getPAGE_OFFSET()));
-			System.out.println(String.format("mid: {%s}, maxPages:{%s}", mid, maxNbPages));
+			System.out.println(String.format("mid: {%s}, maxPages: {%s}", mid, maxNbPages));
 			logger.debug(String.format("Page: %s {%s, %s}", current, Pages.getPAGE_LIMIT(), Pages.getPAGE_OFFSET()));
 			logger.debug(String.format("mid: {%s} maxPages:{%s}", mid, maxNbPages));
 			request.setAttribute("pageComputers", pageComputers);

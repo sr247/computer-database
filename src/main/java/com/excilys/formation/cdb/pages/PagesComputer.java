@@ -26,9 +26,9 @@ public class PagesComputer<T> extends Pages<T> {
 		numberOfPages = (int) Math.ceil((double) numberOfElements / (double) PAGE_LIMIT);
 		if(index < 2) {
 			CURRENT_PAGE = Optional.of(1);
-		}else if(index > 1 && index < numberOfPages-1) {
+		}else if(index > 1 && index < numberOfPages) {
 			CURRENT_PAGE = Optional.of(index);
-		} else if(index > numberOfPages-1) {
+		} else if(index >= numberOfPages) {
 			CURRENT_PAGE = Optional.of(numberOfPages);
 		}
 		PAGE_OFFSET = (CURRENT_PAGE.get()-1) * PAGE_LIMIT;
@@ -74,6 +74,15 @@ public class PagesComputer<T> extends Pages<T> {
 		WebServiceComputer webcmp = WebServiceComputer.INSTANCE;
 		numberOfElements = webcmp.getNumberOf();
 		numberOfPages = (int) Math.ceil((double)numberOfElements / (double) PAGE_LIMIT);
+	}
+
+	@Override
+	public int getNumberOfPages() throws ServiceManagerException {
+		// TODO Auto-generated method stub
+		WebServiceComputer webcmp = WebServiceComputer.INSTANCE;
+		numberOfElements = webcmp.getNumberOf();
+		numberOfPages = (int) Math.ceil((double)numberOfElements / (double) PAGE_LIMIT);
+		return numberOfPages;
 	}
 	
 	

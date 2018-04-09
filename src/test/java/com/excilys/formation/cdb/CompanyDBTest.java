@@ -26,49 +26,4 @@ class CompanyDBTest {
 	void tearDown() throws Exception {
 	}
 
-	@Test
-	void testGetInterface() {
-		fail("Not yet implemented");
-	}
-
-	@Test
-	void testGetConnexion() {
-		fail("Not yet implemented");
-	}
-
-	@Test
-	void testGetNumCompanies() {
-		fail("Not yet implemented");
-	}
-
-	@Test
-	void testGetCompanyByID() {
-		fail("Not yet implemented");
-	}
-
-	@Test
-	void testGetCompanyList() {
-		fail("Not yet implemented");
-	}
-
-	@Test
-	void testGetCompanyListIntInt() {
-		fail("Not yet implemented");
-	}
-
-	@Test
-	void testCreate() {
-		fail("Not yet implemented");
-	}
-
-	@Test
-	void testUpdate() {
-		fail("Not yet implemented");
-	}
-
-	@Test
-	void testDelete() {
-		fail("Not yet implemented");
-	}
-
 }

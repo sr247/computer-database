@@ -26,8 +26,12 @@ public class PagesCompany<T> extends Pages<T> {
 		WebServiceCompany webcpy = WebServiceCompany.INSTANCE;
 		numberOfElements = webcpy.getNumberOf();
 		numberOfPages = (int) Math.ceil((double)numberOfElements / (double) PAGE_LIMIT);
-		if(index > 1 && index < numberOfPages-1) {
-			CURRENT_PAGE = Optional.of(index);			
+		if(index < 2) {
+			CURRENT_PAGE = Optional.of(1);
+		}else if(index > 1 && index < numberOfPages) {
+			CURRENT_PAGE = Optional.of(index);
+		} else if(index >= numberOfPages) {
+			CURRENT_PAGE = Optional.of(numberOfPages);
 		}
 		PAGE_OFFSET = (CURRENT_PAGE.get()-1) * PAGE_LIMIT;
 		this.content = (List<T>) webcpy.getList(PAGE_OFFSET, PAGE_LIMIT);
@@ -74,6 +78,14 @@ public class PagesCompany<T> extends Pages<T> {
 		numberOfElements = webcpy.getNumberOf();
 		numberOfPages = (int) Math.ceil((double)numberOfElements / (double) PAGE_LIMIT);
 
+	}
+
+	@Override
+	public int getNumberOfPages() throws ServiceManagerException {
+		WebServiceCompany webcpy = WebServiceCompany.INSTANCE;
+		numberOfElements = webcpy.getNumberOf();
+		numberOfPages = (int) Math.ceil((double)numberOfElements / (double) PAGE_LIMIT);
+		return numberOfPages;
 	}
 
 	

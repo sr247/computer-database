@@ -32,13 +32,6 @@ public abstract class Pages<T> {
 	}
 
 	/**
-	 * @return the numberOfPage
-	 */
-	public int getNumberOfPages() {
-		return numberOfPages;
-	}
-
-	/**
 	 * @return the content
 	 */
 	public List<T> getContent() {
@@ -93,6 +86,11 @@ public abstract class Pages<T> {
 	public static void setStride(int pAGE_LIMIT) throws ServiceManagerException {
 		PAGE_LIMIT = pAGE_LIMIT;
 	};
+	
+	/**
+	 * @return the numberOfPage
+	 */
+	abstract public int getNumberOfPages() throws ServiceManagerException;
 	
 	public abstract void goTo(int index) throws ServiceManagerException;
 	

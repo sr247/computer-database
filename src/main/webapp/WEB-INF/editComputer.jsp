@@ -32,15 +32,25 @@
                         <fieldset>
                             <div class="form-group">
                                 <label for="computerName">Computer name</label>
-                                <input type="text" class="form-control" id="computerName" placeholder="" value="<c:out value="${computer.name}"/>">
+                                <input type="text" class="form-control" id="computerName" 
+                                		placeholder="" 
+                                		value="<c:out value="${computer.name}"/>"
+                                		data-validation="alphanumeric" 
+                                		data-validation-allowing="-_/+">
                             </div>
                             <div class="form-group">
                                 <label for="introduced">Introduced date</label>
-                                <input type="date" class="form-control" id="introduced" placeholder="" value="<c:out value="${computer.introduced}"/>">
+                                <input type="date" class="form-control" id="introduced" 
+                                		placeholder="" 
+                                		value="<c:out value="${computer.introduced}"/>"
+                                		data-validation="date">
                             </div>
                             <div class="form-group">
                                 <label for="discontinued">Discontinued date</label>
-                                <input type="date" class="form-control" id="discontinued" placeholder="" value="<c:out value="${computer.discontinued}"/>">
+                                <input type="date" class="form-control" id="discontinued" 
+                                		placeholder="" 
+                                		value="<c:out value="${computer.discontinued}"/>"
+                                		data-validation="date">
                             </div>
                             <div class="form-group">
                                 <label for="companyId">Company</label>
@@ -68,5 +78,13 @@
             </div>
         </div>
     </section>
+    
+<script src="static/js/jquery.min.js"></script>
+<script src="static/js/jquery.validate.min.js"></script>
+<script>
+  $.validate({
+    lang: 'fr'
+  });
+</script>
 </body>
 </html>

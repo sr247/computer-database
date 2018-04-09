@@ -5,7 +5,7 @@
 	<groupId>com.excilys.formation.java</groupId>
 	<artifactId>computer-database</artifactId>
 	<version>4.3.0-SNAPSHOT</version>
-	<packaging>jar</packaging>
+	<packaging>war</packaging>
 
 	<name>computer-database</name>
 	<url>https://github.com/sr247/computer-database</url>
@@ -51,6 +51,8 @@
 		<!-- runtime -->
 		<mysql.version>5.1.38</mysql.version>
 		<myqsl-jdbc.version>8.0.8-dmr</myqsl-jdbc.version>
+		<tomcat-plugin-version>2.2</tomcat-plugin-version>
+		
 	</properties>
 
 	<build>
@@ -67,7 +69,19 @@
 				</configuration>
 			</plugin>
 			
-			<!-- Plugin Selenium tes -->
+			<!-- Plugin Tomcat8 -->
+			<plugin>
+    			<groupId>org.apache.tomcat.maven</groupId>
+    			<artifactId>tomcat7-maven-plugin</artifactId>
+    			<version>${tomcat-plugin-version}</version>
+    			<configuration>
+        			<url>http://localhost:8080/manager/text</url>
+        			<server>TomcatServer</server>
+        			<path>/computer-database</path>
+    			</configuration>
+			</plugin>
+			
+			<!-- Plugin Selenium test -->
         	<plugin>
             	<groupId>org.codehaus.mojo</groupId>
             	<artifactId>selenium-maven-plugin</artifactId>
@@ -97,7 +111,7 @@
         	</plugin>
 
 			<!-- plugin maven for sunfire test -->
-			<plugin>
+ 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
 				<version>${sunfire-version}</version>
@@ -161,6 +175,13 @@
 			<artifactId>mockito-all</artifactId>
 			<version>${mockito.version}</version>
 			<scope>test</scope>
+		</dependency>
+		
+		<!-- tomcat -->
+		<dependency>
+    		<groupId>org.apache.tomcat.maven</groupId>
+    		<artifactId>tomcat7-maven-plugin</artifactId>
+    		<version>${tomcat-plugin-version}</version>
 		</dependency>
 
 		<!-- logging -->

@@ -19,21 +19,24 @@ public enum ComputerMapperDTO {
 	
 	public static List<ComputerDTO> map(List<Computer> computerList) {
 		List<ComputerDTO> cmpDTOList = new ArrayList<ComputerDTO>();
-		for(Computer c : computerList) {
-			int id = c.getId();
-			String name = c.getName() == null ? "" : c.getName();
-			String intro = c.getIntroduced() == null ? "" : c.getIntroduced().toString();
-			String discon = c.getDiscontinued() == null ? "" : c.getDiscontinued().toString();
-			
-			CompanyDTO companyTmp = CompanyMapperDTO.map(c.getCompany());
-			String company = companyTmp == null ? "" : companyTmp.getName();
-			
-			ComputerDTO cmp = new ComputerDTO(id, name, intro, discon, company);
+		for(Computer computer : computerList) {
+			ComputerDTO cmp = map(computer);
 			cmpDTOList.add(cmp);
 		}
 		return cmpDTOList;
 	}
 	
+	public static ComputerDTO map(Computer computer) {
+		int id = computer.getId();
+		String name = computer.getName() == null ? "" : computer.getName();
+		String intro = computer.getIntroduced() == null ? "" : computer.getIntroduced().toString();
+		String discon = computer.getDiscontinued() == null ? "" : computer.getDiscontinued().toString();
+		
+		CompanyDTO companyTmp = CompanyMapperDTO.map(computer.getCompany());
+		String company = companyTmp == null ? "" : companyTmp.getName();
+		
+		return new ComputerDTO(id, name, intro, discon, company);
+	}
 
 
 }

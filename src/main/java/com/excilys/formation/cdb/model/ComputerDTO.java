@@ -5,23 +5,23 @@ public class ComputerDTO {
 	private String name;
 	private String introduced;
 	private String discontinued;
-	private String company;
+	private String companyName;
 	
-	public ComputerDTO(int id, String name, String introduced, String discontinued, String company) {
+	public ComputerDTO(int id, String name, String introduced, String discontinued, String companyName) {
 		this.id = id;
 		this.name = name;
 		this.introduced = introduced;
 		this.discontinued = discontinued;
-		this.company = company;
+		this.companyName = companyName;
 	}
 	
 
-	public ComputerDTO(String name, String introduced, String discontinued, String company) {
+	public ComputerDTO(String name, String introduced, String discontinued, String companyName) {
 		this.id = 0;
 		this.name = name;
 		this.introduced = introduced;
 		this.discontinued = discontinued;
-		this.company = company;
+		this.companyName = companyName;
 	}
 	
 	/**
@@ -32,14 +32,12 @@ public class ComputerDTO {
 	}
 
 
-
 	/**
 	 * @param id the id to set
 	 */
 	public void setId(int id) {
 		this.id = id;
 	}
-
 
 
 	/**
@@ -50,7 +48,6 @@ public class ComputerDTO {
 	}
 
 
-
 	/**
 	 * @param name the name to set
 	 */
@@ -59,14 +56,12 @@ public class ComputerDTO {
 	}
 
 
-
 	/**
 	 * @return the introduced
 	 */
 	public String getIntroduced() {
 		return introduced;
 	}
-
 
 
 	/**
@@ -99,8 +94,8 @@ public class ComputerDTO {
 	/**
 	 * @return the company_id
 	 */
-	public String getCompany() {
-		return company;
+	public String getCompanyName() {
+		return companyName;
 	}
 
 
@@ -108,18 +103,30 @@ public class ComputerDTO {
 	/**
 	 * @param company_id the company_id to set
 	 */
-	public void setCompany(String company) {
-		this.company = company;
+	public void setCompany(String companyName) {
+		this.companyName = companyName;
 	}
 	
 	@Override 
 	public String toString() {
-		return "Computer:("
-				+ "id=" + id + ", "
-				+ "name=" + name + ", "
-				+ "introduced=" + introduced + ", "
-				+ "discontinued=" + discontinued + ", "
-				+ "company=" + company + ")";
+		StringBuilder s = new StringBuilder();
+		return s.append("Computer:(")
+				.append("id=")
+				.append(id)
+				.append(", ")
+				.append("name=")
+				.append(name)
+				.append(", ")
+				.append("introduced=")
+				.append(introduced)
+				.append(", ")
+				.append("discontinued=")
+				.append(discontinued)
+				.append(", ")
+				.append("company=")
+				.append(companyName)
+				.append(")")
+				.toString();
 	}
 	
 	@Override
@@ -127,9 +134,9 @@ public class ComputerDTO {
 		ComputerDTO cmp = (ComputerDTO) o;
 		return this.id == cmp.id
 				&& this.name.equals(cmp.name)
-				&& this.introduced == cmp.introduced
-				&& this.discontinued == cmp.discontinued
-				&& this.company == cmp.company;
+				&& this.introduced.equals(cmp.introduced)
+				&& this.discontinued.equals(cmp.discontinued)
+				&& this.companyName.equals(cmp.companyName);
 		
 	}
 }

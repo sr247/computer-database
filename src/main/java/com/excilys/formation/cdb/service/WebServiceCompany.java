@@ -37,13 +37,13 @@ public enum WebServiceCompany {
 		}
 	}
 	
-	public List<Company> getList(int from, int to) throws ServiceManagerException{
+	public List<Company> getList(int limit, int offset) throws ServiceManagerException{
 		CompanyDB cpnDB = CompanyDB.INSTANCE;
 		try {
-			if(from == 0 && to == 0) {
+			if(limit == 0 && offset == 0) {
 				return cpnDB.getCompanyList();
 			}
-			return cpnDB.getCompanyList(from, to);			
+			return cpnDB.getCompanyList(limit, offset);			
 		}catch (DAOException e) {
 			logger.error("WebServiceError: {}", e.getMessage(), e);
 			throw new ServiceManagerException("WebServiceError: " + e.getMessage(), e);

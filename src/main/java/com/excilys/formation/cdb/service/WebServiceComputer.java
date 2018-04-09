@@ -50,10 +50,13 @@ public enum WebServiceComputer {
 		}
 	}
 	
-	public List<Computer> getList(int from, int to) throws ServiceManagerException {
+	public List<Computer> getList(int limit, int offset) throws ServiceManagerException {
 		ComputerDB cmpDB = ComputerDB.INSTANCE;
 		try {
-			return cmpDB.getComputerList(from, to);
+			if(limit == 0 && offset == 0) {
+				return cmpDB.getComputerList();
+			}
+			return cmpDB.getComputerList(limit, offset);
 		} catch (DAOException e) {
 			// TODO Auto-generated catch block
 			logger.error("{}: {}", e.getClass().getSimpleName(), e.getMessage(), e);

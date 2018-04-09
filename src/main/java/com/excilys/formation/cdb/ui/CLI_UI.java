@@ -58,7 +58,7 @@ public class CLI_UI {
 				for(Object c : p.getContent()) {
 					System.out.println(c);
 				}
-				System.out.println("Page " + p.getNum());
+				System.out.println("Page " + Pages.getCURRENT_PAGE().get());
 				System.out.println("Type n for next, p for precedent, q for quit: ");
 				String reponse = sc.nextLine();
 				try {
@@ -78,25 +78,28 @@ public class CLI_UI {
 		p.reset();
 	}
 	
-	@SuppressWarnings("unchecked")
 	public void list(String[] t) throws ServiceManagerException {
 		boolean all =  t[1].equals("all");
 		String table = all ? t[2] : t[1];
 		if("computer".equals(table)) {
-			PagesComputer p = null;
+			PagesComputer<?> p = null;
 			if(all) {
-				p = new PagesComputer(wscmp.getAllList());
+				p = new PagesComputer<>(wscmp.getAllList());
 			}else {
-				p = new PagesComputer(wscmp.getList(Pages.getFrom(), Pages.getTo()));
+				int offset = Pages.getPAGE_OFFSET();
+				int stride = Pages.getPAGE_LIMIT();
+				p = new PagesComputer<>(wscmp.getList(offset, stride));
 			}			
 			printList(all, p);
 			
 		} else if("company".equals(table)){
-			PagesCompany p = null;
+			PagesCompany<?> p = null;
 			if(all) {
-				p = new PagesCompany(wscpy.getAllList());
+				p = new PagesCompany<>(wscpy.getAllList());
 			}else {
-				p = new PagesCompany(wscpy.getList(Pages.getFrom(), Pages.getTo()));
+				int offset = Pages.getPAGE_OFFSET();
+				int stride = Pages.getPAGE_LIMIT();
+				p = new PagesCompany<>(wscpy.getList(offset, stride));
 			}
 			printList(all, p);
 		}
@@ -111,6 +114,7 @@ public class CLI_UI {
 		}catch (DateTimeParseException|NumberFormatException e) {
 			// TODO: handle exception
 			logger.warn(e.getMessage(), e);
+			throw new IncorrectFieldException("Champ invalide!");
 		}
 	}
 	

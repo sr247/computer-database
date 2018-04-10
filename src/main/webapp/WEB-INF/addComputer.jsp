@@ -32,20 +32,23 @@
                                 		id="computerName" placeholder="Computer name"
                                 		data-validation="required"
                                 		data-validation="number" 
-                                		data-validation-allowing="- _/+">
+                                		data-validation-allowing="- _/+"
+                                		required>
                             </div>
                             <div class="form-group">
                                 <label for="introduced">Introduced date</label>
                                 <input type="date" class="form-control" name="introduced" 
                                 		id="introduced" placeholder="Introduced date"
                                 		value=""
-                                		data-validation="date">
+                                		data-validation="date"
+                                		required>
                             </div>
                             <div class="form-group">
                                 <label for="discontinued">Discontinued date</label>
                                 <input type="date" class="form-control" name="discontinued" 
                                			id="discontinued" placeholder="Discontinued date"
-                                		data-validation="date">
+                                		data-validation="date"
+                                		required>
                             </div>
                             <div class="form-group">
                                 <label for="companyId">Company</label>

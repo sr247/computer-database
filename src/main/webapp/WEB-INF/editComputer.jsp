@@ -37,7 +37,8 @@
                                 		value="<c:out value="${computer.name}"/>"
                                 		data-validation="required"
                                 		data-validation="alphanumeric" 
-                                		data-validation-allowing="- _/+">
+                                		data-validation-allowing="- _/+"
+                                		required>
                             </div>
                             <div class="form-group">
                                 <label for="introduced">Introduced date</label>

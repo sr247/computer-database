@@ -16,7 +16,7 @@ import com.excilys.formation.cdb.pages.PagesComputer;
 import com.excilys.formation.cdb.service.WebServiceComputer;
 
 // StringUtils, lib interessant
-// Methode isBlank = test: (isNull && isEmpty && hasNoCharacters)
+// Methode isBlank = test: (isNull && isEmpty && hasNoCharacters)!
 
 /**
  * Servlet implementation class AcceuilServlet
@@ -32,14 +32,12 @@ public class DashboardServlet extends HttpServlet {
      */
     public DashboardServlet() {
         super();
-        // TODO Auto-generated constructor stub
     }
 
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
 		response.getWriter().append("Served at: ").append(request.getContextPath());
 		WebServiceComputer webServComp = WebServiceComputer.INSTANCE;
 		String parameter = null;
@@ -48,16 +46,13 @@ public class DashboardServlet extends HttpServlet {
 			numComputers = webServComp.getNumberOf();
 			request.setAttribute("numComputers", numComputers);
 		} catch (ServiceManagerException e) {
-			// TODO Auto-generated catch block
 			logger.debug("DashBoardServletException: {}", e.getMessage(), e);
-			throw new ServletException(e.getMessage(), e);
 		}
 		
-		if((parameter = request.getParameter("stride")) != null) {				
+		if((parameter = request.getParameter("stride")) != null) {
 			try {
 				Pages.setStride(Integer.valueOf(parameter));
 			} catch (NumberFormatException | ServiceManagerException e) {
-				// TODO Auto-generated catch block
 				logger.debug("DashBoardServletException: {}", e.getMessage(), e);
 			}			
 		} else {
@@ -79,20 +74,17 @@ public class DashboardServlet extends HttpServlet {
 						(ComputerMapperDTO.map(webServComp.getList(offset, limit)));
 			int maxNbPages = pageComputers.getNumberOfPages();
 			int current = Pages.getCURRENT_PAGE().get();
-			int mid = current < 3 ? 3 : ( current >= 3 && current <= (maxNbPages-2) ? current : maxNbPages-2 );
+			int mid = current < 3 ? 3 : (current >= 3 && current <= (maxNbPages-2) ? current : maxNbPages-2);
 			
-			System.out.println(String.format("Page: %s {%s, %s}", current, Pages.getPAGE_LIMIT(), Pages.getPAGE_OFFSET()));
-			System.out.println(String.format("mid: {%s}, maxPages: {%s}", mid, maxNbPages));
 			logger.debug(String.format("Page: %s {%s, %s}", current, Pages.getPAGE_LIMIT(), Pages.getPAGE_OFFSET()));
 			logger.debug(String.format("mid: {%s} maxPages:{%s}", mid, maxNbPages));
+			
 			request.setAttribute("pageComputers", pageComputers);
 			request.setAttribute("current", current);
 			request.setAttribute("mid", mid);
 			
 		} catch (ServiceManagerException e) {
-			// TODO Auto-generated catch block
 			logger.debug("DashBoardServletException: {}", e.getMessage(), e);
-			throw new ServletException(e.getMessage(), e);
 		}
 		this.getServletContext().getRequestDispatcher("/WEB-INF/dashboard.jsp").forward(request, response);
 	}	
@@ -101,7 +93,6 @@ public class DashboardServlet extends HttpServlet {
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
 		doGet(request, response);
 	}
 

@@ -85,6 +85,7 @@ public enum ComputerDB {
 			logger.error("InstanceNotInDatabaseError: {}", e.getMessage(), e);
 			throw new InstanceNotInDatabaseException("InstanceNotInDatabaseError: computer not found.");
 		}
+		logger.debug("Warning: Showing");
 		return cmp;
 	}
 	
@@ -101,7 +102,8 @@ public enum ComputerDB {
 		} catch(Exception e) {
 			logger.warn("Warning: " + e.getMessage());
 			throw new InstanceNotInDatabaseException("InstanceNotInDatabaseError: computers not found");
-		}	
+		}
+		logger.debug("Warning: Listing");
 		return computers;
 	}
 	
@@ -120,6 +122,7 @@ public enum ComputerDB {
 			logger.warn("Warning: " + e.getMessage());
 			throw new InstanceNotInDatabaseException("Erreur: ordinateur introuvable");
 		}
+		logger.debug("Warning: Listing");
 		return computers;
 	}
 	

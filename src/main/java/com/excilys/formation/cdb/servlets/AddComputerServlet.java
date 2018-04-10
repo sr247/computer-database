@@ -81,7 +81,7 @@ public class AddComputerServlet extends HttpServlet {
 			Company company = webServCompany.getCompany(cpyFromSel);
 			Computer cmp = new Computer(computerName, introduced, discontinued, company);
 			webServComputer.createComputer(cmp);
-			System.out.println(String.format("Created: %s", cmp));
+			logger.debug(String.format("Created: %s", cmp));
 		} catch (ServiceManagerException e) {
 			logger.debug("AddComputerServletException: {}", e.getMessage(), e);
 		}

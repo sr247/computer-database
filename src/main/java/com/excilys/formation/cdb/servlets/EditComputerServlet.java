@@ -53,7 +53,6 @@ public class EditComputerServlet extends HttpServlet {
 				computer = ComputerMapperDTO.map(webServComputer.getComputer(id));
 				request.setAttribute("idComputer", id);
 				request.setAttribute("computer", computer);
-				logger.debug("Intro: {} \nDiscon: {}",computer.getIntroduced().toString(), computer.getDiscontinued().toString());
 				
 			} catch (ServiceManagerException e) {
 				logger.debug("EditComputerServletException: {}", e.getMessage(), e);
@@ -91,17 +90,17 @@ public class EditComputerServlet extends HttpServlet {
 				
 				if((attribute = Optional.ofNullable((String) request.getParameter("introducted"))).isPresent() ) {
 					if(attribute.get() != "") {
-						introduced = LocalDate.parse(attribute.get());							
+						introduced = LocalDate.parse(attribute.get());
 					}
 					computer.setIntroduced(introduced);
 				}	
 					
 				if((attribute = Optional.ofNullable((String) request.getParameter("discontinued"))).isPresent() ) {
 					if(attribute.get() != "") {
-						discontinued = LocalDate.parse(attribute.get());							
+						discontinued = LocalDate.parse(attribute.get());
 					}
 					computer.setDiscontinued(discontinued);
-				}	
+				}
 				
 				if((attribute = Optional.ofNullable((String) request.getParameter("companyId"))).isPresent() ) {
 					Company company = webServCompany.getCompany(attribute.get());
@@ -109,11 +108,11 @@ public class EditComputerServlet extends HttpServlet {
 				}
 				
 				webServComputer.updateComputer(computer);
-				System.out.println(String.format("Updated: %s", computer));
+				logger.debug(String.format("Updated: %s", computer));
 				
 			} catch (NumberFormatException | ServiceManagerException e) {
+				logger.error(String.format("Fail to Update: %s\n%s: %s", computer));
 				logger.error("EditComputerServletException: {}", e.getMessage(), e);
-				System.out.println(String.format("Fail to Update: %s\nException: %s", computer, e.getMessage()));
 			}
 		}
 		doGet(request, response);

@@ -44,7 +44,8 @@ public enum ComputerDB {
 			+ "LEFT JOIN company ON company.id = computer.company_id "
 			+ "ORDER BY computer.id LIMIT ?, ?;";
 	private final static String CREATE_REQUEST  = "INSERT INTO computer (NAME, INTRODUCED, DISCONTINUED, COMPANY_ID) VALUES (?, ?, ?, ?);";
-	private final static String UPDTATE_REQUEST = "UPDATE computer SET NAME=?, INTRODUCED=?, DISCONTINUED=?, COMPANY_ID=? WHERE ID=?;";
+	private final static String UPDTATE_REQUEST = 
+			"UPDATE computer SET NAME=?, INTRODUCED=?, DISCONTINUED=?, COMPANY_ID=? WHERE ID=?;";
 	private final static String DELETE_REQUEST  = "DELETE FROM computer WHERE ID=?;";
 		
 	private ComputerDB() {
@@ -56,12 +57,10 @@ public enum ComputerDB {
 		try (Connection conn = ConnexionDB.INSTANCE.getConnection();)
 		{
 			s = conn.createStatement();
-			ResultSet res = s
-					.executeQuery(COUNT_NUMBER_OF);
+			ResultSet res = s.executeQuery(COUNT_NUMBER_OF);
 			res.next();
 			numComputers = res.getInt("NUM");
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			logger.error("NumberOfInstanceError: ", e.getMessage(), e);
 			throw new NumberOfInstanceException("NumberOfInstanceError: " + e.getMessage(), e);
 		} catch (NullPointerException e) {
@@ -83,7 +82,6 @@ public enum ComputerDB {
 			res.next();
 			cmp = ComputerMapper.map(res).get();
 		} catch (SQLException|NoSuchElementException e) {
-			// TODO Auto-generated catch block
 			logger.error("InstanceNotInDatabaseError: {}", e.getMessage(), e);
 			throw new InstanceNotInDatabaseException("InstanceNotInDatabaseError: computer not found.");
 		}
@@ -148,40 +146,30 @@ public enum ComputerDB {
 			crt = setDateProperly(Optional.ofNullable(cmp.getDiscontinued()), crt, 3);
 			crt.setInt(4, cmp.getCompany().getId());
 			crt.executeUpdate();
-			// Ici le out deviendra un log
 			logger.warn("Created:" + cmp);
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			logger.error("CreationOfInstanceError: " + e.getMessage());
 			throw new ModifyDatabaseException("CreationOfInstanceError: computer couldn't be created", e);
 		} 
 	}
 	
-	/*
-	 * Ici on update forcément tout.. Bonne ou mauvaise solution ?
-	 * Essayer une version qui update seulement x champs.
-	 */
 	public void update(Computer cmp) throws ModifyDatabaseException {
 		PreparedStatement upd;
 		try (Connection conn = (Connection) ConnexionDB.INSTANCE.getConnection();){
 			upd = (PreparedStatement) conn.prepareStatement(UPDTATE_REQUEST);
-			upd.setString(2, cmp.getName());		
-			upd.setDate(2, Date.valueOf(cmp.getIntroduced()));		
-			upd.setDate(2, Date.valueOf(cmp.getDiscontinued()));		
-			upd.setInt(2, cmp.getCompany().getId());		
-			upd.setInt(3, cmp.getId());
+			upd.setString(1, cmp.getName());
+			setDateProperly(Optional.ofNullable(cmp.getIntroduced()), upd, 2);
+			setDateProperly(Optional.ofNullable(cmp.getDiscontinued()), upd, 3);		
+			upd.setInt(4, cmp.getCompany().getId());		
+			upd.setInt(5, cmp.getId());
 			upd.executeUpdate();
-			
-			// Ici le out deviendra un log
-			logger.info("Updated:" + cmp);
+			logger.info("Updated: {}", cmp);
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			logger.error("UpdateOfInstanceError: " + e.getMessage());
+			logger.error("UpdateOfInstanceError: {}", e.getMessage());
 			throw new ModifyDatabaseException("UpdateOfInstanceError: computer couldn't be updated", e);
 		}
 	}	
 	
-	// Pour le moment on recoit juste l'id
 	public void delete(Computer cmp) throws ModifyDatabaseException {
 		try (Connection conn = (Connection) ConnexionDB.INSTANCE.getConnection();){
 			PreparedStatement del = (PreparedStatement) conn.prepareStatement(DELETE_REQUEST);
@@ -190,7 +178,6 @@ public enum ComputerDB {
 			logger.info("Deleted:" + cmp);
 			
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			logger.error("DeletionOfInstanceError: " + e.getMessage());
 			throw new ModifyDatabaseException("DeletionOfInstanceError: computer couldn't be deleted", e);
 		}

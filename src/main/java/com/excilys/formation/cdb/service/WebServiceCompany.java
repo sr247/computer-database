@@ -22,8 +22,8 @@ public enum WebServiceCompany {
 		try {
 			return cpyDB.getNumCompanies();			
 		}catch(DAOException e) {
-			logger.error("WebServiceError: {}", e.getMessage(), e);
-			throw new ServiceManagerException("WebServiceError: " + e.getMessage(), e);
+			logger.error("WebServiceCompany: {}", e.getMessage(), e);
+			throw new ServiceManagerException("WebServiceCompany: " + e.getMessage(), e);
 		}
 	}
 
@@ -32,8 +32,8 @@ public enum WebServiceCompany {
 		try {
 			return cmpDB.getCompanyList();			
 		}catch(DAOException e) {
-			logger.error("WebServiceError: {}", e.getMessage(), e);
-			throw new ServiceManagerException("WebServiceError: " + e.getMessage(), e);
+			logger.error("WebServiceCompany: {}", e.getMessage(), e);
+			throw new ServiceManagerException("WebServiceCompany: " + e.getMessage(), e);
 		}
 	}
 	
@@ -45,8 +45,8 @@ public enum WebServiceCompany {
 			}
 			return cpnDB.getCompanyList(limit, offset);			
 		}catch (DAOException e) {
-			logger.error("WebServiceError: {}", e.getMessage(), e);
-			throw new ServiceManagerException("WebServiceError: " + e.getMessage(), e);
+			logger.error("WebServiceCompany: {}", e.getMessage(), e);
+			throw new ServiceManagerException("WebServiceCompany: " + e.getMessage(), e);
 		}
 	}
 	
@@ -56,8 +56,8 @@ public enum WebServiceCompany {
 		try {
 			optCompany = cpyDB.getCompanyByID(Integer.valueOf(id));
 		}catch(NumberFormatException|DAOException e) {
-			logger.error("WebServiceError: {}", e.getMessage(), e);
-			throw new ServiceManagerException("WebServiceError: " + e.getMessage(), e);
+			logger.error("WebServiceCompany: {}", e.getMessage(), e);
+			throw new ServiceManagerException("WebServiceCompany: " + e.getMessage(), e);
 		}
 		return optCompany.get();
 	}

@@ -28,34 +28,34 @@
                     <h1>Edit Computer</h1>
 
                     <form action="editComputer" method="POST">
-                        <input type="hidden" value="0" id="id"/> <!-- TODO: Change this value with the computer id -->
+                        <input type="hidden" value="${idComputer}" id="id" name="id"/> <!-- TODO: Change this value with the computer id -->
                         <fieldset>
                             <div class="form-group">
                                 <label for="computerName">Computer name</label>
-                                <input type="text" class="form-control" id="computerName" 
-                                		placeholder="" 
-                                		value="<c:out value="${computer.name}"/>">
-                                		<!--  data-validation="required"
+                                <input type="text" class="form-control" 
+                                		id="computerName" name="computerName" placeholder="" 
+                                		value="<c:out value="${computer.name}"/>"
+                                		data-validation="required"
                                 		data-validation="alphanumeric" 
-                                		data-validation-allowing="- _/+">-->
+                                		data-validation-allowing="- _/+">
                             </div>
                             <div class="form-group">
                                 <label for="introduced">Introduced date</label>
-                                <input type="date" class="form-control" id="introduced" 
-                                		placeholder="" 
+                                <input type="date" class="form-control" 
+                                		id="introduced" name="introduced" placeholder="" 
                                 		value="<c:out value="${computer.introduced}"/>"
                                 		data-validation="date">
                             </div>
                             <div class="form-group">
                                 <label for="discontinued">Discontinued date</label>
-                                <input type="date" class="form-control" id="discontinued" 
-                                		placeholder="" 
+                                <input type="date" class="form-control" 
+                                		id="discontinued" name="discontinued" placeholder="" 
                                 		value="<c:out value="${computer.discontinued}"/>"
                                 		data-validation="date">
                             </div>
                             <div class="form-group">
                                 <label for="companyId">Company</label>
-                                <select class="form-control" id="companyId" >
+                                <select class="form-control" id="companyId" name="companyId">
                                     <c:forEach var="company" items="${companies}">
                                         <c:choose>
                                             <c:when test="${company.name == computer.companyName}">

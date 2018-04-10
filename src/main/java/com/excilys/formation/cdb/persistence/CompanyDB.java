@@ -38,12 +38,10 @@ public enum CompanyDB {
 		Statement s;
 		try (Connection conn = (Connection) ConnexionDB.INSTANCE.getConnection();){
 			s = conn.createStatement();
-			ResultSet res = s
-					.executeQuery(COUNT_NUMBER_OF);
+			ResultSet res = s.executeQuery(COUNT_NUMBER_OF);
 			res.next();
 			numCompanies = res.getInt("NUM");
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			logger.error("NumberOfInstanceException: {}", e.getMessage(), e);
 			throw new NumberOfInstanceException("NumberOfInstanceException: " + e.getMessage(), e);
 		}
@@ -62,7 +60,6 @@ public enum CompanyDB {
 				res.next();
 				cpy = CompanyMapper.map(res).get();
 			} catch (SQLException e) {
-				// TODO Auto-generated catch block
 				logger.error("InstanceNotInDatabaseError: {}", e.getMessage(), e);
 				throw new InstanceNotInDatabaseException("NumberOfInstanceError: company not found", e);
 			}
@@ -71,7 +68,6 @@ public enum CompanyDB {
 	
 	public List<Company> getCompanyList() throws InstanceNotInDatabaseException {
 		List<Company> companies = new ArrayList<Company>();
-		// Solutionner pour les preperedStatement plutot : Plus sécuritaire au niveau des injection sql.
 		try (Connection conn = (Connection) ConnexionDB.INSTANCE.getConnection();){
 			Statement s = conn.createStatement();
 			ResultSet res = s.executeQuery(SELECT_UNLIMITED_LIST);
@@ -80,7 +76,6 @@ public enum CompanyDB {
 				companies.add(CompanyMapper.map(res).get());
 			
 		}catch (SQLException e) {
-			// TODO Auto-generated catch block
 			logger.error("InstanceNotInDatabaseError: {}", e.getMessage(), e);
 			throw new InstanceNotInDatabaseException("InstanceNotInDatabaseError: companies not found", e);
 		}		
@@ -89,7 +84,6 @@ public enum CompanyDB {
 	
 	public List<Company> getCompanyList(int limit, int offset) throws InstanceNotInDatabaseException {
 		List<Company> companies = new ArrayList<Company>();
-		// Solutionner pour les preperedStatement plutot : Plus sécuritaire au niveau des injection sql.
 		try (Connection conn = (Connection) ConnexionDB.INSTANCE.getConnection();){
 			PreparedStatement ps = (PreparedStatement) 
 					conn.prepareStatement(SELECT_LIMITED_LIST);
@@ -101,7 +95,6 @@ public enum CompanyDB {
 				companies.add(CompanyMapper.map(res).get());
 			
 		}catch (SQLException e) {
-			// TODO Auto-generated catch block
 			logger.error("InstanceNotInDatabaseError: ", e.getMessage(), e);
 			throw new InstanceNotInDatabaseException("InstanceNotInDatabaseError: companies not found", e);
 		}
@@ -124,7 +117,6 @@ public enum CompanyDB {
 			cpy.setId(id);
 			logger.info("Created: " + cpy);		
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			logger.error("CreationOfInstanceError: ", e.getMessage(), e);
 			throw new ModifyDatabaseException("CreationOfInstanceError: company couldn't be created", e);
 		}
@@ -145,7 +137,6 @@ public enum CompanyDB {
 			// Can't call commit, when autocommit:true
 			// conn.commit();
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			logger.error("UpdateOfInstanceError: ", e.getMessage(), e);
 			throw new ModifyDatabaseException("UpdatenOfInstanceError: company couldn't be updated", e);
 		}
@@ -157,7 +148,6 @@ public enum CompanyDB {
 			PreparedStatement upd = (PreparedStatement) conn.prepareStatement(DELETE_REQUEST);
 			upd.setInt(1, cmp.getId());
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			logger.error("DeletionOfInstanceError: ", e.getMessage(), e);
 			throw new ModifyDatabaseException("DeletionOfInstanceError: company couldn't be deleted", e);
 		}

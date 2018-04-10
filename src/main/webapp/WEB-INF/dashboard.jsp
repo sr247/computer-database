@@ -16,14 +16,14 @@
 <body>
     <header class="navbar navbar-inverse navbar-fixed-top">
         <div class="container">
-            <a class="navbar-brand" href="Dashboard"> Application - Computer Database </a>
+            <a class="navbar-brand" href="dashboard"> Application - Computer Database </a>
         </div>
     </header>
 
     <section id="main">
         <div class="container">
             <h1 id="homeTitle">
-               ${numComputer} Computers found
+               ${numComputers} Computers found
             </h1>
             <div id="actions" class="form-horizontal">
                 <div class="pull-left">
@@ -35,7 +35,7 @@
                 </div>
                 <div class="pull-right">
                     <a class="btn btn-success" id="addComputer" href="addComputer">Add Computer</a> 
-                    <a class="btn btn-default" id="editComputer" href="#" onclick="$.fn.toggleEditMode();">Edit</a>
+                    <a class="btn btn-default" id="editComputer" href="#" onclick="$.fn.toggleEditMode();">Delete</a>
                 </div>
             </div>
         </div>
@@ -50,7 +50,6 @@
                     <tr>
                         <!-- Variable declarations for passing labels as parameters -->
                         <!-- Table header for Computer Name -->
-
                         <th class="editMode" style="width: 60px; height: 22px;">
                             <input type="checkbox" id="selectall" /> 
                             <span style="vertical-align: top;">
@@ -77,17 +76,17 @@
                 </thead>
                 <!-- Browse attribute computers -->
 	            <tbody id="results">
-	            	<c:forEach var="computer" items="${computers}">
+	            	<c:forEach var="computer" items="${pageComputers.content}">
     	                <tr>
 	                        <td class="editMode">
 	                            <input type="checkbox" name="cb" class="cb" value="0">
 	                        </td>
 	                        <td>
-	                            <a href="editComputer" onclick=""> ${computer.getName()} </a>
+	                            <a href="#" onclick="location.href='editComputer?id=${computer.id}'"> ${computer.name} </a>
 	                        </td>
-	                        <td> ${computer.getIntroduced()}   </td>
-	                        <td> ${computer.getDiscontinued()} </td>
-	                        <td> ${computer.getCompany()}      </td>
+	                        <td> ${computer.introduced}   </td>
+	                        <td> ${computer.discontinued} </td>
+	                        <td> ${computer.companyName}  </td>
     	                </tr>
                     </c:forEach>
                 </tbody>
@@ -95,32 +94,40 @@
             </table>
         </div>
     </section>
-
     <footer class="navbar-fixed-bottom">
         <div class="container text-center">
             <ul class="pagination">
                 <li>
-                    <a href="#" aria-label="Previous">
+					<c:set var="way" value="prev" scope="request"/>
+                    <a href="#" aria-label="Previous" onclick="location.href='dashboard?page=${current-1}'">
                     	<span aria-hidden="true">&laquo;</span>
 					</a>
-				</li>
-				<c:forEach var="i" begin="${pageFrom+1}" end="${pageTo}" step="1">
-            		<li><a href="#">${pageFrom+i}</a></li>				
+				</li>				
+				<!-- Focus de Pages -->
+				<c:forEach var="i" begin="${mid-2}" end="${mid+2}" step="1">
+					<c:choose>
+						<c:when test="${i == current}">
+						<li><a style="background-color:WhiteSmoke;" href="#" onclick="location.href='dashboard?page=${i}'">${i}</a></li>
+						</c:when>						
+						<c:when test="${i != current}">
+						<li><a href="#" onclick="location.href='dashboard?page=${i}'">${i}</a></li>
+						</c:when>
+					</c:choose>
 				</c:forEach>
 				<li>
-                	<a href="#" aria-label="Next">
+                	<a href="#" aria-label="Next" onclick="location.href='dashboard?page=${current+1}'">
                     	<span aria-hidden="true">&raquo;</span>
                 	</a>
-            	</li>
+            	</li> 
         	</ul>
         	
-        <div class="btn-group btn-group-sm pull-right" role="group" >
-	        <!-- Gérer les url via tag lib -->
-            <button type="button" class="btn btn-default" onclick="location.href='Dashboard?stride=10'">10</button>
-            <button type="button" class="btn btn-default" onclick="location.href='Dashboard?stride=50'">50</button>
-            <button type="button" class="btn btn-default" onclick="location.href='Dashboard?stride=100'">100</button>
+            <div class="btn-group btn-group-sm pull-right" role="group" >
+	            <!-- Gérer les url via tag lib -->
+                <button type="button" class="btn btn-default" onclick="location.href='dashboard?stride=10'">10</button>
+                <button type="button" class="btn btn-default" onclick="location.href='dashboard?stride=50'">50</button>
+                <button type="button" class="btn btn-default" onclick="location.href='dashboard?stride=100'">100</button>
+            </div>
         </div>
-
     </footer>
 <script src="static/js/jquery.min.js"></script>
 <script src="static/js/bootstrap.min.js"></script>

@@ -47,7 +47,7 @@ $(function() {
     $.fn.toggleEditMode = function() {
         if($(".editMode").is(":visible")) {
             $(".editMode").hide();
-            $("#editComputer").text("Edit");
+            $("#editComputer").text("Delete");
         }
         else {
             $(".editMode").show();
@@ -57,6 +57,7 @@ $(function() {
     };
 
 }( jQuery ));
+
 
 
 // Function delete selected: Asks for confirmation to delete selected computers, then submits it to the deleteForm
@@ -89,5 +90,13 @@ $(document).keydown(function(e) {
             }
             break;
     }
+});
+
+// Post Request for pages Links
+$(function ( $ ) {
+    $.fn.submitByLinks = function() {
+        $(document).forms["way"].submit();
+    };
+
 });
 

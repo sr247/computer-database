@@ -2,12 +2,13 @@ package com.excilys.formation.cdb.mapper;
 
 import java.sql.Date;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.Optional;
 
+import com.excilys.formation.cdb.exceptions.InstanceNotInDatabaseException;
 import com.excilys.formation.cdb.model.Company;
 import com.excilys.formation.cdb.model.Computer;
-import com.excilys.formation.cdb.persistence.CompanyDB;
 
 public enum ComputerMapper {
 	
@@ -18,7 +19,7 @@ public enum ComputerMapper {
 		
 	}
 	
-	public static Optional<Computer> map(ResultSet res) {
+	public static Optional<Computer> map(ResultSet res) throws InstanceNotInDatabaseException {
 		Computer cmp = null;		
 		try {
 			if(!res.equals(null)) {
@@ -32,8 +33,9 @@ public enum ComputerMapper {
 				cmp = new Computer(id, name, introduced, discontinued, company);
 				
 			}
-		}catch(Exception e) {
-			logger.warn(e.getMessage());
+		}catch(SQLException e) {
+			logger.error("Error in database: {}", e.getMessage(), e);
+			throw new InstanceNotInDatabaseException("Error in database:", e);
 		}	
 		return Optional.ofNullable(cmp);
 	}

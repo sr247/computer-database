@@ -11,6 +11,7 @@ public enum ConnexionDB {
 	
 	INSTANCE;
 	private Connection conn;
+	private static org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(ConnexionDB.class);
 	
 	private ConnexionDB () {
 
@@ -22,24 +23,21 @@ public enum ConnexionDB {
 			
 		try {
 			prop.load(pathDB);
-		} catch (IOException e1) {
+		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			e1.printStackTrace();
+			logger.error("ConnexionDBError: {}", e.getMessage(), e);
 		}	
 		
 		try {
 			Class.forName(prop.getProperty("mysql.driver"));
 			String urlDB = prop.getProperty("mysql.url");
 			String user = prop.getProperty("mysql.user");
-			String passwd = prop.getProperty("mysql.passwd");
+			String passwd = prop.getProperty("mysql.password");
 			conn = DriverManager.getConnection(urlDB, user, passwd);
-		}catch(SQLException e) {
+		}catch(SQLException | ClassNotFoundException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error("ConnexionDBError: {}", e.getMessage(), e);
 			
-		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
 		return conn;
 	}

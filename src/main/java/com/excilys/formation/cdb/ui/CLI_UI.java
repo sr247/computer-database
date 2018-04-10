@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Scanner;
 
 import com.excilys.formation.cdb.exceptions.IncorrectFieldException;
-import com.excilys.formation.cdb.exceptions.InstanceNotFoundException;
+import com.excilys.formation.cdb.exceptions.ServiceManagerException;
 import com.excilys.formation.cdb.model.Company;
 import com.excilys.formation.cdb.model.Computer;
 import com.excilys.formation.cdb.pages.Pages;
@@ -23,6 +23,7 @@ public class CLI_UI {
 	private WebServiceComputer wscmp;
 	private WebServiceCompany wscpy;
 	protected Scanner sc;
+	private static org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(CLI_UI.class);
 	
 	public CLI_UI() {
 		this.exit = false;
@@ -40,13 +41,13 @@ public class CLI_UI {
 		int i = Integer.valueOf(id);
 		try {
 			System.out.println(wscmp.getComputer(i));
-		} catch (InstanceNotFoundException e) {
+		} catch (ServiceManagerException e) {
 			// TODO Auto-generated catch block
-			System.err.println(e.getMessage());
+			logger.warn(e.getMessage(), e);
 		}
 	}
 	
-	private void printList(boolean all, Pages p) {
+	private void printList(boolean all, Pages<?> p) {
 		if(all) {
 			for(Object c : p.getContent()) {
 				System.out.println(c);
@@ -57,51 +58,48 @@ public class CLI_UI {
 				for(Object c : p.getContent()) {
 					System.out.println(c);
 				}
-				System.out.println("Page " + p.getNum());
+				System.out.println("Page " + Pages.getCURRENT_PAGE().get());
 				System.out.println("Type n for next, p for precedent, q for quit: ");
 				String reponse = sc.nextLine();
-				if(reponse.equals("n")) {
-					try {
+				try {
+					if(reponse.equals("n")) {
 						p.next();
-					} catch (InstanceNotFoundException e) {
-						// TODO Auto-generated catch block
-						System.err.println(e.getMessage());
-					}
-				}else if(reponse.equals("p")){
-					try {
+					}else if(reponse.equals("p")){
 						p.preview();
-					} catch (InstanceNotFoundException e) {
-						// TODO Auto-generated catch block
-						System.err.println(e.getMessage());
+					}else if(reponse.equals("q")){
+						still = false;
 					}
-				}else if(reponse.equals("q")){
-					still = false;
+				}catch (ServiceManagerException e) {
+					// TODO Auto-generated catch block
+					logger.warn(e.getMessage(), e);
 				}
 			}
 		}
 		p.reset();
 	}
 	
-	public void list(String[] t) throws InstanceNotFoundException {
+	public void list(String[] t) throws ServiceManagerException {
 		boolean all =  t[1].equals("all");
 		String table = all ? t[2] : t[1];
 		if("computer".equals(table)) {
-			PagesComputer p = null;
+			PagesComputer<?> p = null;
 			if(all) {
-				p = new PagesComputer(wscmp.getAllList());
+				p = new PagesComputer<>(wscmp.getAllList());
 			}else {
-				p = new PagesComputer(wscmp.getList(Pages.getFrom(), Pages.getTo()));
+				int offset = Pages.getPAGE_OFFSET();
+				int stride = Pages.getPAGE_LIMIT();
+				p = new PagesComputer<>(wscmp.getList(offset, stride));
 			}			
 			printList(all, p);
 			
 		} else if("company".equals(table)){
-			PagesCompany p = null;
+			PagesCompany<?> p = null;
 			if(all) {
-				p = new PagesCompany(wscpy.getAllList());
-
+				p = new PagesCompany<>(wscpy.getAllList());
 			}else {
-				p = new PagesCompany(wscpy.getList(Pages.getFrom(), Pages.getTo()));
-
+				int offset = Pages.getPAGE_OFFSET();
+				int stride = Pages.getPAGE_LIMIT();
+				p = new PagesCompany<>(wscpy.getList(offset, stride));
 			}
 			printList(all, p);
 		}
@@ -115,8 +113,8 @@ public class CLI_UI {
 			Integer.parseInt(fields.get(3));
 		}catch (DateTimeParseException|NumberFormatException e) {
 			// TODO: handle exception
-			e.printStackTrace();
-			throw new IncorrectFieldException();
+			logger.warn(e.getMessage(), e);
+			throw new IncorrectFieldException("Champ invalide!");
 		}
 	}
 	
@@ -133,7 +131,7 @@ public class CLI_UI {
 		return fields;
 	}
 	
-	private void create(String[] t) {
+	private void create(String[] t) throws ServiceManagerException {
 		boolean err = false;
 		boolean exit = false;
 		String table = t[1];
@@ -155,22 +153,19 @@ public class CLI_UI {
 					wscmp.createComputer(cmp);
 					err = false;
 				}catch(DateTimeParseException|IncorrectFieldException e) {
-					System.err.println("Erreur: Champ invalide");
-					err = true;
-				}catch (InstanceNotFoundException e) {
-					System.err.println("Erreur: Instance inexistante");
+					logger.warn(e.getMessage(), e);
 					err = true;
 				}
 			}
 		}while(err & !exit);
 	}
 	
-	public void delete(String id) throws InstanceNotFoundException {
+	public void delete(String id) throws ServiceManagerException {
 		int i = Integer.valueOf(id);
 		wscmp.deleteComputer(i);
 	}
 	
-	public void update(String[] t) {
+	public void update(String[] t) throws ServiceManagerException {
 		boolean err = false;
 		boolean exit = false;
 		String table = t[1];
@@ -194,10 +189,7 @@ public class CLI_UI {
 					wscmp.updateComputer(cmp);
 					err = false;
 				}catch(DateTimeParseException|IncorrectFieldException e) {
-					System.err.println("Erreur: Champ invalide");
-					err = true;
-				}catch (InstanceNotFoundException e) {
-					System.err.println("Erreur: Instance inexistante");
+					logger.warn(e.getMessage(), e);
 					err = true;
 				}
 			}
@@ -250,8 +242,9 @@ public class CLI_UI {
 				if(target.length > 2)
 					delete(target[2]);
 			}
-		}catch(InstanceNotFoundException e) {
-			System.err.println(e.getMessage());
+		}catch (ServiceManagerException e) {
+			// TODO Auto-generated catch block
+			logger.warn(e.getMessage(), e);
 		}
 	}
 	

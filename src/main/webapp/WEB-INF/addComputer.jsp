@@ -28,25 +28,35 @@
                         <fieldset>
                             <div class="form-group">
                                 <label for="computerName">Computer name</label>
-                                <input type="text" class="form-control" id="computerName" placeholder="Computer name">
+                                <input type="text" class="form-control" name="computerName" 
+                                		id="computerName" placeholder="Computer name"
+                                		data-validation="alphanumeric" 
+                                		data-validation-allowing="-_/+">
                             </div>
                             <div class="form-group">
                                 <label for="introduced">Introduced date</label>
-                                <input type="date" class="form-control" id="introduced" placeholder="Introduced date">
+                                <input type="date" class="form-control" name="introduced" 
+                                		id="introduced" placeholder="Introduced date"
+                                		value=""
+                                		data-validation="date">
                             </div>
                             <div class="form-group">
                                 <label for="discontinued">Discontinued date</label>
-                                <input type="date" class="form-control" id="discontinued" placeholder="Discontinued date">
+                                <input type="date" class="form-control" name="discontinued" 
+                               			id="discontinued" placeholder="Discontinued date"
+                                		data-validation="date">
                             </div>
                             <div class="form-group">
                                 <label for="companyId">Company</label>
-                                <select class="form-control" id="companyId" >
-                                    <option value="0">--</option>
+                                <select class="form-control" id="companyId" name="companyId" >
+                                	<c:forEach var="company" items="${companies}">
+                                    	<option value="${company.id}">${company.name}</option>
+                                    </c:forEach>
                                 </select>
                             </div>                  
                         </fieldset>
                         <div class="actions pull-right">
-                            <input type="submit" value="Add" class="btn btn-primary" href="addComputer">
+                            <input type="submit" value="Add" class="btn btn-primary">
                             or
                             <a href="dashboard" class="btn btn-default">Cancel</a>
                         </div>
@@ -55,5 +65,13 @@
             </div>
         </div>
     </section>
+    
+<script src="static/js/jquery.min.js"></script>
+<script src="static/js/jquery.validate.min.js"></script>
+<script>
+  $.validate({
+    lang: 'fr'
+  });
+</script>
 </body>
 </html>

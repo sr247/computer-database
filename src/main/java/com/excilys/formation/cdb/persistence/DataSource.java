@@ -17,17 +17,18 @@ public class DataSource {
     static {
     	Properties prop = new Properties();
 		InputStream pathDB = DataSource.class.getClassLoader().getResourceAsStream("datasource.properties");
+
 		try {
 			prop.load(pathDB);
-			
-		} catch (IOException e) {
+			Class.forName(prop.getProperty("dataSource.driver"));			
+			config = new HikariConfig(prop);
+			config.addDataSourceProperty( "cachePrepStmts" , "true" );
+			config.addDataSourceProperty( "prepStmtCacheSize" , "250" );
+			config.addDataSourceProperty( "prepStmtCacheSqlLimit" , "2048" );
+			ds = new HikariDataSource(config);        
+		} catch (ClassNotFoundException | IOException e) {
 			logger.debug("DataSourceError: {}", e.getMessage(), e);
 		}
-		config = new HikariConfig(prop);
-        config.addDataSourceProperty( "cachePrepStmts" , "true" );
-        config.addDataSourceProperty( "prepStmtCacheSize" , "250" );
-        config.addDataSourceProperty( "prepStmtCacheSqlLimit" , "2048" );
-        ds = new HikariDataSource(config);        
     }
  
     private DataSource() {}

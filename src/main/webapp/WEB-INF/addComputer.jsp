@@ -40,15 +40,13 @@
                                 <input type="date" class="form-control" name="introduced" 
                                 		id="introduced" placeholder="Introduced date"
                                 		value=""
-                                		data-validation="date"
-                                		required>
+                                		data-validation="date">
                             </div>
                             <div class="form-group">
                                 <label for="discontinued">Discontinued date</label>
                                 <input type="date" class="form-control" name="discontinued" 
                                			id="discontinued" placeholder="Discontinued date"
-                                		data-validation="date"
-                                		required>
+                                		data-validation="date">
                             </div>
                             <div class="form-group">
                                 <label for="companyId">Company</label>

@@ -29,6 +29,7 @@ public class DashboardServlet extends HttpServlet {
 	
 	private static final long serialVersionUID = 7292200966426509099L;
 	private static org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(DashboardServlet.class);
+	private static final String DASHBOARD_EXCEPTION = "DashBoardServletException: {}";
 	
     /**
      * @see HttpServlet#HttpServlet()
@@ -40,6 +41,7 @@ public class DashboardServlet extends HttpServlet {
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
+    @Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		response.getWriter().append("Served at: ").append(request.getContextPath());
 		WebServiceComputer webServComp = WebServiceComputer.INSTANCE;
@@ -49,19 +51,18 @@ public class DashboardServlet extends HttpServlet {
 			numComputers = webServComp.getNumberOf();
 			request.setAttribute("numComputers", numComputers);
 		} catch (ServiceManagerException e) {
-			String s = String.format("DashBoardServletException: %s", e.getMessage());
-			logger.debug(s, e);
+			logger.debug(DASHBOARD_EXCEPTION, e.getMessage(), e);
 		}
 		
 		if((parameter = request.getParameter("stride")) != null) {
 			try {
 				Pages.setStride(Integer.valueOf(parameter));
 			} catch (NumberFormatException | ServiceManagerException e) {
-				logger.debug("DashBoardServletException: {}", e.getMessage(), e);
+				logger.debug(DASHBOARD_EXCEPTION, e.getMessage(), e);
 			}			
 		} else {
-			String s = "DashBoardServletException: No stride provided";
-			logger.debug(s);
+			String s = "No stride provided";
+			logger.info(DASHBOARD_EXCEPTION, s);
 		}
 		
 		PagesComputer<ComputerDTO> pageComputers = new PagesComputer<>();
@@ -70,27 +71,26 @@ public class DashboardServlet extends HttpServlet {
 				int page = Integer.valueOf(parameter);
 				pageComputers.goTo(page);
 			}else {
-				String s = "DashBoardServletException: No page provided";
-				logger.debug(s);
+				String s = "No page provided";
+				logger.debug(DASHBOARD_EXCEPTION, s);
 			}
 			int offset = Pages.getPAGE_OFFSET();
 			int limit = Pages.getPAGE_LIMIT();
 			pageComputers = 
-					new PagesComputer<ComputerDTO>
-						(ComputerMapperDTO.map(webServComp.getList(offset, limit)));
+					new PagesComputer<ComputerDTO> (ComputerMapperDTO.map(webServComp.getList(offset, limit)));
 			int maxNbPages = pageComputers.getNumberOfPages();
 			int current = Pages.getCURRENT_PAGE().get();
 			int mid = current < 3 ? 3 : (current >= 3 && current <= (maxNbPages-2) ? current : maxNbPages-2);
 			
-			logger.debug("Page: {} {{}, {}}", current, Pages.getPAGE_LIMIT(), Pages.getPAGE_OFFSET());
-			logger.debug("mid:{} maxPages:{}", mid, maxNbPages);
+			logger.info("Page: {} {{}, {}}", current, Pages.getPAGE_LIMIT(), Pages.getPAGE_OFFSET());
+			logger.info("mid:{} maxPages:{}", mid, maxNbPages);
 			
 			request.setAttribute("pageComputers", pageComputers);
 			request.setAttribute("current", current);
 			request.setAttribute("mid", mid);
 			
 		} catch (ServiceManagerException e) {
-			logger.debug("DashBoardServletException: {}", e.getMessage(), e);
+			logger.debug(DASHBOARD_EXCEPTION, e.getMessage(), e);
 		}
 		this.getServletContext().getRequestDispatcher("/WEB-INF/dashboard.jsp").forward(request, response);
 	}	
@@ -98,17 +98,21 @@ public class DashboardServlet extends HttpServlet {
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
+	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		WebServiceComputer webServComp = WebServiceComputer.INSTANCE;
 		try {
 			Optional<String[]> names = Optional.ofNullable(request.getParameterValues("selection"));
 			if(names.isPresent()) {
 				List<String> list =  Arrays.asList(names.get());
-				logger.debug(list.toString());				
+				List<Integer> list2 = (List<Integer>) list.stream().map(n -> Integer.parseInt(n));
+				logger.info(list2.toString());
 			} else {
-				logger.debug("DashBoardServletException: No checkbox checked.");
+				String s = "No checkbox checked.";
+				logger.info(DASHBOARD_EXCEPTION, s);
 			}
 		} catch (Exception e) {
-			logger.debug("AddComputerServletException: {} - from:{}", e.getMessage(), e.getClass().getSimpleName(), e);
+			logger.debug(DASHBOARD_EXCEPTION, e.getMessage(), e);
 		}
 		doGet(request, response);
 	}

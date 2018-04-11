@@ -36,7 +36,7 @@ public enum CompanyDB {
 	public int getNumCompanies() throws NumberOfInstanceException {
 		
 		Statement s;
-		try (Connection conn = (Connection) ConnexionDB.INSTANCE.getConnection();){
+		try (Connection conn = (Connection) DataSource.getConnection();){
 			s = conn.createStatement();
 			ResultSet res = s.executeQuery(COUNT_NUMBER_OF);
 			res.next();
@@ -52,7 +52,7 @@ public enum CompanyDB {
 			PreparedStatement sel = null;
 			ResultSet res = null;
 			Company cpy = null;
-			try (Connection conn = (Connection) ConnexionDB.INSTANCE.getConnection();){
+			try (Connection conn = (Connection) DataSource.getConnection();){
 				sel = (PreparedStatement) 
 						conn.prepareStatement(SELECT_ONE);
 				sel.setInt(1, id);
@@ -68,7 +68,7 @@ public enum CompanyDB {
 	
 	public List<Company> getCompanyList() throws InstanceNotInDatabaseException {
 		List<Company> companies = new ArrayList<Company>();
-		try (Connection conn = (Connection) ConnexionDB.INSTANCE.getConnection();){
+		try (Connection conn = (Connection) DataSource.getConnection();){
 			Statement s = conn.createStatement();
 			ResultSet res = s.executeQuery(SELECT_UNLIMITED_LIST);
 			
@@ -84,7 +84,7 @@ public enum CompanyDB {
 	
 	public List<Company> getCompanyList(int limit, int offset) throws InstanceNotInDatabaseException {
 		List<Company> companies = new ArrayList<Company>();
-		try (Connection conn = (Connection) ConnexionDB.INSTANCE.getConnection();){
+		try (Connection conn = (Connection) DataSource.getConnection();){
 			PreparedStatement ps = (PreparedStatement) 
 					conn.prepareStatement(SELECT_LIMITED_LIST);
 			ps.setInt(1, limit);
@@ -106,7 +106,7 @@ public enum CompanyDB {
 	private void create(Company cpy) throws NumberOfInstanceException, ModifyDatabaseException {
 		PreparedStatement crt;
 		ResultSet generatedKey = null;
-		try (Connection conn = (Connection) ConnexionDB.INSTANCE.getConnection();){
+		try (Connection conn = (Connection) DataSource.getConnection();){
 			crt = (PreparedStatement) conn.prepareStatement(CREATE_REQUEST);			
 			crt.setString(2, cpy.getName());			
 			crt.executeUpdate();
@@ -125,7 +125,7 @@ public enum CompanyDB {
 	
 	private void update(String field, Company cmp) throws ModifyDatabaseException {
 		PreparedStatement upd;
-		try (Connection conn = (Connection) ConnexionDB.INSTANCE.getConnection();){
+		try (Connection conn = (Connection) DataSource.getConnection();){
 			upd = (PreparedStatement) conn.prepareStatement(UPDTATE_REQUEST);
 
 			upd.setString(1, field);
@@ -134,8 +134,7 @@ public enum CompanyDB {
 			}
 			upd.setInt(3, cmp.getId());
 			upd.executeUpdate();
-			// Can't call commit, when autocommit:true
-			// conn.commit();
+			// Can't call commit, when autocommit:true: commit the connexion
 		} catch (SQLException e) {
 			logger.error("UpdateOfInstanceError: ", e.getMessage(), e);
 			throw new ModifyDatabaseException("UpdatenOfInstanceError: company couldn't be updated", e);
@@ -144,7 +143,7 @@ public enum CompanyDB {
 	}
 	
 	private void delete(Company cmp) throws ModifyDatabaseException {
-		try (Connection conn = (Connection) ConnexionDB.INSTANCE.getConnection();){
+		try (Connection conn = (Connection) DataSource.getConnection();){
 			PreparedStatement upd = (PreparedStatement) conn.prepareStatement(DELETE_REQUEST);
 			upd.setInt(1, cmp.getId());
 		} catch (SQLException e) {

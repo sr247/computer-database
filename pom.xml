@@ -53,6 +53,9 @@
 		<myqsl-jdbc.version>8.0.8-dmr</myqsl-jdbc.version>
 		<tomcat-plugin-version>2.2</tomcat-plugin-version>
 		
+		<!-- Connection pool -->
+		<hikariCP-version>3.0.0</hikariCP-version>
+		
 	</properties>
 	
 	<dependencies>
@@ -114,6 +117,14 @@
     		<groupId>jstl</groupId>
     		<artifactId>jstl</artifactId>
     		<version>${jstl-version}</version>
+		</dependency>
+		
+		
+		<!-- connection pool -->
+		<dependency>
+    		<groupId>com.zaxxer</groupId>
+	    	<artifactId>HikariCP</artifactId>
+    		<version>${hikariCP-version}</version>
 		</dependency>
 		
 	</dependencies>

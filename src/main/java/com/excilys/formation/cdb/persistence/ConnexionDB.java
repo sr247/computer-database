@@ -24,7 +24,6 @@ public enum ConnexionDB {
 		try {
 			prop.load(pathDB);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			logger.error("ConnexionDBError: {}", e.getMessage(), e);
 		}	
 		
@@ -35,7 +34,6 @@ public enum ConnexionDB {
 			String passwd = prop.getProperty("mysql.password");
 			conn = DriverManager.getConnection(urlDB, user, passwd);
 		}catch(SQLException | ClassNotFoundException e) {
-			// TODO Auto-generated catch block
 			logger.error("ConnexionDBError: {}", e.getMessage(), e);
 			
 		}

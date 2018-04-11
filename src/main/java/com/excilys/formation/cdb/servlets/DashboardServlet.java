@@ -1,6 +1,9 @@
 package com.excilys.formation.cdb.servlets;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -46,7 +49,8 @@ public class DashboardServlet extends HttpServlet {
 			numComputers = webServComp.getNumberOf();
 			request.setAttribute("numComputers", numComputers);
 		} catch (ServiceManagerException e) {
-			logger.debug("DashBoardServletException: {}", e.getMessage(), e);
+			String s = String.format("DashBoardServletException: %s", e.getMessage());
+			logger.debug(s, e);
 		}
 		
 		if((parameter = request.getParameter("stride")) != null) {
@@ -56,7 +60,8 @@ public class DashboardServlet extends HttpServlet {
 				logger.debug("DashBoardServletException: {}", e.getMessage(), e);
 			}			
 		} else {
-			logger.debug("DashBoardServletException: No stride provided");
+			String s = "DashBoardServletException: No stride provided";
+			logger.debug(s);
 		}
 		
 		PagesComputer<ComputerDTO> pageComputers = new PagesComputer<>();
@@ -65,7 +70,8 @@ public class DashboardServlet extends HttpServlet {
 				int page = Integer.valueOf(parameter);
 				pageComputers.goTo(page);
 			}else {
-				logger.debug("DashBoardServletException: No page provided");
+				String s = "DashBoardServletException: No page provided";
+				logger.debug(s);
 			}
 			int offset = Pages.getPAGE_OFFSET();
 			int limit = Pages.getPAGE_LIMIT();
@@ -76,8 +82,8 @@ public class DashboardServlet extends HttpServlet {
 			int current = Pages.getCURRENT_PAGE().get();
 			int mid = current < 3 ? 3 : (current >= 3 && current <= (maxNbPages-2) ? current : maxNbPages-2);
 			
-			logger.debug(String.format("Page: %s {%s, %s}", current, Pages.getPAGE_LIMIT(), Pages.getPAGE_OFFSET()));
-			logger.debug(String.format("mid: {%s} maxPages:{%s}", mid, maxNbPages));
+			logger.debug("Page: {} {{}, {}}", current, Pages.getPAGE_LIMIT(), Pages.getPAGE_OFFSET());
+			logger.debug("mid:{} maxPages:{}", mid, maxNbPages);
 			
 			request.setAttribute("pageComputers", pageComputers);
 			request.setAttribute("current", current);
@@ -93,6 +99,17 @@ public class DashboardServlet extends HttpServlet {
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		try {
+			Optional<String[]> names = Optional.ofNullable(request.getParameterValues("selection"));
+			if(names.isPresent()) {
+				List<String> list =  Arrays.asList(names.get());
+				logger.debug(list.toString());				
+			} else {
+				logger.debug("DashBoardServletException: No checkbox checked.");
+			}
+		} catch (Exception e) {
+			logger.debug("AddComputerServletException: {} - from:{}", e.getMessage(), e.getClass().getSimpleName(), e);
+		}
 		doGet(request, response);
 	}
 

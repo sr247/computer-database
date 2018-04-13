@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -102,11 +103,16 @@ public class DashboardServlet extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		WebServiceComputer webServComp = WebServiceComputer.INSTANCE;
 		try {
-			Optional<String[]> names = Optional.ofNullable(request.getParameterValues("selection"));
-			if(names.isPresent()) {
-				List<String> list =  Arrays.asList(names.get());
-				List<Integer> list2 = (List<Integer>) list.stream().map(n -> Integer.parseInt(n));
-				logger.info(list2.toString());
+			Optional<String[]> ids = Optional.ofNullable(request.getParameterValues("selection"));
+			if(ids.isPresent()) {
+				List<String> idListString =  Arrays.asList(ids.get());
+				
+				List<Integer> idListInteger = 
+						idListString.stream()
+						.map(Integer::parseInt)
+						.collect(Collectors.toList());
+				
+				logger.info(idListInteger.toString());
 			} else {
 				String s = "No checkbox checked.";
 				logger.info(DASHBOARD_EXCEPTION, s);

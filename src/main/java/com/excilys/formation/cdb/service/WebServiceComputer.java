@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.excilys.formation.cdb.exceptions.DAOException;
 import com.excilys.formation.cdb.exceptions.ServiceManagerException;
-import com.excilys.formation.cdb.exceptions.ValidateException;
+import com.excilys.formation.cdb.exceptions.ValidatorException;
 import com.excilys.formation.cdb.model.Computer;
 import com.excilys.formation.cdb.persistence.ComputerDB;
 
@@ -13,7 +13,9 @@ public enum WebServiceComputer {
 	
 	INSTANCE;
 	private static org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(WebServiceComputer.class);
-
+	private static final String WEBSERVICE_COMPUTER_EXCEPTION = "WebServiceComputer: %s, from %s";
+	private static final String WEBSERVICE_COMPUTER_LOGGER = "WebServiceComputer: {}";
+	
 	private WebServiceComputer() {
 	
 	}	
@@ -23,8 +25,8 @@ public enum WebServiceComputer {
 		try {
 			return cmpDB.getNumComputers();
 		}catch(DAOException e) {
-			logger.error("{}: {}", e.getClass().getSimpleName(), e.getMessage(), e);
-			throw new ServiceManagerException("WebServiceComputer: " + e.getMessage(), e);
+			logger.error(WEBSERVICE_COMPUTER_LOGGER, e.getClass().getSimpleName(), e.getMessage(), e);
+			throw new ServiceManagerException(String.format(WEBSERVICE_COMPUTER_EXCEPTION, e.getMessage(), e.getClass().getSimpleName()), e);
 		}
 	}
 	
@@ -33,7 +35,7 @@ public enum WebServiceComputer {
 		try {
 			return cmpDB.getComputerByID(id);
 		} catch (DAOException e) {
-			logger.error("{}: {}", e.getClass().getSimpleName(), e.getMessage(), e);
+			logger.error(WEBSERVICE_COMPUTER_LOGGER, e.getClass().getSimpleName(), e.getMessage(), e);
 			throw new ServiceManagerException("WebServiceComputer: " + e.getMessage(), e);
 		}
 	}
@@ -44,7 +46,7 @@ public enum WebServiceComputer {
 			return cmpDB.getComputerList();
 		} catch (DAOException e) {
 
-			logger.error("{}: {}", e.getClass().getSimpleName(), e.getMessage(), e);
+			logger.error(WEBSERVICE_COMPUTER_LOGGER, e.getClass().getSimpleName(), e.getMessage(), e);
 			throw new ServiceManagerException("WebServiceComputer: " + e.getMessage(), e);
 		}
 	}
@@ -57,7 +59,7 @@ public enum WebServiceComputer {
 			}
 			return cmpDB.getComputerList(limit, offset);
 		} catch (DAOException e) {
-			logger.error("{}: {}", e.getClass().getSimpleName(), e.getMessage(), e);
+			logger.error(WEBSERVICE_COMPUTER_LOGGER, e.getClass().getSimpleName(), e.getMessage(), e);
 			throw new ServiceManagerException("WebServiceComputer: " + e.getMessage(), e);
 		}
 	}
@@ -70,12 +72,9 @@ public enum WebServiceComputer {
 		try {
 			vcmp.validate(cmp);		
 			cmpDB.create(cmp);
-		} catch (DAOException e) {
-			logger.error("{}: {}", e.getClass().getSimpleName(), e.getMessage(), e);
-			throw new ServiceManagerException("WebServiceComputer: " + e.getMessage(), e);
-		} catch (ValidateException e) {
-			logger.error("{}: {}", e.getClass().getSimpleName(), e.getMessage(), e);
-			throw new ServiceManagerException("WebServiceComputer: " + e.getMessage(), e);
+		} catch (DAOException | ValidatorException e) {
+			logger.error(WEBSERVICE_COMPUTER_LOGGER, e.getClass().getSimpleName(), e.getMessage(), e);
+			throw new ServiceManagerException(String.format(WEBSERVICE_COMPUTER_EXCEPTION, e.getMessage(), e.getClass().getSimpleName()), e);
 		}
 	}
 	
@@ -86,12 +85,9 @@ public enum WebServiceComputer {
 		try {
 			vcmp.validate(cmp);	
 			cmpDB.update(cmp);
-		} catch (DAOException e) {
-			logger.error("{}: {}", e.getClass().getSimpleName(), e.getMessage(), e);
-			throw new ServiceManagerException(String.format("WebServiceComputer: %s, from %s", e.getMessage(), e.getClass().getSimpleName()), e);
-		} catch (ValidateException e) {
-			logger.error("{}: {}", e.getClass().getSimpleName(), e.getMessage(), e);
-			throw new ServiceManagerException(String.format("WebServiceComputer: %s, from %s", e.getMessage(), e.getClass().getSimpleName()), e);
+		} catch (DAOException | ValidatorException e) {
+			logger.error(WEBSERVICE_COMPUTER_LOGGER, e.getClass().getSimpleName(), e.getMessage(), e);
+			throw new ServiceManagerException(String.format(WEBSERVICE_COMPUTER_EXCEPTION, e.getMessage(), e.getClass().getSimpleName()), e);
 		}
 	}
 	
@@ -102,8 +98,18 @@ public enum WebServiceComputer {
 			cmp = cmpDB.getComputerByID(id);
 			cmpDB.delete(cmp);
 		} catch (DAOException e) {
-			logger.error("{}: {}", e.getClass().getSimpleName(), e.getMessage(), e);
-			throw new ServiceManagerException(String.format("WebServiceComputer: %s, from %s", e.getMessage(), e.getClass().getSimpleName()), e);
+			logger.error(WEBSERVICE_COMPUTER_LOGGER, e.getClass().getSimpleName(), e.getMessage(), e);
+			throw new ServiceManagerException(String.format(WEBSERVICE_COMPUTER_EXCEPTION, e.getMessage(), e.getClass().getSimpleName()), e);
+		}
+	}
+	
+	public void deleteComputerFromIDList(List<Integer> idList) throws ServiceManagerException{
+		ComputerDB cmpDB = ComputerDB.INSTANCE;		
+		try {
+			cmpDB.deleteFromIDList(idList);
+		} catch (DAOException e) {
+			logger.error(WEBSERVICE_COMPUTER_LOGGER, e.getClass().getSimpleName(), e.getMessage(), e);
+			throw new ServiceManagerException(String.format(WEBSERVICE_COMPUTER_EXCEPTION, e.getMessage(), e.getClass().getSimpleName()), e);
 		}
 	}
 

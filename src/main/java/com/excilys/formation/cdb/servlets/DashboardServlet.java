@@ -107,16 +107,17 @@ public class DashboardServlet extends HttpServlet {
 			Optional<String[]> ids = Optional.ofNullable(request.getParameterValues("selection"));
 			if(ids.isPresent()) {
 				List<String> idListString = new ArrayList<>();
-				for(String s : idListString) {
-					
+				for(String s : ids.get()) {
+					for(String ss : s.split(",")){
+						idListString.add(ss);
+					}
 				}
 				
-				List<Integer> idListInteger = 
-						idListString.stream()
+				List<Integer> idListInteger =  idListString.stream()
 						.map(Integer::parseInt)
 						.collect(Collectors.toList());
-				
-				logger.info(idListInteger.toString());
+				logger.info("Liste des checkboxes: {}", idListInteger.toString());
+				webServComp.deleteComputerFromIDList(idListInteger);
 			} else {
 				String s = "No checkbox checked.";
 				logger.info(DASHBOARD_EXCEPTION, s);

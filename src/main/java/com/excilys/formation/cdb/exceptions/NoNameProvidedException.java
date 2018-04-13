@@ -1,6 +1,6 @@
 package com.excilys.formation.cdb.exceptions;
 
-public class NoNameProvidedException extends ValidateException {
+public class NoNameProvidedException extends ValidatorException {
 
 	private static final long serialVersionUID = -5102850543650694510L;
 

@@ -42,7 +42,6 @@ public class CLI_UI {
 		try {
 			System.out.println(wscmp.getComputer(i));
 		} catch (ServiceManagerException e) {
-			// TODO Auto-generated catch block
 			logger.warn(e.getMessage(), e);
 		}
 	}
@@ -70,7 +69,6 @@ public class CLI_UI {
 						still = false;
 					}
 				}catch (ServiceManagerException e) {
-					// TODO Auto-generated catch block
 					logger.warn(e.getMessage(), e);
 				}
 			}
@@ -112,7 +110,6 @@ public class CLI_UI {
 			LocalDate.parse(fields.get(2), fmt);
 			Integer.parseInt(fields.get(3));
 		}catch (DateTimeParseException|NumberFormatException e) {
-			// TODO: handle exception
 			logger.warn(e.getMessage(), e);
 			throw new IncorrectFieldException("Champ invalide!");
 		}
@@ -160,14 +157,18 @@ public class CLI_UI {
 		}while(err & !exit);
 	}
 	
-	public void delete(String id) throws ServiceManagerException {
-		int i = Integer.valueOf(id);
-		wscmp.deleteComputer(i);
+	public void delete(String[] t) throws ServiceManagerException {
+		int i = Integer.valueOf(t[2]);
+		String table = t[1];
+		if("computer".equals(table)) {
+			wscmp.deleteComputer(i);
+		}else if ("company".equals(table)) {
+			wscpy.deleteCompany(t[2]);
+		}
 	}
 	
 	public void update(String[] t) throws ServiceManagerException {
 		boolean err = false;
-		boolean exit = false;
 		String table = t[1];
 		
 		do{
@@ -185,7 +186,6 @@ public class CLI_UI {
 					d2 = LocalDate.parse(fields.get(2), fmt);
 					Company cmpny = wscpy.getCompany(fields.get(3));					
 					Computer cmp = new Computer(fields.get(0), d1, d2, cmpny);
-					err = false;
 					wscmp.updateComputer(cmp);
 					err = false;
 				}catch(DateTimeParseException|IncorrectFieldException e) {
@@ -240,10 +240,9 @@ public class CLI_UI {
 				target = command.split(" ");
 				System.out.println("Command delete");
 				if(target.length > 2)
-					delete(target[2]);
+					delete(target);
 			}
 		}catch (ServiceManagerException e) {
-			// TODO Auto-generated catch block
 			logger.warn(e.getMessage(), e);
 		}
 	}

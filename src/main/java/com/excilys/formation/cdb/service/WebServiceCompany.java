@@ -12,6 +12,8 @@ public enum WebServiceCompany {
 	
 	INSTANCE;
 	private static org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(WebServiceCompany.class);
+	private static final String WEBSERVICE_COMPANY_EXCEPTION = "WebServiceCompany: %s, from %s";
+	private static final String WEBSERVICE_COMPANY_LOGGER = "WebServiceCompany: {}";
 
 	private WebServiceCompany() {
 		
@@ -60,6 +62,19 @@ public enum WebServiceCompany {
 			throw new ServiceManagerException("WebServiceCompany: " + e.getMessage(), e);
 		}
 		return optCompany.get();
+	}
+	
+	
+	public void deleteCompany(String id) throws ServiceManagerException {
+		CompanyDB cpyDB = CompanyDB.INSTANCE;
+		Company cpy = null;
+		try {
+			cpy  = getCompany(id);
+			cpyDB.delete(cpy);
+		} catch (DAOException e) {
+			logger.error(WEBSERVICE_COMPANY_LOGGER, e.getClass().getSimpleName(), e.getMessage(), e);
+			throw new ServiceManagerException(String.format(WEBSERVICE_COMPANY_EXCEPTION, e.getMessage(), e.getClass().getSimpleName()), e);
+		}
 	}
 
 	

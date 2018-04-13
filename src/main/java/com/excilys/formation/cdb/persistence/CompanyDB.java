@@ -15,7 +15,6 @@ import com.excilys.formation.cdb.exceptions.ModifyDatabaseException;
 import com.excilys.formation.cdb.exceptions.NumberOfInstanceException;
 import com.excilys.formation.cdb.mapper.CompanyMapper;
 import com.excilys.formation.cdb.model.Company;
-import com.excilys.formation.cdb.model.Computer;
 
 public enum CompanyDB {
 	
@@ -142,7 +141,7 @@ public enum CompanyDB {
 		
 	}
 	
-	private void delete(Company cpy) throws DAOException {
+	public void delete(Company cpy) throws DAOException {
 		ComputerDB computerDB = ComputerDB.INSTANCE;
 		Connection conn = null;
 		try {
@@ -153,6 +152,7 @@ public enum CompanyDB {
 			PreparedStatement upd = (PreparedStatement) conn.prepareStatement(DELETE_REQUEST);
 			upd.setInt(1, cpy.getId());
 			upd.executeQuery();
+			conn.commit();
 		} catch (SQLException e1) {
 			logger.error("DeletionOfInstanceError: {}", e1.getMessage(), e1);
 			try {

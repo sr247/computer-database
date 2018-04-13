@@ -59,6 +59,7 @@ public enum ComputerDB {
 	}
 
 	public int getNumComputers() throws DAOException {
+		
 		Statement state;
 		try (Connection conn = (Connection) DataSource.getConnection();){
 			state = conn.createStatement();
@@ -76,6 +77,7 @@ public enum ComputerDB {
 	}
 	
 	public Computer getComputerByID(int id) throws DAOException {
+		
 		ResultSet res = null;
 		Computer cmp = null;
 		try (Connection conn = (Connection) DataSource.getConnection();
@@ -109,6 +111,7 @@ public enum ComputerDB {
 	}
 	
 	public List<Computer> getComputerList(int limit, int offset) throws DAOException {
+		
 		List<Computer> computers = new ArrayList<Computer>();
 		try (Connection conn = (Connection) DataSource.getConnection();){
 			PreparedStatement ps = (PreparedStatement) 
@@ -127,6 +130,7 @@ public enum ComputerDB {
 	}
 	
 	public List<Integer> getAllComputersRelatedToCompanyWithID(int id) throws SQLException {
+		
 		List<Integer> computersID = new ArrayList<>();
 		Connection conn = (Connection) DataSource.getConnection();
 		PreparedStatement ps = (PreparedStatement) 
@@ -141,15 +145,8 @@ public enum ComputerDB {
 		return computersID;
 	}
 	
-	/**
-	 * 
-	 * @param date
-	 * @param ps
-	 * @param i
-	 * @return
-	 * @throws SQLException
-	 */
 	public PreparedStatement setDateProperly(Optional<LocalDate> date, PreparedStatement ps, int i) throws SQLException {
+		
 		if(!date.isPresent()) {
 			ps.setNull(i, java.sql.Types.DATE);
 		} else {
@@ -161,7 +158,7 @@ public enum ComputerDB {
 	
 	
 	public void create(Computer cmp) throws DAOException {
-		//Can't call commit, when autocommit:true
+		
 		PreparedStatement crt;
 		try (Connection conn = (Connection) DataSource.getConnection();){
 			crt = (PreparedStatement) 
@@ -179,6 +176,7 @@ public enum ComputerDB {
 	}
 	
 	public void update(Computer cmp) throws DAOException {
+		
 		PreparedStatement upd;
 		try (Connection conn = (Connection) DataSource.getConnection();){
 			upd = (PreparedStatement) conn.prepareStatement(UPDTATE_REQUEST);
@@ -196,6 +194,7 @@ public enum ComputerDB {
 	}	
 	
 	public void delete(Computer cmp) throws DAOException {
+		
 		try (Connection conn = (Connection) DataSource.getConnection();){
 			PreparedStatement del = (PreparedStatement) conn.prepareStatement(DELETE_REQUEST);
 			del.setInt(1, cmp.getId());
@@ -216,20 +215,41 @@ public enum ComputerDB {
             }
         } catch (SQLException e) {
             logger.error("DeletionOfInstanceError: {}", e);
-            throw new DAOException("Couldn't delete the provided computers' list.", e);
+            throw new ModifyDatabaseException("Couldn't delete the provided computers' list.", e);
         }
 	}
 	
-	public void deleteFromIDList(List<Integer> idList) throws DAOException{
-		try (Connection conn = (Connection) DataSource.getConnection();
-			PreparedStatement ps = conn.prepareStatement(DELETE_REQUEST); ){
+	public void deleteFromIDList(List<Integer> idList) throws DAOException {
+		Connection conn = null;
+		PreparedStatement ps = null;
+		
+		try {
+			conn = (Connection) DataSource.getConnection();
+			ps = conn.prepareStatement(DELETE_REQUEST);
+			conn.setAutoCommit(false);
             for (Integer id : idList) {
                 ps.setInt(1, id);
                 ps.executeUpdate();
+                logger.info("Delete: {}", id);
             }
-        } catch (SQLException e) {
-            logger.error("DeletionOfInstanceError: {}", e);
-            throw new DAOException("Couldn't delete the provided computers' list.", e);
-        }
+            conn.commit();
+        } catch (SQLException e1) {
+            logger.error("DeletionOfInstanceError: {}", e1.getMessage(), e1);
+			try {
+				conn.rollback();
+			}catch(SQLException e) {
+				logger.error("DeletionOfInstanceError: {}", e.getMessage(), e);
+				throw new ModifyDatabaseException("DeletionOfInstanceError: Rolling back has failed.", e);
+			}
+        } finally {
+        	// Envisager des optionnals ici aussi ?
+			try {
+				ps.close();
+				conn.close();
+			} catch (SQLException e) {
+				logger.error("DeletionOfInstanceError: {}", e.getMessage(), e);
+				// throw new ModifyDatabaseException("DeletionOfInstanceError: Closing connection has failed.", e);
+			}
+		}
 	}
 }

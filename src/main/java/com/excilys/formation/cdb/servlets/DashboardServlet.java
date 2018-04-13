@@ -1,6 +1,7 @@
 package com.excilys.formation.cdb.servlets;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -105,7 +106,10 @@ public class DashboardServlet extends HttpServlet {
 		try {
 			Optional<String[]> ids = Optional.ofNullable(request.getParameterValues("selection"));
 			if(ids.isPresent()) {
-				List<String> idListString =  Arrays.asList(ids.get());
+				List<String> idListString = new ArrayList<>();
+				for(String s : idListString) {
+					
+				}
 				
 				List<Integer> idListInteger = 
 						idListString.stream()

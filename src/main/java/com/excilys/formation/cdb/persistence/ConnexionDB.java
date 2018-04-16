@@ -40,9 +40,4 @@ public enum ConnexionDB {
 		return conn;
 	}
 	
-	public static void main (String[] args) throws SQLException {
-		Connection conn = ConnexionDB.INSTANCE.getConnection();
-		conn.close();
-	}
-	
 }

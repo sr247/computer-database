@@ -19,7 +19,6 @@ public class ValidateComputer {
 	@Autowired
 	private CompanyDB companyDB;
 	
-	
 	private ValidateComputer() {}	
 	
 	public void validate(Computer cmp) throws IncorrectFieldException, InstanceNotInDatabaseException {

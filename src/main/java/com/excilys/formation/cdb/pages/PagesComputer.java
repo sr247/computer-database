@@ -3,26 +3,29 @@ package com.excilys.formation.cdb.pages;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import com.excilys.formation.cdb.exceptions.ServiceManagerException;
+import com.excilys.formation.cdb.model.ModelBase;
 import com.excilys.formation.cdb.service.ServiceComputer;
 
-public class PagesComputer<T> extends Pages<T> {
+@Service
+public class PagesComputer<T extends ModelBase> extends Pages<T> {
 
+	@Autowired
+	private ServiceComputer serviceComputer;
 	public PagesComputer() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
 	public PagesComputer(List<T> page) {
 		super(page);
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override
 	public void goTo(int index) throws ServiceManagerException {
-		// TODO Auto-generated method stub
-		ServiceComputer webcmp = ServiceComputer.INSTANCE;
-		numberOfElements = webcmp.getNumberOf();
+		numberOfElements = serviceComputer.getNumberOf();
 		numberOfPages = (int) Math.ceil((double) numberOfElements / (double) PAGE_LIMIT);
 		if(index < 2) {
 			CURRENT_PAGE = Optional.of(1);
@@ -32,15 +35,13 @@ public class PagesComputer<T> extends Pages<T> {
 			CURRENT_PAGE = Optional.of(numberOfPages);
 		}
 		PAGE_OFFSET = (CURRENT_PAGE.get()-1) * PAGE_LIMIT;
-		this.content = (List<T>) webcmp.getList(PAGE_OFFSET, PAGE_LIMIT);
+		this.content = (List<T>) serviceComputer.getList(PAGE_OFFSET, PAGE_LIMIT);
 	}
 	
 	
 	@Override
 	public void next() throws ServiceManagerException {
-		// TODO Auto-generated method stub
-		ServiceComputer webcmp = ServiceComputer.INSTANCE;
-		numberOfElements = webcmp.getNumberOf();
+		numberOfElements = serviceComputer.getNumberOf();
 		numberOfPages = (int) Math.ceil((double) numberOfElements / (double) PAGE_LIMIT);
 		
 		if(CURRENT_PAGE.isPresent()) {
@@ -49,15 +50,13 @@ public class PagesComputer<T> extends Pages<T> {
 				CURRENT_PAGE = Optional.of(numberOfPages);
 		}
 		PAGE_OFFSET = (CURRENT_PAGE.get()-1) * PAGE_LIMIT;
-		this.content = (List<T>) webcmp.getList(PAGE_OFFSET, PAGE_LIMIT);
+		this.content = (List<T>) serviceComputer.getList(PAGE_OFFSET, PAGE_LIMIT);
 	}
 
 	
 	@Override
 	public void preview() throws ServiceManagerException  {
-		// TODO Auto-generated method stub
-		ServiceComputer webcmp = ServiceComputer.INSTANCE;
-		numberOfElements = webcmp.getNumberOf();
+		numberOfElements = serviceComputer.getNumberOf();
 		numberOfPages = (int) Math.ceil((double)numberOfElements / (double) PAGE_LIMIT);
 		
 		if(CURRENT_PAGE.isPresent()) {
@@ -66,21 +65,17 @@ public class PagesComputer<T> extends Pages<T> {
 				CURRENT_PAGE = Optional.of(1);
 		}
 		PAGE_OFFSET = (CURRENT_PAGE.get()-1) * PAGE_LIMIT;
-		this.content = (List<T>) webcmp.getList(PAGE_OFFSET, PAGE_LIMIT);
+		this.content = (List<T>) serviceComputer.getList(PAGE_OFFSET, PAGE_LIMIT);
 	}
 
 	public void update() throws ServiceManagerException {
-		// TODO Auto-generated method stub
-		ServiceComputer webcmp = ServiceComputer.INSTANCE;
-		numberOfElements = webcmp.getNumberOf();
+		numberOfElements = serviceComputer.getNumberOf();
 		numberOfPages = (int) Math.ceil((double)numberOfElements / (double) PAGE_LIMIT);
 	}
 
 	@Override
 	public int getNumberOfPages() throws ServiceManagerException {
-		// TODO Auto-generated method stub
-		ServiceComputer webcmp = ServiceComputer.INSTANCE;
-		numberOfElements = webcmp.getNumberOf();
+		numberOfElements = serviceComputer.getNumberOf();
 		numberOfPages = (int) Math.ceil((double)numberOfElements / (double) PAGE_LIMIT);
 		return numberOfPages;
 	}

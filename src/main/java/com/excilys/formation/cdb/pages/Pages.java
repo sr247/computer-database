@@ -3,9 +3,13 @@ package com.excilys.formation.cdb.pages;
 import java.util.List;
 import java.util.Optional;
 
-import com.excilys.formation.cdb.exceptions.ServiceManagerException;
+import org.springframework.stereotype.Service;
 
-public abstract class Pages<T> {
+import com.excilys.formation.cdb.exceptions.ServiceManagerException;
+import com.excilys.formation.cdb.model.ModelBase;
+
+@Service
+public abstract class Pages<T extends ModelBase> {
 	
 	// Déterminer quel variables dointt etre static ou pas.
 	protected static int PAGE_LIMIT = 10;
@@ -14,7 +18,7 @@ public abstract class Pages<T> {
 	
 	protected int numberOfElements;
 	protected int numberOfPages;
-	protected List<T> content;	
+	protected List<T>content;	
 	
 	public Pages() {
 	}

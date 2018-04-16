@@ -6,14 +6,13 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-
 import java.time.LocalDate;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.excilys.formation.cdb.exceptions.DAOException;
@@ -28,7 +27,11 @@ public class ComputerDB {
 	
 	private static org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(CompanyDB.class);
 	
-	private static int numComputers = -1;	
+	@Autowired
+	private ComputerMapper computerMapper;
+	
+	// ça meriterait une petite enum pour retirer tout ça...
+	private static int numComputers;
 	private static final String COUNT_NUMBER_OF = "SELECT COUNT(*) AS NUM FROM computer;";
 	private static final String COMPANY_COLUMN = "company.id as caId, company.name as caName ";
 	private static final String LEFT_JOIN_ON_COMPANY = "LEFT JOIN company ON company.id = computer.company_id ";
@@ -55,7 +58,9 @@ public class ComputerDB {
 	
 	private static final String SELECT_RELATED_TO_COMPANY =
 			"SELECT computer.id FROM computer WHERE company_id=?;";
-		
+	
+	private static final String DELETE_LOGGER = "DeletionOfInstanceError: {}";
+	
 	private ComputerDB() {}
 
 	public int getNumComputers() throws DAOException {
@@ -85,7 +90,7 @@ public class ComputerDB {
 			ps.setInt(1, id);
 			res = ps.executeQuery();
 			res.next();
-			cmp = ComputerMapper.map(res).get();
+			cmp = computerMapper.map(res).get();
 		} catch (SQLException | NoSuchElementException e) {
 			logger.error("InstanceNotInDatabaseError: {}", e.getMessage(), e);
 			throw new InstanceNotInDatabaseException("InstanceNotInDatabaseError: computer not found.");
@@ -100,8 +105,12 @@ public class ComputerDB {
 			PreparedStatement ps = (PreparedStatement) conn.prepareStatement(SELECT_UNLIMITED_LIST);
 			ResultSet res = ps.executeQuery();) {
 			
-			while (res.next())
-				computers.add(ComputerMapper.map(res).get());
+			while (res.next()) {
+				Optional<Computer> computer = computerMapper.map(res);
+				if(computer.isPresent())
+					computers.add(computer.get());					
+
+			}
 			
 		} catch(SQLException e) {
 			logger.error("InstanceNotInDatabaseError: {}", e.getMessage(), e);
@@ -112,15 +121,18 @@ public class ComputerDB {
 	
 	public List<Computer> getComputerList(int limit, int offset) throws DAOException {
 		
-		List<Computer> computers = new ArrayList<Computer>();
+		List<Computer> computers = new ArrayList<>();
 		try (Connection conn = (Connection) DataSource.getConnection();){
 			PreparedStatement ps = (PreparedStatement) 
 					conn.prepareStatement(SELECT_LIMITED_LIST);
 			ps.setInt(1, limit);
 			ps.setInt(2, offset);
 			ResultSet res = ps.executeQuery();
-			while (res.next())
-				computers.add(ComputerMapper.map(res).get());
+			while (res.next()) {
+				Optional<Computer> computer = computerMapper.map(res);
+				if(computer.isPresent())
+					computers.add(computer.get());
+			}
 			
 		}catch(SQLException e) {
 			logger.error("InstanceNotInDatabaseError: {}", e.getMessage(), e);
@@ -201,7 +213,7 @@ public class ComputerDB {
 			del.executeUpdate();
 			logger.info("Deleted: {}", cmp);
 		} catch (SQLException e) {
-			logger.error("DeletionOfInstanceError: {}", e.getMessage(), e);
+			logger.error(DELETE_LOGGER, e.getMessage(), e);
 			throw new ModifyDatabaseException("DeletionOfInstanceError: computer couldn't be deleted", e);
 		}
 	}
@@ -214,7 +226,7 @@ public class ComputerDB {
                 ps.executeUpdate();
             }
         } catch (SQLException e) {
-            logger.error("DeletionOfInstanceError: {}", e);
+            logger.error(DELETE_LOGGER, e);
             throw new ModifyDatabaseException("Couldn't delete the provided computers' list.", e);
         }
 	}
@@ -234,11 +246,11 @@ public class ComputerDB {
             }
             conn.commit();
         } catch (SQLException e1) {
-            logger.error("DeletionOfInstanceError: {}", e1.getMessage(), e1);
+            logger.error(DELETE_LOGGER, e1.getMessage(), e1);
 			try {
 				conn.rollback();
 			}catch(SQLException e) {
-				logger.error("DeletionOfInstanceError: {}", e.getMessage(), e);
+				logger.error(DELETE_LOGGER, e.getMessage(), e);
 				throw new ModifyDatabaseException("DeletionOfInstanceError: Rolling back has failed.", e);
 			}
         } finally {
@@ -247,7 +259,7 @@ public class ComputerDB {
 				ps.close();
 				conn.close();
 			} catch (SQLException e) {
-				logger.error("DeletionOfInstanceError: {}", e.getMessage(), e);
+				logger.error(DELETE_LOGGER, e.getMessage(), e);
 				// throw new ModifyDatabaseException("DeletionOfInstanceError: Closing connection has failed.", e);
 			}
 		}

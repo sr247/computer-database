@@ -2,7 +2,6 @@ package com.excilys.formation.cdb.servlets;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -12,6 +11,9 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import com.excilys.formation.cdb.exceptions.ServiceManagerException;
 import com.excilys.formation.cdb.mapper.ComputerMapperDTO;
@@ -27,11 +29,17 @@ import com.excilys.formation.cdb.service.ServiceComputer;
  * Servlet implementation class AcceuilServlet
  */
 @WebServlet("/dashboard")
+@Service
 public class DashboardServlet extends HttpServlet {
 	
 	private static final long serialVersionUID = 7292200966426509099L;
 	private static org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(DashboardServlet.class);
 	private static final String DASHBOARD_EXCEPTION = "DashBoardServletException: {}";
+
+	@Autowired
+	private ServiceComputer serviceComputer;
+	@Autowired
+	private ComputerMapperDTO computerMDTO;
 	
     /**
      * @see HttpServlet#HttpServlet()
@@ -46,11 +54,10 @@ public class DashboardServlet extends HttpServlet {
     @Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		response.getWriter().append("Served at: ").append(request.getContextPath());
-		ServiceComputer webServComp = ServiceComputer.INSTANCE;
 		String parameter = null;
 		int numComputers = 0;
 		try {
-			numComputers = webServComp.getNumberOf();
+			numComputers = serviceComputer.getNumberOf();
 			request.setAttribute("numComputers", numComputers);
 		} catch (ServiceManagerException e) {
 			logger.debug(DASHBOARD_EXCEPTION, e.getMessage(), e);
@@ -69,8 +76,8 @@ public class DashboardServlet extends HttpServlet {
 		
 		PagesComputer<ComputerDTO> pageComputers = new PagesComputer<>();
 		try {
-			if((parameter = (String) request.getParameter("page")) != null){
-				int page = Integer.valueOf(parameter);
+			if((parameter = request.getParameter("page")) != null){
+				int page = Integer.parseInt(parameter);
 				pageComputers.goTo(page);
 			}else {
 				String s = "No page provided";
@@ -79,7 +86,7 @@ public class DashboardServlet extends HttpServlet {
 			int offset = Pages.getPAGE_OFFSET();
 			int limit = Pages.getPAGE_LIMIT();
 			pageComputers = 
-					new PagesComputer<ComputerDTO> (ComputerMapperDTO.map(webServComp.getList(offset, limit)));
+					new PagesComputer<ComputerDTO> (computerMDTO.map(serviceComputer.getList(offset, limit)));
 			int maxNbPages = pageComputers.getNumberOfPages();
 			int current = Pages.getCURRENT_PAGE().get();
 			int mid = current < 3 ? 3 : (current >= 3 && current <= (maxNbPages-2) ? current : maxNbPages-2);
@@ -91,7 +98,7 @@ public class DashboardServlet extends HttpServlet {
 			request.setAttribute("current", current);
 			request.setAttribute("mid", mid);
 			
-		} catch (ServiceManagerException e) {
+		} catch (Exception e) {
 			logger.debug(DASHBOARD_EXCEPTION, e.getMessage(), e);
 		}
 		this.getServletContext().getRequestDispatcher("/WEB-INF/dashboard.jsp").forward(request, response);
@@ -102,7 +109,6 @@ public class DashboardServlet extends HttpServlet {
 	 */
 	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		ServiceComputer webServComp = ServiceComputer.INSTANCE;
 		try {
 			Optional<String[]> ids = Optional.ofNullable(request.getParameterValues("selection"));
 			if(ids.isPresent()) {
@@ -117,7 +123,7 @@ public class DashboardServlet extends HttpServlet {
 						.map(Integer::parseInt)
 						.collect(Collectors.toList());
 				logger.info("Liste des checkboxes: {}", idListInteger.toString());
-				webServComp.deleteComputerFromIDList(idListInteger);
+				serviceComputer.deleteComputerFromIDList(idListInteger);
 			} else {
 				String s = "No checkbox checked.";
 				logger.info(DASHBOARD_EXCEPTION, s);

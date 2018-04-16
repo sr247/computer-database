@@ -15,8 +15,8 @@ import com.excilys.formation.cdb.persistence.CompanyDB;
 public class ServiceCompany {
 	
 	private static org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(ServiceCompany.class);
-	private static final String WEBSERVICE_COMPANY_EXCEPTION = "WebServiceCompany: %s, from %s";
-	private static final String WEBSERVICE_COMPANY_LOGGER = "WebServiceCompany: {}";
+	private static final String SERVICE_COMPANY_EXCEPTION = "ServiceCompany: %s";
+	private static final String SERVICE_COMPANY_LOGGER = "ServiceCompany: {}";
 	
 	@Autowired
 	private CompanyDB companyDB;
@@ -27,8 +27,8 @@ public class ServiceCompany {
 		try {
 			return companyDB.getNumCompanies();			
 		}catch(DAOException e) {
-			logger.error("WebServiceCompany: {}", e.getMessage(), e);
-			throw new ServiceManagerException("WebServiceCompany: " + e.getMessage(), e);
+			logger.error(SERVICE_COMPANY_LOGGER, e.getMessage(), e);
+			throw new ServiceManagerException(String.format(SERVICE_COMPANY_EXCEPTION, e.getMessage()), e);
 		}
 	}
 
@@ -36,8 +36,8 @@ public class ServiceCompany {
 		try {
 			return companyDB.getCompanyList();			
 		}catch(DAOException e) {
-			logger.error("WebServiceCompany: {}", e.getMessage(), e);
-			throw new ServiceManagerException("WebServiceCompany: " + e.getMessage(), e);
+			logger.error(SERVICE_COMPANY_LOGGER, e.getMessage(), e);
+			throw new ServiceManagerException(String.format(SERVICE_COMPANY_EXCEPTION, e.getMessage()), e);
 		}
 	}
 	
@@ -48,8 +48,8 @@ public class ServiceCompany {
 			}
 			return companyDB.getCompanyList(limit, offset);			
 		}catch (DAOException e) {
-			logger.error("WebServiceCompany: {}", e.getMessage(), e);
-			throw new ServiceManagerException("WebServiceCompany: " + e.getMessage(), e);
+			logger.error(SERVICE_COMPANY_LOGGER, e.getMessage(), e);
+			throw new ServiceManagerException(String.format(SERVICE_COMPANY_EXCEPTION, e.getMessage()), e);
 		}
 	}
 	
@@ -58,10 +58,10 @@ public class ServiceCompany {
 		try {
 			optCompany = companyDB.getCompanyByID(Integer.valueOf(id));
 		}catch(NumberFormatException|DAOException e) {
-			logger.error("WebServiceCompany: {}", e.getMessage(), e);
-			throw new ServiceManagerException("WebServiceCompany: " + e.getMessage(), e);
+			logger.error(SERVICE_COMPANY_LOGGER, e.getMessage(), e);
+			throw new ServiceManagerException(String.format(SERVICE_COMPANY_EXCEPTION, e.getMessage()), e);
 		}
-		return optCompany.get();
+		return optCompany.isPresent() ? optCompany.get() : null;
 	}
 	
 	
@@ -71,8 +71,8 @@ public class ServiceCompany {
 			company  = getCompany(id);
 			companyDB.delete(company);
 		} catch (DAOException e) {
-			logger.error(WEBSERVICE_COMPANY_LOGGER, e.getClass().getSimpleName(), e.getMessage(), e);
-			throw new ServiceManagerException(String.format(WEBSERVICE_COMPANY_EXCEPTION, e.getMessage(), e.getClass().getSimpleName()), e);
+			logger.error(SERVICE_COMPANY_LOGGER, e.getClass().getSimpleName(), e.getMessage(), e);
+			throw new ServiceManagerException(String.format(SERVICE_COMPANY_EXCEPTION, e.getMessage()), e);
 		}
 	}
 

@@ -6,20 +6,24 @@ import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.Optional;
 
+import org.springframework.stereotype.Component;
+
 import com.excilys.formation.cdb.exceptions.InstanceNotInDatabaseException;
 import com.excilys.formation.cdb.model.Company;
 import com.excilys.formation.cdb.model.Computer;
 
-public enum ComputerMapper {
+/**
+ * Classe Mapper pour mapper les ordinateurs.
+ * @author sr247
+ */
+@Component
+public class ComputerMapper {
 	
-	INSTANCE;
 	private static org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(ComputerMapper.class);
 	
-	private ComputerMapper() {
-		
-	}
+	private ComputerMapper() {}
 	
-	public static Optional<Computer> map(ResultSet res) throws InstanceNotInDatabaseException {
+	public Optional<Computer> map(ResultSet res) throws InstanceNotInDatabaseException {
 		Computer cmp = null;		
 		try {
 			if(!res.equals(null)) {

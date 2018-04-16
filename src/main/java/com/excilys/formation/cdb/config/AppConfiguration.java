@@ -40,7 +40,7 @@ import com.zaxxer.hikari.HikariDataSource;
 
 @Configuration
 @EnableWebMvc
-@ComponentScan(basePackages = "{mapper, persistence, service}")
+@ComponentScan(basePackages = "{mapper, persistence, service, pages}")
 public class AppConfiguration implements WebMvcConfigurer, WebApplicationInitializer {
 
 	    @Bean
@@ -70,8 +70,7 @@ public class AppConfiguration implements WebMvcConfigurer, WebApplicationInitial
 			webAppContext.setServletContext(servletContext);
 	        ServletRegistration.Dynamic dispatcher = servletContext.addServlet("dashboard", new DispatcherServlet(webAppContext));
 	        dispatcher.setLoadOnStartup(1);
-	        dispatcher.addMapping("/");
-			
+	       	dispatcher.addMapping("/");
 		}
 
 		@Override
@@ -177,4 +176,5 @@ public class AppConfiguration implements WebMvcConfigurer, WebApplicationInitial
 			// Ommited
 			return null;
 		}
+
 }

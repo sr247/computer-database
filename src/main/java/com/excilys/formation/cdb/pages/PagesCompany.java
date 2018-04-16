@@ -7,10 +7,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.excilys.formation.cdb.exceptions.ServiceManagerException;
+import com.excilys.formation.cdb.model.ModelBase;
 import com.excilys.formation.cdb.service.ServiceCompany;
 
 @Service
-public class PagesCompany<T> extends Pages<T> {
+public class PagesCompany<T extends ModelBase> extends Pages<T> {
 
 	@Autowired
 	private ServiceCompany serviceCompany;

@@ -1,6 +1,6 @@
 package com.excilys.formation.cdb.model;
 
-public class Company {
+public class Company extends ModelBase {
 	private int id;
 	private String name;	
 	

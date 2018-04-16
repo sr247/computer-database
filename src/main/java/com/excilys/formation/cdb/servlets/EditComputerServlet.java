@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import com.excilys.formation.cdb.exceptions.ServiceManagerException;
 import com.excilys.formation.cdb.mapper.CompanyMapperDTO;
@@ -27,6 +28,7 @@ import com.excilys.formation.cdb.service.ServiceComputer;
  * Servlet implementation class EditComputerServlet
  */
 @WebServlet("/editComputer")
+@Service
 public class EditComputerServlet extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
@@ -37,6 +39,10 @@ public class EditComputerServlet extends HttpServlet {
 	private ServiceCompany serviceCompany;
 	@Autowired
 	private ServiceComputer serviceComputer;
+	@Autowired
+	private ComputerMapperDTO computerMDTO;	
+	@Autowired
+	private CompanyMapperDTO companyMDTO;
 	
     /**
      * @see HttpServlet#HttpServlet()
@@ -56,7 +62,7 @@ public class EditComputerServlet extends HttpServlet {
 			ComputerDTO computer = null;
 			try {
 				int id = Integer.parseInt(parameter);
-				computer = ComputerMapperDTO.map(serviceComputer.getComputer(id));
+				computer = computerMDTO.map(serviceComputer.getComputer(id));
 				request.setAttribute("idComputer", id);
 				request.setAttribute("computer", computer);
 				
@@ -65,7 +71,7 @@ public class EditComputerServlet extends HttpServlet {
 			}
 		}
         try {
-            List<CompanyDTO> companies = CompanyMapperDTO.map(serviceCompany.getAllList());
+            List<CompanyDTO> companies = companyMDTO.map(serviceCompany.getAllList());
             request.setAttribute("companies", companies);
         } catch (Exception e) {
             logger.debug("EditComputerServletException: {}", e.getMessage(), e);

@@ -30,8 +30,10 @@
                                 <label for="computerName">Computer name</label>
                                 <input type="text" class="form-control" name="computerName" 
                                 		id="computerName" placeholder="Computer name"
-                                		data-validation="alphanumeric" 
-                                		data-validation-allowing="-_/+">
+                                		data-validation="required"
+                                		data-validation="number" 
+                                		data-validation-allowing="- _/+"
+                                		required>
                             </div>
                             <div class="form-group">
                                 <label for="introduced">Introduced date</label>

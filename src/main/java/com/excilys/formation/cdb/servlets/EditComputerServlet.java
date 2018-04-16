@@ -3,6 +3,7 @@ package com.excilys.formation.cdb.servlets;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -33,14 +34,12 @@ public class EditComputerServlet extends HttpServlet {
      */
     public EditComputerServlet() {
         super();
-        // TODO Auto-generated constructor stub
     }
 
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
 		response.getWriter().append("Served at: ").append(request.getContextPath());
 		
 		WebServiceComputer webServComputer = WebServiceComputer.INSTANCE;
@@ -54,10 +53,8 @@ public class EditComputerServlet extends HttpServlet {
 				computer = ComputerMapperDTO.map(webServComputer.getComputer(id));
 				request.setAttribute("idComputer", id);
 				request.setAttribute("computer", computer);
-				logger.debug("Intro: {} \nDiscon: {}",computer.getIntroduced().toString(), computer.getDiscontinued().toString());
 				
 			} catch (ServiceManagerException e) {
-				// TODO Auto-generated catch block
 				logger.debug("EditComputerServletException: {}", e.getMessage(), e);
 			}
 		}
@@ -65,9 +62,7 @@ public class EditComputerServlet extends HttpServlet {
             List<CompanyDTO> companies = CompanyMapperDTO.map(webServCompany.getAllList());
             request.setAttribute("companies", companies);
         } catch (ServiceManagerException e) {
-            // TODO Auto-generated catch block
-            logger.debug("AddComputerError: {}", e.getMessage(), e);
-            // throw new ServletException(e.getMessage(), e);
+            logger.debug("EditComputerServletException: {}", e.getMessage(), e);
         }
 		this.getServletContext().getRequestDispatcher("/WEB-INF/editComputer.jsp").forward(request, response);
 	}
@@ -76,39 +71,50 @@ public class EditComputerServlet extends HttpServlet {
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
 		WebServiceComputer webServComputer = WebServiceComputer.INSTANCE;
 		WebServiceCompany webServCompany = WebServiceCompany.INSTANCE;
 		
-		String attribute = null;
+		Optional<String> attribute = null;
 		Computer computer = null;
 		String parameter = null;
 		if((parameter = request.getParameter("id")) != null){
 			try {
 				int id = Integer.valueOf(parameter);
+				LocalDate introduced = null;
+				LocalDate discontinued = null;
 				computer = webServComputer.getComputer(id);
 			
-				if((attribute = (String) request.getAttribute("computerName")) != null) {
-					computer.setName(attribute);
+				if((attribute = Optional.ofNullable((String) request.getParameter("computerName"))).isPresent() ) {
+					computer.setName(attribute.get());
 				}
-				if((attribute = (String) request.getAttribute("introducted")) != null) {
-					computer.setIntroduced(LocalDate.parse(attribute));
+				
+				if((attribute = Optional.ofNullable((String) request.getParameter("introducted"))).isPresent() ) {
+					if(attribute.get() != "") {
+						introduced = LocalDate.parse(attribute.get());
+					}
+					computer.setIntroduced(introduced);
+				}	
+					
+				if((attribute = Optional.ofNullable((String) request.getParameter("discontinued"))).isPresent() ) {
+					if(attribute.get() != "") {
+						discontinued = LocalDate.parse(attribute.get());
+					}
+					computer.setDiscontinued(discontinued);
 				}
-				if((attribute = (String) request.getAttribute("computerName")) != null) {
-					computer.setDiscontinued(LocalDate.parse(attribute));
-				}
-				if((attribute = (String) request.getAttribute("companyId")) != null) {
-					Company company = webServCompany.getCompany(attribute);
+				
+				if((attribute = Optional.ofNullable((String) request.getParameter("companyId"))).isPresent() ) {
+					Company company = webServCompany.getCompany(attribute.get());
 					computer.setCompany(company);
 				}
+				
 				webServComputer.updateComputer(computer);
-				request.setAttribute("computer", computer);
+				logger.debug(String.format("Updated: %s", computer));
+				
 			} catch (NumberFormatException | ServiceManagerException e) {
-				// TODO Auto-generated catch block
+				logger.error(String.format("Fail to Update: %s\n%s: %s", computer));
 				logger.error("EditComputerServletException: {}", e.getMessage(), e);
 			}
 		}
-
 		doGet(request, response);
 	}
 

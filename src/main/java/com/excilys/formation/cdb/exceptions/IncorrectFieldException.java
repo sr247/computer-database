@@ -1,6 +1,6 @@
 package com.excilys.formation.cdb.exceptions;
 
-public class IncorrectFieldException extends ValidateException {
+public class IncorrectFieldException extends ValidatorException {
 
 	private static final long serialVersionUID = 7061341174505257036L;
 

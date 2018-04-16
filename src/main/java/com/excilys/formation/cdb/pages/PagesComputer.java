@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import com.excilys.formation.cdb.exceptions.ServiceManagerException;
-import com.excilys.formation.cdb.service.WebServiceComputer;
+import com.excilys.formation.cdb.service.ServiceComputer;
 
 public class PagesComputer<T> extends Pages<T> {
 
@@ -21,7 +21,7 @@ public class PagesComputer<T> extends Pages<T> {
 	@Override
 	public void goTo(int index) throws ServiceManagerException {
 		// TODO Auto-generated method stub
-		WebServiceComputer webcmp = WebServiceComputer.INSTANCE;
+		ServiceComputer webcmp = ServiceComputer.INSTANCE;
 		numberOfElements = webcmp.getNumberOf();
 		numberOfPages = (int) Math.ceil((double) numberOfElements / (double) PAGE_LIMIT);
 		if(index < 2) {
@@ -39,7 +39,7 @@ public class PagesComputer<T> extends Pages<T> {
 	@Override
 	public void next() throws ServiceManagerException {
 		// TODO Auto-generated method stub
-		WebServiceComputer webcmp = WebServiceComputer.INSTANCE;
+		ServiceComputer webcmp = ServiceComputer.INSTANCE;
 		numberOfElements = webcmp.getNumberOf();
 		numberOfPages = (int) Math.ceil((double) numberOfElements / (double) PAGE_LIMIT);
 		
@@ -56,7 +56,7 @@ public class PagesComputer<T> extends Pages<T> {
 	@Override
 	public void preview() throws ServiceManagerException  {
 		// TODO Auto-generated method stub
-		WebServiceComputer webcmp = WebServiceComputer.INSTANCE;
+		ServiceComputer webcmp = ServiceComputer.INSTANCE;
 		numberOfElements = webcmp.getNumberOf();
 		numberOfPages = (int) Math.ceil((double)numberOfElements / (double) PAGE_LIMIT);
 		
@@ -71,7 +71,7 @@ public class PagesComputer<T> extends Pages<T> {
 
 	public void update() throws ServiceManagerException {
 		// TODO Auto-generated method stub
-		WebServiceComputer webcmp = WebServiceComputer.INSTANCE;
+		ServiceComputer webcmp = ServiceComputer.INSTANCE;
 		numberOfElements = webcmp.getNumberOf();
 		numberOfPages = (int) Math.ceil((double)numberOfElements / (double) PAGE_LIMIT);
 	}
@@ -79,7 +79,7 @@ public class PagesComputer<T> extends Pages<T> {
 	@Override
 	public int getNumberOfPages() throws ServiceManagerException {
 		// TODO Auto-generated method stub
-		WebServiceComputer webcmp = WebServiceComputer.INSTANCE;
+		ServiceComputer webcmp = ServiceComputer.INSTANCE;
 		numberOfElements = webcmp.getNumberOf();
 		numberOfPages = (int) Math.ceil((double)numberOfElements / (double) PAGE_LIMIT);
 		return numberOfPages;

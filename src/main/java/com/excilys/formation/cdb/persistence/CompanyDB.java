@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.stereotype.Repository;
+
 import com.excilys.formation.cdb.exceptions.DAOException;
 import com.excilys.formation.cdb.exceptions.InstanceNotInDatabaseException;
 import com.excilys.formation.cdb.exceptions.ModifyDatabaseException;
@@ -16,9 +18,9 @@ import com.excilys.formation.cdb.exceptions.NumberOfInstanceException;
 import com.excilys.formation.cdb.mapper.CompanyMapper;
 import com.excilys.formation.cdb.model.Company;
 
-public enum CompanyDB {
+@Repository
+public class CompanyDB {
 	
-	INSTANCE;
 	private static org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(CompanyDB.class);
 	
 	private static int numCompanies;	
@@ -103,52 +105,19 @@ public enum CompanyDB {
 	
 
 	private void create(Company cpy) throws DAOException {
-		PreparedStatement crt;
-		ResultSet generatedKey = null;
-		try (Connection conn = (Connection) DataSource.getConnection();){
-			crt = (PreparedStatement) conn.prepareStatement(CREATE_REQUEST);			
-			crt.setString(2, cpy.getName());			
-			crt.executeUpdate();
-			
-			generatedKey = crt.getGeneratedKeys();
-			int id = generatedKey.getInt("ID");
-			
-			cpy.setId(id);
-			logger.info("Created: {}", cpy);		
-		} catch (SQLException e) {
-			logger.error("CreationOfInstanceError: {}", e.getMessage(), e);
-			throw new ModifyDatabaseException("CreationOfInstanceError: company couldn't be created", e);
-		}
 	}
 
 	
 	private void update(String field, Company cmp) throws DAOException {
-		PreparedStatement upd;
-		try (Connection conn = (Connection) DataSource.getConnection();){
-			upd = (PreparedStatement) conn.prepareStatement(UPDTATE_REQUEST);
-
-			upd.setString(1, field);
-			if("NAME".equals(field)) {
-				upd.setString(2, cmp.getName());
-			}
-			upd.setInt(3, cmp.getId());
-			upd.executeUpdate();
-			// Can't call commit, when autocommit:true: commit the connexion
-		} catch (SQLException e) {
-			logger.error("UpdateOfInstanceError: ", e.getMessage(), e);
-			throw new ModifyDatabaseException("UpdateOfInstanceError: company couldn't be updated", e);
-		}
-		
 	}
 	
 	public void delete(Company cpy) throws DAOException {
-		ComputerDB computerDB = ComputerDB.INSTANCE;
 		Connection conn = null;
 		try {
 			conn = (Connection) DataSource.getConnection();
 			conn.setAutoCommit(false);
-			List<Integer> computers = computerDB.getAllComputersRelatedToCompanyWithID(cpy.getId());
-			computerDB.deleteTransactionalFromIDList(computers, conn);
+			List<Integer> computers = ComputerDB.getAllComputersRelatedToCompanyWithID(cpy.getId());
+			ComputerDB.deleteTransactionalFromIDList(computers, conn);
 			PreparedStatement upd = (PreparedStatement) conn.prepareStatement(DELETE_REQUEST);
 			upd.setInt(1, cpy.getId());
 			upd.executeQuery();

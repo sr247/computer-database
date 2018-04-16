@@ -3,26 +3,29 @@ package com.excilys.formation.cdb.service;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import com.excilys.formation.cdb.exceptions.DAOException;
 import com.excilys.formation.cdb.exceptions.ServiceManagerException;
 import com.excilys.formation.cdb.model.Company;
 import com.excilys.formation.cdb.persistence.CompanyDB;
 
-public enum WebServiceCompany {
+@Service
+public class ServiceCompany {
 	
-	INSTANCE;
-	private static org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(WebServiceCompany.class);
+	private static org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(ServiceCompany.class);
 	private static final String WEBSERVICE_COMPANY_EXCEPTION = "WebServiceCompany: %s, from %s";
 	private static final String WEBSERVICE_COMPANY_LOGGER = "WebServiceCompany: {}";
-
-	private WebServiceCompany() {
-		
-	}
+	
+	@Autowired
+	private CompanyDB companyDB;
+	
+	private ServiceCompany() {}
 
 	public int getNumberOf() throws ServiceManagerException {
-		CompanyDB cpyDB = CompanyDB.INSTANCE;
 		try {
-			return cpyDB.getNumCompanies();			
+			return companyDB.getNumCompanies();			
 		}catch(DAOException e) {
 			logger.error("WebServiceCompany: {}", e.getMessage(), e);
 			throw new ServiceManagerException("WebServiceCompany: " + e.getMessage(), e);
@@ -30,9 +33,8 @@ public enum WebServiceCompany {
 	}
 
 	public List<Company> getAllList() throws ServiceManagerException {
-		CompanyDB cmpDB = CompanyDB.INSTANCE;
 		try {
-			return cmpDB.getCompanyList();			
+			return companyDB.getCompanyList();			
 		}catch(DAOException e) {
 			logger.error("WebServiceCompany: {}", e.getMessage(), e);
 			throw new ServiceManagerException("WebServiceCompany: " + e.getMessage(), e);
@@ -40,12 +42,11 @@ public enum WebServiceCompany {
 	}
 	
 	public List<Company> getList(int limit, int offset) throws ServiceManagerException{
-		CompanyDB cpnDB = CompanyDB.INSTANCE;
 		try {
 			if(limit == 0 && offset == 0) {
-				return cpnDB.getCompanyList();
+				return companyDB.getCompanyList();
 			}
-			return cpnDB.getCompanyList(limit, offset);			
+			return companyDB.getCompanyList(limit, offset);			
 		}catch (DAOException e) {
 			logger.error("WebServiceCompany: {}", e.getMessage(), e);
 			throw new ServiceManagerException("WebServiceCompany: " + e.getMessage(), e);
@@ -53,10 +54,9 @@ public enum WebServiceCompany {
 	}
 	
 	public Company getCompany(String id) throws ServiceManagerException {
-		CompanyDB cpyDB = CompanyDB.INSTANCE;
 		Optional<Company> optCompany = Optional.empty();
 		try {
-			optCompany = cpyDB.getCompanyByID(Integer.valueOf(id));
+			optCompany = companyDB.getCompanyByID(Integer.valueOf(id));
 		}catch(NumberFormatException|DAOException e) {
 			logger.error("WebServiceCompany: {}", e.getMessage(), e);
 			throw new ServiceManagerException("WebServiceCompany: " + e.getMessage(), e);
@@ -66,11 +66,10 @@ public enum WebServiceCompany {
 	
 	
 	public void deleteCompany(String id) throws ServiceManagerException {
-		CompanyDB cpyDB = CompanyDB.INSTANCE;
-		Company cpy = null;
+		Company company = null;
 		try {
-			cpy  = getCompany(id);
-			cpyDB.delete(cpy);
+			company  = getCompany(id);
+			companyDB.delete(company);
 		} catch (DAOException e) {
 			logger.error(WEBSERVICE_COMPANY_LOGGER, e.getClass().getSimpleName(), e.getMessage(), e);
 			throw new ServiceManagerException(String.format(WEBSERVICE_COMPANY_EXCEPTION, e.getMessage(), e.getClass().getSimpleName()), e);

@@ -18,7 +18,7 @@ import com.excilys.formation.cdb.mapper.ComputerMapperDTO;
 import com.excilys.formation.cdb.model.ComputerDTO;
 import com.excilys.formation.cdb.pages.Pages;
 import com.excilys.formation.cdb.pages.PagesComputer;
-import com.excilys.formation.cdb.service.WebServiceComputer;
+import com.excilys.formation.cdb.service.ServiceComputer;
 
 // StringUtils, lib interessant
 // Methode isBlank = test: (isNull && isEmpty && hasNoCharacters)!
@@ -46,7 +46,7 @@ public class DashboardServlet extends HttpServlet {
     @Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		response.getWriter().append("Served at: ").append(request.getContextPath());
-		WebServiceComputer webServComp = WebServiceComputer.INSTANCE;
+		ServiceComputer webServComp = ServiceComputer.INSTANCE;
 		String parameter = null;
 		int numComputers = 0;
 		try {
@@ -102,7 +102,7 @@ public class DashboardServlet extends HttpServlet {
 	 */
 	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		WebServiceComputer webServComp = WebServiceComputer.INSTANCE;
+		ServiceComputer webServComp = ServiceComputer.INSTANCE;
 		try {
 			Optional<String[]> ids = Optional.ofNullable(request.getParameterValues("selection"));
 			if(ids.isPresent()) {

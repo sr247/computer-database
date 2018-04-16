@@ -2,6 +2,8 @@ package com.excilys.formation.cdb.service;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
 import com.excilys.formation.cdb.exceptions.DAOException;
 import com.excilys.formation.cdb.exceptions.ServiceManagerException;
 import com.excilys.formation.cdb.exceptions.ValidatorException;
@@ -9,21 +11,23 @@ import com.excilys.formation.cdb.model.Computer;
 import com.excilys.formation.cdb.persistence.ComputerDB;
 
 
-public enum WebServiceComputer {
+public enum ServiceComputer {
 	
 	INSTANCE;
-	private static org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(WebServiceComputer.class);
+	private static org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(ServiceComputer.class);
 	private static final String WEBSERVICE_COMPUTER_EXCEPTION = "WebServiceComputer: %s, from %s";
 	private static final String WEBSERVICE_COMPUTER_LOGGER = "WebServiceComputer: {}";
 	
-	private WebServiceComputer() {
+	@Autowired
+	private ComputerDB computerDB;
+	@Autowired
+	private ValidateComputer validateComputer;
 	
-	}	
+	private ServiceComputer() {}	
 		
 	public int getNumberOf() throws ServiceManagerException{
-		ComputerDB cmpDB = ComputerDB.INSTANCE;
 		try {
-			return cmpDB.getNumComputers();
+			return computerDB.getNumComputers();
 		}catch(DAOException e) {
 			logger.error(WEBSERVICE_COMPUTER_LOGGER, e.getClass().getSimpleName(), e.getMessage(), e);
 			throw new ServiceManagerException(String.format(WEBSERVICE_COMPUTER_EXCEPTION, e.getMessage(), e.getClass().getSimpleName()), e);
@@ -31,47 +35,41 @@ public enum WebServiceComputer {
 	}
 	
 	public Computer getComputer(int id) throws ServiceManagerException {
-		ComputerDB cmpDB = ComputerDB.INSTANCE;
 		try {
-			return cmpDB.getComputerByID(id);
+			return computerDB.getComputerByID(id);
 		} catch (DAOException e) {
 			logger.error(WEBSERVICE_COMPUTER_LOGGER, e.getClass().getSimpleName(), e.getMessage(), e);
-			throw new ServiceManagerException("WebServiceComputer: " + e.getMessage(), e);
+			throw new ServiceManagerException(String.format(WEBSERVICE_COMPUTER_EXCEPTION, e.getMessage(), e.getClass().getSimpleName()), e);
 		}
 	}
 	
 	public List<Computer> getAllList() throws ServiceManagerException {
-		ComputerDB cmpDB = ComputerDB.INSTANCE;
 		try {
-			return cmpDB.getComputerList();
+			return computerDB.getComputerList();
 		} catch (DAOException e) {
 
 			logger.error(WEBSERVICE_COMPUTER_LOGGER, e.getClass().getSimpleName(), e.getMessage(), e);
-			throw new ServiceManagerException("WebServiceComputer: " + e.getMessage(), e);
+			throw new ServiceManagerException(String.format(WEBSERVICE_COMPUTER_EXCEPTION, e.getMessage(), e.getClass().getSimpleName()), e);
 		}
 	}
 	
 	public List<Computer> getList(int limit, int offset) throws ServiceManagerException {
-		ComputerDB cmpDB = ComputerDB.INSTANCE;
 		try {
 			if(limit == 0 && offset == 0) {
-				return cmpDB.getComputerList();
+				return computerDB.getComputerList();
 			}
-			return cmpDB.getComputerList(limit, offset);
+			return computerDB.getComputerList(limit, offset);
 		} catch (DAOException e) {
 			logger.error(WEBSERVICE_COMPUTER_LOGGER, e.getClass().getSimpleName(), e.getMessage(), e);
-			throw new ServiceManagerException("WebServiceComputer: " + e.getMessage(), e);
+			throw new ServiceManagerException(String.format(WEBSERVICE_COMPUTER_EXCEPTION, e.getMessage(), e.getClass().getSimpleName()), e);
 		}
 	}
 	
 	
 	public void createComputer(Computer cmp) throws ServiceManagerException {
-		
-		ValidateComputer vcmp = ValidateComputer.INSTANCE;
-		ComputerDB cmpDB = ComputerDB.INSTANCE;		
 		try {
-			vcmp.validate(cmp);		
-			cmpDB.create(cmp);
+			validateComputer.validate(cmp);		
+			computerDB.create(cmp);
 		} catch (DAOException | ValidatorException e) {
 			logger.error(WEBSERVICE_COMPUTER_LOGGER, e.getClass().getSimpleName(), e.getMessage(), e);
 			throw new ServiceManagerException(String.format(WEBSERVICE_COMPUTER_EXCEPTION, e.getMessage(), e.getClass().getSimpleName()), e);
@@ -79,12 +77,9 @@ public enum WebServiceComputer {
 	}
 	
 	public void updateComputer(Computer cmp) throws ServiceManagerException {
-		
-		ValidateComputer vcmp = ValidateComputer.INSTANCE;
-		ComputerDB cmpDB = ComputerDB.INSTANCE;
 		try {
-			vcmp.validate(cmp);	
-			cmpDB.update(cmp);
+			validateComputer.validate(cmp);	
+			computerDB.update(cmp);
 		} catch (DAOException | ValidatorException e) {
 			logger.error(WEBSERVICE_COMPUTER_LOGGER, e.getClass().getSimpleName(), e.getMessage(), e);
 			throw new ServiceManagerException(String.format(WEBSERVICE_COMPUTER_EXCEPTION, e.getMessage(), e.getClass().getSimpleName()), e);
@@ -92,11 +87,10 @@ public enum WebServiceComputer {
 	}
 	
 	public void deleteComputer(int id) throws ServiceManagerException {
-		ComputerDB cmpDB = ComputerDB.INSTANCE;
 		Computer cmp;
 		try {
-			cmp = cmpDB.getComputerByID(id);
-			cmpDB.delete(cmp);
+			cmp = computerDB.getComputerByID(id);
+			computerDB.delete(cmp);
 		} catch (DAOException e) {
 			logger.error(WEBSERVICE_COMPUTER_LOGGER, e.getClass().getSimpleName(), e.getMessage(), e);
 			throw new ServiceManagerException(String.format(WEBSERVICE_COMPUTER_EXCEPTION, e.getMessage(), e.getClass().getSimpleName()), e);
@@ -104,9 +98,8 @@ public enum WebServiceComputer {
 	}
 	
 	public void deleteComputerFromIDList(List<Integer> idList) throws ServiceManagerException{
-		ComputerDB cmpDB = ComputerDB.INSTANCE;		
 		try {
-			cmpDB.deleteFromIDList(idList);
+			computerDB.deleteFromIDList(idList);
 		} catch (DAOException e) {
 			logger.error(WEBSERVICE_COMPUTER_LOGGER, e.getClass().getSimpleName(), e.getMessage(), e);
 			throw new ServiceManagerException(String.format(WEBSERVICE_COMPUTER_EXCEPTION, e.getMessage(), e.getClass().getSimpleName()), e);

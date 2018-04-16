@@ -14,6 +14,8 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
+import org.springframework.stereotype.Repository;
+
 import com.excilys.formation.cdb.exceptions.DAOException;
 import com.excilys.formation.cdb.exceptions.InstanceNotInDatabaseException;
 import com.excilys.formation.cdb.exceptions.ModifyDatabaseException;
@@ -21,9 +23,9 @@ import com.excilys.formation.cdb.exceptions.NumberOfInstanceException;
 import com.excilys.formation.cdb.mapper.ComputerMapper;
 import com.excilys.formation.cdb.model.Computer;
 
-public enum ComputerDB {
+@Repository
+public class ComputerDB {
 	
-	INSTANCE;
 	private static org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(CompanyDB.class);
 	
 	private static int numComputers = -1;	
@@ -54,9 +56,7 @@ public enum ComputerDB {
 	private static final String SELECT_RELATED_TO_COMPANY =
 			"SELECT computer.id FROM computer WHERE company_id=?;";
 		
-	private ComputerDB() {
-		
-	}
+	private ComputerDB() {}
 
 	public int getNumComputers() throws DAOException {
 		
@@ -129,7 +129,7 @@ public enum ComputerDB {
 		return computers;
 	}
 	
-	public List<Integer> getAllComputersRelatedToCompanyWithID(int id) throws SQLException {
+	public static List<Integer> getAllComputersRelatedToCompanyWithID(int id) throws SQLException {
 		
 		List<Integer> computersID = new ArrayList<>();
 		Connection conn = (Connection) DataSource.getConnection();
@@ -206,7 +206,7 @@ public enum ComputerDB {
 		}
 	}
 	
-	public void deleteTransactionalFromIDList(List<Integer> idList, Connection connection) throws DAOException {
+	public static void deleteTransactionalFromIDList(List<Integer> idList, Connection connection) throws DAOException {
 
         try (PreparedStatement ps = connection.prepareStatement(DELETE_REQUEST)) {
             for (Integer id : idList) {

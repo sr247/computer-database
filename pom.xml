@@ -33,7 +33,7 @@
 		<java.version>1.8</java.version>
 		<javax.version>4.0.0</javax.version>
 		<mojo.version>1.2.1</mojo.version>
-		<jstl-version>1.2</jstl-version>
+		<jstl.version>1.2</jstl.version>
 
 		<!-- checkstyle -->
 		<checkstyle.version>3.0.0</checkstyle.version>
@@ -41,7 +41,7 @@
 		<!-- test -->
 		<junit.version>5.0.1</junit.version>
 		<mockito.version>1.9.5</mockito.version>
-		<sunfire-version>2.19.1</sunfire-version>
+		<sunfire.version>2.19.1</sunfire.version>
 
 		<!-- logs -->
 		<log4j.version>1.2.17</log4j.version>
@@ -51,10 +51,10 @@
 		<!-- runtime -->
 		<mysql.version>5.1.38</mysql.version>
 		<myqsl-jdbc.version>8.0.8-dmr</myqsl-jdbc.version>
-		<tomcat-plugin-version>2.2</tomcat-plugin-version>
+		<tomcat-plugin.version>2.2</tomcat-plugin.version>
 		
 		<!-- Connection pool -->
-		<hikariCP-version>3.0.0</hikariCP-version>
+		<hikariCP.version>3.0.0</hikariCP.version>
 		
 		<!-- Spring version -->
     	<springframework.version>4.3.14.RELEASE</springframework.version>
@@ -80,7 +80,7 @@
 		<dependency>
     		<groupId>org.apache.tomcat.maven</groupId>
     		<artifactId>tomcat7-maven-plugin</artifactId>
-    		<version>${tomcat-plugin-version}</version>
+    		<version>${tomcat-plugin.version}</version>
 		</dependency>
 
 		<!-- logging -->
@@ -119,7 +119,7 @@
 		<dependency>
     		<groupId>jstl</groupId>
     		<artifactId>jstl</artifactId>
-    		<version>${jstl-version}</version>
+    		<version>${jstl.version}</version>
 		</dependency>
 		
 		
@@ -127,7 +127,7 @@
 		<dependency>
     		<groupId>com.zaxxer</groupId>
 	    	<artifactId>HikariCP</artifactId>
-    		<version>${hikariCP-version}</version>
+    		<version>${hikariCP.version}</version>
 		</dependency>
 		
 		<!-- Spring -->
@@ -186,6 +186,16 @@
   			<version>${springframework.version}</version>
 		</dependency>
 		
+		<!--
+    	Spring MVC for Servlet Environments (depends on spring-core, spring-beans, spring-context, spring-web)
+    	Define this if you use Spring MVC with a Servlet Container such as Apache Tomcat (org.springframework.web.servlet.*)
+		-->
+		<dependency>
+  			<groupId>org.springframework</groupId>
+  			<artifactId>spring-webmvc</artifactId>
+  			<version>${springframework.version}</version>
+		</dependency>
+		
 		<!-- 
     	Bean Factory and JavaBeans utilities (depends on spring-core)
     	Define this if you use Spring Bean APIs (org.springframework.beans.*) 
@@ -236,7 +246,7 @@
 			<plugin>
     			<groupId>org.apache.tomcat.maven</groupId>
     			<artifactId>tomcat7-maven-plugin</artifactId>
-    			<version>${tomcat-plugin-version}</version>
+    			<version>${tomcat-plugin.version}</version>
     			<configuration>
         			<url>http://localhost:8080/manager/text</url>
         			<server>TomcatServer</server>
@@ -277,7 +287,7 @@
  			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
-				<version>${sunfire-version}</version>
+				<version>${sunfire.version}</version>
 				<dependencies>
 					<dependency>
 						<groupId>org.junit.platform</groupId>
@@ -305,7 +315,7 @@
 					</execution>
 				</executions>
 				<configuration>
-					<mainClass>com.excilys.formation.java.ui.CLI_UI</mainClass>
+					<mainClass>com.excilys.formation.java.ui.CliUI</mainClass>
 				</configuration>
 			</plugin>
 		</plugins>

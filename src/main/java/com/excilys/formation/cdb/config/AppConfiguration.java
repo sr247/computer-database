@@ -18,6 +18,7 @@ import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.validation.MessageCodesResolver;
 import org.springframework.validation.Validator;
 import org.springframework.web.WebApplicationInitializer;
+import org.springframework.web.context.ContextLoaderListener;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.HandlerMethodReturnValueHandler;
@@ -65,12 +66,14 @@ public class AppConfiguration implements WebMvcConfigurer, WebApplicationInitial
 	    }
 
 		@Override
-		public void onStartup(ServletContext servletContext) throws ServletException {
+		public void onStartup(ServletContext container) throws ServletException {
 			AnnotationConfigWebApplicationContext webAppContext = new AnnotationConfigWebApplicationContext();
-			webAppContext.setServletContext(servletContext);
-	        ServletRegistration.Dynamic dispatcher = servletContext.addServlet("dashboard", new DispatcherServlet(webAppContext));
+			webAppContext.setConfigLocation("com.excilys.formation.cdb.config");
+			webAppContext.setServletContext(container);
+			container.addListener(new ContextLoaderListener(webAppContext));
+	        ServletRegistration.Dynamic dispatcher = container.addServlet("dashboard", new DispatcherServlet(webAppContext));
 	        dispatcher.setLoadOnStartup(1);
-	       	dispatcher.addMapping("/");
+	       	dispatcher.addMapping("/dashboard");
 		}
 
 		@Override

@@ -16,7 +16,6 @@ import com.excilys.formation.cdb.model.Computer;
  * Classe Mapper pour mapper les ordinateurs.
  * @author sr247
  */
-@Component
 public class ComputerMapper {
 	
 	private static org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(ComputerMapper.class);

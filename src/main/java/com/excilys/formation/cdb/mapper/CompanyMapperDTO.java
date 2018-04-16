@@ -3,7 +3,6 @@ package com.excilys.formation.cdb.mapper;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.stereotype.Component;
 
 import com.excilys.formation.cdb.model.Company;
 import com.excilys.formation.cdb.model.CompanyDTO;
@@ -12,10 +11,7 @@ import com.excilys.formation.cdb.model.CompanyDTO;
  * Classe de Mapping des entreprises formattée pour une page web
  * @author sr247
  */
-@Component
 public class CompanyMapperDTO {
-
-	private static org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(CompanyMapperDTO.class);
     
 	CompanyMapperDTO() {}
 

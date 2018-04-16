@@ -13,7 +13,6 @@ import com.excilys.formation.cdb.model.Company;
  * Classe Mapper pour mapper les entreprises.
  * @author sr247
  */
-@Component
 public class CompanyMapper {
 
 	private static org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(CompanyMapper.class);

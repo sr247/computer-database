@@ -13,6 +13,7 @@ import com.excilys.formation.cdb.model.Company;
  * Classe Mapper pour mapper les entreprises.
  * @author sr247
  */
+@Component
 public class CompanyMapper {
 
 	private static org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(CompanyMapper.class);
@@ -27,7 +28,7 @@ public class CompanyMapper {
 	 * @return Un object Optional<Company> qui est vide si res est vide. 
 	 * @throws InstanceNotInDatabaseException 
 	 */
-    public static Optional<Company> map(ResultSet res) throws InstanceNotInDatabaseException {
+    public Optional<Company> map(ResultSet res) throws InstanceNotInDatabaseException {
 		Company cpn = null;		
 		try {
             if (res != null) {

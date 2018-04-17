@@ -15,9 +15,6 @@ public class PagesComputer<T extends ModelBase> extends Pages<T> {
 
 	@Autowired
 	private ServiceComputer serviceComputer;
-	public PagesComputer() {
-		super();
-	}
 
 	public PagesComputer(List<T> page) {
 		super(page);

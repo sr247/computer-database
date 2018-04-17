@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
+import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -12,7 +13,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
 import com.excilys.formation.cdb.exceptions.ServiceManagerException;
 import com.excilys.formation.cdb.mapper.CompanyMapperDTO;
@@ -26,7 +28,7 @@ import com.excilys.formation.cdb.service.ServiceComputer;
  * Servlet implementation class addComputerServlet
  */
 @WebServlet("/addComputer")
-@Service
+@Controller
 public class AddComputerServlet extends HttpServlet {
 
 	private static final long serialVersionUID = 2332590973522058116L;
@@ -38,11 +40,18 @@ public class AddComputerServlet extends HttpServlet {
 	private ServiceComputer serviceComputer;
 	@Autowired
 	private CompanyMapperDTO companyMDTO;
-    /**
+    
+	/**
      * @see HttpServlet#HttpServlet()
      */
     public AddComputerServlet() {
         super();
+    }
+    
+    @Override
+    public void init(ServletConfig config) throws ServletException {
+        super.init(config);
+        SpringBeanAutowiringSupport.processInjectionBasedOnServletContext(this, config.getServletContext());
     }
 
 	/**

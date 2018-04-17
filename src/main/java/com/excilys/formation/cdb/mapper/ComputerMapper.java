@@ -6,6 +6,7 @@ import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.Optional;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.excilys.formation.cdb.exceptions.InstanceNotInDatabaseException;
@@ -16,11 +17,13 @@ import com.excilys.formation.cdb.model.Computer;
  * Classe Mapper pour mapper les ordinateurs.
  * @author sr247
  */
+@Component
 public class ComputerMapper {
 	
 	private static org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(ComputerMapper.class);
 	
-	private ComputerMapper() {}
+	@Autowired
+	private CompanyMapper companyMapper;
 	
 	public Optional<Computer> map(ResultSet res) throws InstanceNotInDatabaseException {
 		Computer cmp = null;		
@@ -32,9 +35,9 @@ public class ComputerMapper {
 				Date discon = res.getDate("DISCONTINUED");
 				LocalDate introduced = intro == null ? null : intro.toLocalDate();
 				LocalDate discontinued = discon == null ? null : discon.toLocalDate();
-				Company company = CompanyMapper.map(res).get();
-				cmp = new Computer(id, name, introduced, discontinued, company);
-				
+				Optional<Company> company = companyMapper.map(res);
+				if(company.isPresent())
+					cmp = new Computer(id, name, introduced, discontinued, company.get());
 			}
 		}catch(SQLException e) {
 			logger.error("Error in database: {}", e.getMessage(), e);

@@ -17,13 +17,11 @@ import com.excilys.formation.cdb.model.ComputerDTO;
 @Component
 public class ComputerMapperDTO {
 	
-	private static org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(ComputerMapper.class);
 	@Autowired
 	CompanyMapperDTO companyMDTO;
-	private ComputerMapperDTO() {}
 	
 	public List<ComputerDTO> map(List<Computer> computerList) {
-		List<ComputerDTO> cmpDTOList = new ArrayList<ComputerDTO>();
+		List<ComputerDTO> cmpDTOList = new ArrayList<>();
 		for(Computer computer : computerList) {
 			ComputerDTO cmp = map(computer);
 			cmpDTOList.add(cmp);

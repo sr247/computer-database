@@ -16,10 +16,6 @@ public class PagesCompany<T extends ModelBase> extends Pages<T> {
 	@Autowired
 	private ServiceCompany serviceCompany;
 	
-	public PagesCompany() {
-		super();
-	}
-
 	public PagesCompany(List<T> page) {
 		super(page);
 	}
@@ -56,7 +52,6 @@ public class PagesCompany<T extends ModelBase> extends Pages<T> {
 	}
 	
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public void preview() throws ServiceManagerException  {
 		numberOfElements = serviceCompany.getNumberOf();

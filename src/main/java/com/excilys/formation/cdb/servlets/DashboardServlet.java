@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -13,7 +14,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
 import com.excilys.formation.cdb.exceptions.ServiceManagerException;
 import com.excilys.formation.cdb.mapper.ComputerMapperDTO;
@@ -22,14 +24,11 @@ import com.excilys.formation.cdb.pages.Pages;
 import com.excilys.formation.cdb.pages.PagesComputer;
 import com.excilys.formation.cdb.service.ServiceComputer;
 
-// StringUtils, lib interessant
-// Methode isBlank = test: (isNull && isEmpty && hasNoCharacters)!
-
 /**
  * Servlet implementation class AcceuilServlet
  */
 @WebServlet("/dashboard")
-@Service
+@Controller
 public class DashboardServlet extends HttpServlet {
 	
 	private static final long serialVersionUID = 7292200966426509099L;
@@ -41,11 +40,10 @@ public class DashboardServlet extends HttpServlet {
 	@Autowired
 	private ComputerMapperDTO computerMDTO;
 	
-    /**
-     * @see HttpServlet#HttpServlet()
-     */
-    public DashboardServlet() {
-        super();
+    @Override
+    public void init(ServletConfig config) throws ServletException {
+        super.init(config);
+        SpringBeanAutowiringSupport.processInjectionBasedOnServletContext(this, config.getServletContext());
     }
 
 	/**
@@ -60,18 +58,18 @@ public class DashboardServlet extends HttpServlet {
 			numComputers = serviceComputer.getNumberOf();
 			request.setAttribute("numComputers", numComputers);
 		} catch (ServiceManagerException e) {
-			logger.debug(DASHBOARD_EXCEPTION, e.getMessage(), e);
+			logger.error(DASHBOARD_EXCEPTION, e.getMessage(), e);
 		}
 		
 		if((parameter = request.getParameter("stride")) != null) {
 			try {
 				Pages.setStride(Integer.valueOf(parameter));
 			} catch (NumberFormatException | ServiceManagerException e) {
-				logger.debug(DASHBOARD_EXCEPTION, e.getMessage(), e);
+				logger.error(DASHBOARD_EXCEPTION, e.getMessage(), e);
 			}			
 		} else {
 			String s = "No stride provided";
-			logger.info(DASHBOARD_EXCEPTION, s);
+			logger.debug(DASHBOARD_EXCEPTION, s);
 		}
 		
 		PagesComputer<ComputerDTO> pageComputers = new PagesComputer<>();
@@ -99,7 +97,7 @@ public class DashboardServlet extends HttpServlet {
 			request.setAttribute("mid", mid);
 			
 		} catch (Exception e) {
-			logger.debug(DASHBOARD_EXCEPTION, e.getMessage(), e);
+			logger.error(DASHBOARD_EXCEPTION, e.getMessage(), e);
 		}
 		this.getServletContext().getRequestDispatcher("/WEB-INF/dashboard.jsp").forward(request, response);
 	}	

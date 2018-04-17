@@ -20,11 +20,10 @@ public class ServiceComputer {
 	
 	@Autowired
 	private ComputerDB computerDB;
+	
 	@Autowired
 	private ValidateComputer validateComputer;
 	
-	private ServiceComputer() {}	
-		
 	public int getNumberOf() throws ServiceManagerException{
 		try {
 			return computerDB.getNumComputers();

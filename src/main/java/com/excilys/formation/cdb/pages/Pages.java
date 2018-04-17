@@ -20,52 +20,30 @@ public abstract class Pages<T extends ModelBase> {
 	protected int numberOfPages;
 	protected List<T>content;	
 	
-	public Pages() {
-	}
-	
 	public Pages(List<T> page) {
 		this.content = page;
 	}
 
-
-	/**
-	 * @return the numberOfElements
-	 */
 	public int getNumberOfElements() {
 		return numberOfElements;
 	}
 
-	/**
-	 * @return the content
-	 */
 	public List<T> getContent() {
 		return content;
 	}
 
-	/**
-	 * @return the pAGE_OFFSET
-	 */
 	public static int getPAGE_OFFSET() {
 		return PAGE_OFFSET;
 	}
 	
-	/**
-	 * @return the pAGE_STRIDE
-	 */
 	public static int getPAGE_LIMIT() {
 		return PAGE_LIMIT;
 	}
 	
-	/**
-	 * @param pAGE_STRIDE the pAGE_STRIDE to set
-	 */
 	public static void setPAGE_LIMIT(int pAGE_LIMIT) {
 		PAGE_LIMIT = pAGE_LIMIT;
 	}
 
-	/**
-	 * @param pAGE_OFFSET the pAGE_OFFSET to set
-	 */
 	public static void setPAGE_OFFSET(int pAGE_OFFSET) {
 		PAGE_OFFSET = pAGE_OFFSET;
 	}
@@ -80,21 +58,15 @@ public abstract class Pages<T extends ModelBase> {
 		content = null;
 	}	
 	
-	/**
-	 * @return the cURRENT_PAGE
-	 */
 	public static Optional<Integer> getCURRENT_PAGE() {
 		return CURRENT_PAGE;
 	}
 
 	public static void setStride(int pAGE_LIMIT) throws ServiceManagerException {
 		PAGE_LIMIT = pAGE_LIMIT;
-	};
-	
-	/**
-	 * @return the numberOfPage
-	 */
-	abstract public int getNumberOfPages() throws ServiceManagerException;
+	}
+
+	public abstract int getNumberOfPages() throws ServiceManagerException;
 	
 	public abstract void goTo(int index) throws ServiceManagerException;
 	

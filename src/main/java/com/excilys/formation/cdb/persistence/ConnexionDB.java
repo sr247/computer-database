@@ -9,7 +9,6 @@ import java.util.Properties;
 
 import org.springframework.stereotype.Repository;
 
-@Repository
 public class ConnexionDB {
 	private Connection conn;
 	private static org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(ConnexionDB.class);

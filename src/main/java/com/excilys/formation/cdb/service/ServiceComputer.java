@@ -46,7 +46,6 @@ public class ServiceComputer {
 		try {
 			return computerDB.getComputerList();
 		} catch (DAOException e) {
-
 			logger.error(SERVICE_COMPUTER_LOGGER, e.getClass().getSimpleName(), e.getMessage(), e);
 			throw new ServiceManagerException(String.format(SERVICE_COMPUTER_EXCEPTION, e.getMessage()), e);
 		}

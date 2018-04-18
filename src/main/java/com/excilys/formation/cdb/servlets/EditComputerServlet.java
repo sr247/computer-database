@@ -74,7 +74,6 @@ public class EditComputerServlet extends HttpServlet {
 				computer = computerMDTO.map(serviceComputer.getComputer(id));
 				request.setAttribute("idComputer", id);
 				request.setAttribute("computer", computer);
-				
 			} catch (Exception e) {
 				logger.error("EditComputerServletException: {}", e.getMessage(), e);
 			}
@@ -105,6 +104,7 @@ public class EditComputerServlet extends HttpServlet {
 				if((attribute = Optional.ofNullable((String) request.getParameter("computerName"))).isPresent() ) {
 					computer.setName(attribute.get());
 				}
+				
 				
 				if((attribute = Optional.ofNullable((String) request.getParameter("introducted"))).isPresent() ) {
 					if(attribute.get() != "") {

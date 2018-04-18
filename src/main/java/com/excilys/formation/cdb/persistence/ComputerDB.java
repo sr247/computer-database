@@ -12,9 +12,12 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
+import javax.sql.DataSource;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import com.excilys.formation.cdb.config.SpringConfig;
 import com.excilys.formation.cdb.exceptions.DAOException;
 import com.excilys.formation.cdb.exceptions.InstanceNotInDatabaseException;
 import com.excilys.formation.cdb.exceptions.ModifyDatabaseException;
@@ -31,7 +34,7 @@ public class ComputerDB {
 	private ComputerMapper computerMapper;
 	
 	@Autowired
-	private javax.sql.DataSource datasource;
+	private DataSource datasource;
 	
 	// ça meriterait une petite enum pour retirer tout ça...
 	private static int numComputers;
@@ -67,9 +70,11 @@ public class ComputerDB {
 	private ComputerDB() {}
 
 	public int getNumComputers() throws DAOException {
+		
 		try (Connection conn = datasource.getConnection();
 			Statement state = conn.createStatement(); 
 			ResultSet res = state.executeQuery(COUNT_NUMBER_OF); ){
+			logger.debug("HERE !!!");
 			res.next();
 			numComputers = res.getInt("NUM");
 		} catch (SQLException e) {
@@ -83,6 +88,7 @@ public class ComputerDB {
 	}
 	
 	public Computer getComputerByID(int id) throws DAOException {
+		DataSource datasource = new SpringConfig().datasource();
 		ResultSet res = null;
 		Computer cmp = null;
 		try (Connection conn = datasource.getConnection();
@@ -99,7 +105,7 @@ public class ComputerDB {
 	}
 	
 	public List<Computer> getComputerList() throws DAOException {
-		
+		DataSource datasource = new SpringConfig().datasource();
 		List<Computer> computers = new ArrayList<Computer>();
 		try (Connection conn = datasource.getConnection();
 			PreparedStatement ps = conn.prepareStatement(SELECT_UNLIMITED_LIST);
@@ -131,16 +137,15 @@ public class ComputerDB {
 				if(computer.isPresent())
 					computers.add(computer.get());
 			} 
-			
-		}catch(SQLException e) {
-			logger.error("InstanceNotInDatabaseError: {}", e.getMessage(), e);
+		}catch(SQLException e1) {
+			logger.error("InstanceNotInDatabaseError: {}", e1.getMessage(), e1);
 			throw new InstanceNotInDatabaseException("Erreur: ordinateur introuvable");
 		} finally {
 			if(res != null) {
 				try {
 					res.close();
 				} catch (SQLException e) {
-					
+					logger.error("CloseConnectionException: {}", e.getMessage(), e);
 				}
 			}
 		}
@@ -148,7 +153,6 @@ public class ComputerDB {
 	}
 	
 	public List<Integer> getAllComputersRelatedToCompanyWithID(int id) throws SQLException {
-		
 		List<Integer> computersID = new ArrayList<>();
 		Connection conn = datasource.getConnection();
 		PreparedStatement ps = conn.prepareStatement(SELECT_RELATED_TO_COMPANY);
@@ -203,7 +207,6 @@ public class ComputerDB {
 	}	
 	
 	public void delete(Computer cmp) throws DAOException {
-		
 		try (Connection conn = datasource.getConnection();
 			PreparedStatement del = conn.prepareStatement(DELETE_REQUEST); ){
 			del.setInt(1, cmp.getId());
@@ -256,7 +259,7 @@ public class ComputerDB {
 				if(conn != null)
 					conn.close();
 			} catch (SQLException e) {
-				logger.error(DELETE_LOGGER, e.getMessage(), e);
+				logger.error("CloseConnectionException: {}", e.getMessage(), e);
 			}
 		}
 	}

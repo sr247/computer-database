@@ -4,22 +4,26 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 import com.excilys.formation.cdb.exceptions.ServiceManagerException;
 import com.excilys.formation.cdb.model.ModelBase;
 import com.excilys.formation.cdb.service.ServiceCompany;
 
-@Service
+@Component
 public class PagesCompany<T extends ModelBase> extends Pages<T> {
+
 
 	@Autowired
 	private ServiceCompany serviceCompany;
+
+	public PagesCompany() {
+		super();
+	}
 	
 	public PagesCompany(List<T> page) {
 		super(page);
 	}
-
 	
 	@Override
 	public void goTo(int index) throws ServiceManagerException {

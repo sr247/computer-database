@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import javax.sql.DataSource;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -33,8 +35,8 @@ public class CompanyDB {
 	private static final String UPDTATE_REQUEST = "UPDATE company SET ?=? WHERE ID=?;";
 	private static final String DELETE_REQUEST  = "DELETE FROM company WHERE ID=?";
 	private static final String INSTANCE_ERROR_LOGGER = "InstanceNotInDatabaseError: {}";
+	private static final String INSTANCE_ERROR_EXCEPTION = "InstanceNotInDatabaseError: %s";
 		
-	private javax.sql.DataSource datasource;
 	
 	@Autowired
 	private ComputerDB computerDB;
@@ -42,8 +44,9 @@ public class CompanyDB {
 	@Autowired
 	private CompanyMapper companyMapper;
 	
+	@Autowired
+	private DataSource datasource;
 	
-	private CompanyDB() {}
 	
 	public int getNumCompanies() throws NumberOfInstanceException {
 		ResultSet res = null;
@@ -54,30 +57,29 @@ public class CompanyDB {
 			numCompanies = res.getInt("NUM");
 		} catch (SQLException e) {
 			logger.error("NumberOfInstanceException: {}", e.getMessage(), e);
-			throw new NumberOfInstanceException("NumberOfInstanceException: " + e.getMessage(), e);
+			throw new NumberOfInstanceException(String.format("NumberOfInstanceException: %s", e.getMessage()), e);
 		}
 		return numCompanies;
 	}
 	
 	public Optional <Company> getCompanyByID(int id) throws InstanceNotInDatabaseException {
-			PreparedStatement sel = null;
-			ResultSet res = null;
-			Optional<Company> cpy = Optional.empty();
-			try (Connection conn = datasource.getConnection();){
-				sel = conn.prepareStatement(SELECT_ONE);
-				sel.setInt(1, id);
-				res = sel.executeQuery();
-				res.next();
-				cpy = companyMapper.map(res);
-			} catch (SQLException e) {
-				logger.error(INSTANCE_ERROR_LOGGER, e.getMessage(), e);
-				throw new InstanceNotInDatabaseException("InstanceNotInDatabaseError: company not found", e);
-			}
-			return cpy;
+		PreparedStatement ps = null;
+		ResultSet res = null;
+		Optional<Company> cpy = Optional.empty();
+		try (Connection conn = datasource.getConnection();){
+			ps = conn.prepareStatement(SELECT_ONE);
+			ps.setInt(1, id);
+			res = ps.executeQuery();
+			res.next();
+			cpy = companyMapper.map(res);
+		} catch (SQLException e) {
+			logger.error(INSTANCE_ERROR_LOGGER, e.getMessage(), e);
+			throw new InstanceNotInDatabaseException(String.format(INSTANCE_ERROR_EXCEPTION, "company not found"), e);
+		}
+		return cpy;
 	}
 
 	public List<Company> getCompanyList() throws InstanceNotInDatabaseException {
-
 		List<Company> companies = new ArrayList<>();
 		try (Connection conn = datasource.getConnection();
 			Statement state = conn.createStatement();
@@ -89,8 +91,7 @@ public class CompanyDB {
 			}
 		}catch (SQLException e) {
 			logger.error(INSTANCE_ERROR_LOGGER, e.getMessage(), e);
-			throw new InstanceNotInDatabaseException("0"
-					+ ": companies not found", e);
+			throw new InstanceNotInDatabaseException(String.format(INSTANCE_ERROR_EXCEPTION, "companies not found"), e);
 		}
 		return companies;
 	}
@@ -107,7 +108,6 @@ public class CompanyDB {
 				if(company.isPresent())
 					companies.add(company.get());
 			}
-			
 		}catch (SQLException e) {
 			logger.error(INSTANCE_ERROR_LOGGER, e.getMessage(), e);
 			throw new InstanceNotInDatabaseException("InstanceNotInDatabaseError: companies not found", e);

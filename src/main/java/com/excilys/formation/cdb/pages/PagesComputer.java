@@ -4,17 +4,23 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 import com.excilys.formation.cdb.exceptions.ServiceManagerException;
 import com.excilys.formation.cdb.model.ModelBase;
 import com.excilys.formation.cdb.service.ServiceComputer;
 
-@Service
+@Component
 public class PagesComputer<T extends ModelBase> extends Pages<T> {
-
+	
+	private static org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(PagesComputer.class);
+	
 	@Autowired
 	private ServiceComputer serviceComputer;
+	
+	public PagesComputer() {
+		super();
+	}
 
 	public PagesComputer(List<T> page) {
 		super(page);
@@ -72,7 +78,11 @@ public class PagesComputer<T extends ModelBase> extends Pages<T> {
 
 	@Override
 	public int getNumberOfPages() throws ServiceManagerException {
-		numberOfElements = serviceComputer.getNumberOf();
+//		if(serviceComputer != null) {
+			numberOfElements = serviceComputer.getNumberOf();
+//		} else {
+//			logger.debug("ServiceComputer not initialized.");
+//		}
 		numberOfPages = (int) Math.ceil((double)numberOfElements / (double) PAGE_LIMIT);
 		return numberOfPages;
 	}

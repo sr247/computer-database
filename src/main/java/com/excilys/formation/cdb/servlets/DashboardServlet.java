@@ -39,6 +39,8 @@ public class DashboardServlet extends HttpServlet {
 	private ServiceComputer serviceComputer;
 	@Autowired
 	private ComputerMapperDTO computerMDTO;
+	@Autowired
+	private PagesComputer<ComputerDTO> pageComputers;
 	
     @Override
     public void init(ServletConfig config) throws ServletException {
@@ -72,7 +74,6 @@ public class DashboardServlet extends HttpServlet {
 			logger.debug(DASHBOARD_EXCEPTION, s);
 		}
 		
-		PagesComputer<ComputerDTO> pageComputers = new PagesComputer<>();
 		try {
 			if((parameter = request.getParameter("page")) != null){
 				int page = Integer.parseInt(parameter);
@@ -83,8 +84,7 @@ public class DashboardServlet extends HttpServlet {
 			}
 			int offset = Pages.getPAGE_OFFSET();
 			int limit = Pages.getPAGE_LIMIT();
-			pageComputers = 
-					new PagesComputer<ComputerDTO> (computerMDTO.map(serviceComputer.getList(offset, limit)));
+			pageComputers.setContent(computerMDTO.map(serviceComputer.getList(offset, limit)));
 			int maxNbPages = pageComputers.getNumberOfPages();
 			int current = Pages.getCURRENT_PAGE().get();
 			int mid = current < 3 ? 3 : (current >= 3 && current <= (maxNbPages-2) ? current : maxNbPages-2);

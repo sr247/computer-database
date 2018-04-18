@@ -16,7 +16,6 @@ import org.springframework.web.WebApplicationInitializer;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
 import org.springframework.web.servlet.DispatcherServlet;
 
-import com.excilys.formation.cdb.persistence.CompanyDB;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 
@@ -27,23 +26,23 @@ import com.zaxxer.hikari.HikariDataSource;
 		"com.excilys.formation.cdb.pages"})
 public class SpringConfig implements WebApplicationInitializer {
 	
-	private static org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(CompanyDB.class);
+	private static org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(SpringConfig.class);
 
+		// Créer un DatabaseConfig pour générer la datasource  
 	    @Bean
-	    public DataSource getDataSource () {
+	    public DataSource datasource() {
 	    	HikariConfig config = null;
 	        HikariDataSource ds = null;
 	    	Properties prop = new Properties();
-	    	
+	    	InputStream pathDB = SpringConfig.class.getClassLoader().getResourceAsStream("datasource.properties");
 	    	try {
-	    		InputStream pathDB = SpringConfig.class.getClassLoader().getResourceAsStream("datasource.properties");
 				prop.load(pathDB);
-				Class.forName(prop.getProperty("dataSource.driver"));		
+				Class.forName(prop.getProperty("dataSource.driver"));
 				config = new HikariConfig(prop);
 				config.addDataSourceProperty( "cachePrepStmts" , "true" );
 				config.addDataSourceProperty( "prepStmtCacheSize" , "250" );
 				config.addDataSourceProperty( "prepStmtCacheSqlLimit" , "2048" );
-				ds = new HikariDataSource(config); 
+				ds = new HikariDataSource(config);
 	    	} catch (ClassNotFoundException | IOException e) {
 				// Gérer les loggers et les Exceptions
 			} catch (Exception e) {
@@ -55,10 +54,15 @@ public class SpringConfig implements WebApplicationInitializer {
 
 		@Override
 		public void onStartup(ServletContext container) throws ServletException {
-			AnnotationConfigWebApplicationContext webAppContext = new AnnotationConfigWebApplicationContext();
-			webAppContext.setServletContext(container);
+			AnnotationConfigWebApplicationContext springContext = new AnnotationConfigWebApplicationContext();
+			springContext.register(SpringConfig.class);
+			springContext.setServletContext(container);
 			
-			ServletRegistration.Dynamic dispatcher = container.addServlet("dashboard", new DispatcherServlet(webAppContext));
+//		      // Create the dispatcher servlet's Spring application context
+//			AnnotationConfigWebApplicationContext dispatcherContext = new AnnotationConfigWebApplicationContext();
+//		    dispatcherContext.register(DispatcherConfig.class);
+			
+			ServletRegistration.Dynamic dispatcher = container.addServlet("dashboard", new DispatcherServlet(springContext));
 	        dispatcher.setLoadOnStartup(1);
 	       	dispatcher.addMapping("/dashboard");
 		}

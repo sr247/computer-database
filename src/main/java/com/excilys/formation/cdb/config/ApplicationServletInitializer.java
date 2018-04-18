@@ -2,7 +2,7 @@ package com.excilys.formation.cdb.config;
 
 import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
 
-public class ApplicationConfig extends AbstractAnnotationConfigDispatcherServletInitializer {
+public class ApplicationServletInitializer extends AbstractAnnotationConfigDispatcherServletInitializer {
 
 	@Override
 	protected Class<?>[] getRootConfigClasses() {

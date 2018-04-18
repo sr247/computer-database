@@ -5,7 +5,7 @@ import java.time.LocalDate;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 import com.excilys.formation.cdb.exceptions.IncorrectFieldException;
 import com.excilys.formation.cdb.exceptions.InstanceNotInDatabaseException;
@@ -13,7 +13,7 @@ import com.excilys.formation.cdb.model.Company;
 import com.excilys.formation.cdb.model.Computer;
 import com.excilys.formation.cdb.persistence.CompanyDB;
 
-@Service
+@Component
 public class ValidateComputer {
 	
 	@Autowired

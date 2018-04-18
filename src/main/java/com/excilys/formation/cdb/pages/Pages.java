@@ -3,12 +3,12 @@ package com.excilys.formation.cdb.pages;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 import com.excilys.formation.cdb.exceptions.ServiceManagerException;
 import com.excilys.formation.cdb.model.ModelBase;
 
-@Service
+@Component
 public abstract class Pages<T extends ModelBase> {
 	
 	// Déterminer quel variables dointt etre static ou pas.
@@ -19,6 +19,8 @@ public abstract class Pages<T extends ModelBase> {
 	protected int numberOfElements;
 	protected int numberOfPages;
 	protected List<T>content;	
+
+	public Pages() { }
 	
 	public Pages(List<T> page) {
 		this.content = page;
@@ -30,6 +32,10 @@ public abstract class Pages<T extends ModelBase> {
 
 	public List<T> getContent() {
 		return content;
+	}
+	
+	public void setContent(List<T> content) {
+		this.content = content;
 	}
 
 	public static int getPAGE_OFFSET() {
@@ -68,6 +74,7 @@ public abstract class Pages<T extends ModelBase> {
 
 	public abstract int getNumberOfPages() throws ServiceManagerException;
 	
+
 	public abstract void goTo(int index) throws ServiceManagerException;
 	
 	public abstract void next() throws ServiceManagerException;

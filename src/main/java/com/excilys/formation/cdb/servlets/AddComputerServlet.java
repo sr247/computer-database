@@ -82,15 +82,11 @@ public class AddComputerServlet extends HttpServlet {
 			LocalDate introduced = null;
 			LocalDate discontinued = null;
 			
-			if(intro.isPresent()) {
-				if(intro.get() != "") {
-					introduced = LocalDate.parse(intro.get());							
-				}
+			if(intro.isPresent() && intro.get() != "") {
+				introduced = LocalDate.parse(intro.get());							
 			}	
-			if(discon.isPresent()) {
-				if(discon.get() != "") {
-					discontinued = LocalDate.parse(discon.get());							
-				}
+			if(discon.isPresent() && discon.get() != "") {
+				discontinued = LocalDate.parse(discon.get());							
 			}
 			
 			String cpyFromSel = request.getParameter("companyId");

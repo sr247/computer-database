@@ -5,28 +5,24 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.sql.DataSource;
 
-import org.omg.PortableInterceptor.INACTIVE;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.NestedRuntimeException;
 import org.springframework.stereotype.Repository;
 import org.springframework.jdbc.core.JdbcTemplate;
 
-
-import com.excilys.formation.cdb.config.SpringConfig;
 import com.excilys.formation.cdb.exceptions.DAOException;
 import com.excilys.formation.cdb.exceptions.InstanceNotInDatabaseException;
 import com.excilys.formation.cdb.exceptions.ModifyDatabaseException;
 import com.excilys.formation.cdb.exceptions.NumberOfInstanceException;
 import com.excilys.formation.cdb.mapper.ComputerMapper;
+import com.excilys.formation.cdb.mapper.row.ComputerRowMapper;
 import com.excilys.formation.cdb.model.Computer;
 
 @Repository
@@ -34,13 +30,11 @@ public class ComputerDB {
 	
 	private static org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(CompanyDB.class);
 	
-	private ComputerMapper computerMapper;		
 	private JdbcTemplate jdbcTemplate;
 	private DataSource datasource;
 	
 	// Auto Autowired
-	public ComputerDB(ComputerMapper computerMapper, DataSource datasource) {
-		this.computerMapper = computerMapper;
+	public ComputerDB(DataSource datasource) {
 		this.datasource = datasource;
 		this.jdbcTemplate = new JdbcTemplate(datasource);
 	}
@@ -51,7 +45,7 @@ public class ComputerDB {
 	private static final String LEFT_JOIN_ON_COMPANY = "LEFT JOIN company ON company.id = computer.company_id ";
 	
 	private static final String COUNT_NUMBER_OF = "SELECT COUNT(*) AS NUM FROM computer;";
-	private static final String SELECT_ONE = 
+	private static final String SELECT_BY_ID = 
 			"SELECT computer.id as cmpId, computer.name as cmpName, introduced, discontinued, company_id, " 
 			+ COMPANY_COLUMN
 			+ "FROM computer "
@@ -67,9 +61,12 @@ public class ComputerDB {
 			+ "FROM computer "
 			+ LEFT_JOIN_ON_COMPANY
 			+ "ORDER BY computer.id LIMIT ?, ?;";
-	private static final String CREATE_REQUEST  = "INSERT INTO computer (NAME, INTRODUCED, DISCONTINUED, COMPANY_ID) VALUES (?, ?, ?, ?);";
+	private static final String CREATE_REQUEST  = 
+			"INSERT INTO computer (NAME, INTRODUCED, DISCONTINUED, COMPANY_ID) VALUES (?, ?, ?, ?);";
+	
 	private static final String UPDTATE_REQUEST = 
 			"UPDATE computer SET NAME=?, INTRODUCED=?, DISCONTINUED=?, COMPANY_ID=? WHERE ID=?;";
+	
 	private static final String DELETE_REQUEST = "DELETE FROM computer WHERE ID=?;";
 	
 	private static final String SELECT_RELATED_TO_COMPANY =
@@ -88,36 +85,27 @@ public class ComputerDB {
 	}
 	
 	public Computer getComputerByID(int id) throws DAOException {
-		DataSource datasource = new SpringConfig().datasource();
-		ResultSet res = null;
-		Computer cmp = null;
-		try (Connection conn = datasource.getConnection();
-			 PreparedStatement ps = conn.prepareStatement(SELECT_ONE);){
-			ps.setInt(1, id);
-			res = ps.executeQuery();
-			res.next();
-			cmp = computerMapper.map(res).get();
-		} catch (SQLException | NoSuchElementException e) {
-			logger.error("InstanceNotInDatabaseError: {}", e.getMessage(), e);
-			throw new InstanceNotInDatabaseException("InstanceNotInDatabaseError: computer not found.");
+		Computer computer = null;
+		try {
+			Optional<Computer> opt =
+					jdbcTemplate.queryForObject(SELECT_BY_ID, new Object[] {id}, new ComputerRowMapper());
+			computer = opt.get();
+		} catch (NullPointerException | NestedRuntimeException e) {
+			logger.error("NumberOfInstanceError: ", e.getMessage(), e);
+			throw new NumberOfInstanceException("NumberOfInstanceError: " + e.getMessage(), e);
 		}
-		return cmp;
+		return computer;
 	}
 	
 	public List<Computer> getComputerList() throws DAOException {
-		DataSource datasource = new SpringConfig().datasource();
-		List<Computer> computers = new ArrayList<Computer>();
-		try (Connection conn = datasource.getConnection();
-			PreparedStatement ps = conn.prepareStatement(SELECT_UNLIMITED_LIST);
-			ResultSet res = ps.executeQuery();) {
-			
-			while (res.next()) {
-				Optional<Computer> computer = computerMapper.map(res);
-				if(computer.isPresent())
-					computers.add(computer.get());					
-			}
-			
-		} catch(SQLException e) {
+		List<Computer> computers = new ArrayList<>();
+		try {
+			computers =
+					jdbcTemplate.query(SELECT_UNLIMITED_LIST, new ComputerRowMapper())
+					.stream()
+					.map(o -> o.get())
+					.collect(Collectors.toList());
+		} catch (NullPointerException | NestedRuntimeException e) {
 			logger.error("InstanceNotInDatabaseError: {}", e.getMessage(), e);
 			throw new InstanceNotInDatabaseException("InstanceNotInDatabaseError: computers not found");
 		}
@@ -126,41 +114,27 @@ public class ComputerDB {
 	
 	public List<Computer> getComputerList(int limit, int offset) throws DAOException {
 		List<Computer> computers = new ArrayList<>();
-		ResultSet res = null;
-		try (Connection conn = datasource.getConnection();
-			PreparedStatement ps = conn.prepareStatement(SELECT_LIMITED_LIST); ){
-			ps.setInt(1, limit);
-			ps.setInt(2, offset);
-			res = ps.executeQuery();
-			while (res.next()) {
-				Optional<Computer> computer = computerMapper.map(res);
-				if(computer.isPresent())
-					computers.add(computer.get());
-			} 
-		}catch(SQLException e1) {
-			logger.error("InstanceNotInDatabaseError: {}", e1.getMessage(), e1);
-			throw new InstanceNotInDatabaseException("Erreur: ordinateur introuvable");
-		} finally {
-			if(res != null) {
-				try {
-					res.close();
-				} catch (SQLException e) {
-					logger.error("CloseConnectionException: {}", e.getMessage(), e);
-				}
-			}
+
+		try {
+			computers =
+					jdbcTemplate.query(SELECT_LIMITED_LIST, new Object[] {limit, offset}, new ComputerRowMapper())
+					.stream()
+					.map(o -> o.get())
+					.collect(Collectors.toList());
+		} catch (NullPointerException | NestedRuntimeException e) {
+			logger.error("InstanceNotInDatabaseError: {}", e.getMessage(), e);
+			throw new InstanceNotInDatabaseException("InstanceNotInDatabaseError: computers not found");
 		}
 		return computers;
 	}
 	
-	public List<Integer> getAllComputersRelatedToCompanyWithID(int id) throws SQLException {
+	public List<Integer> getAllComputersRelatedToCompanyWithID(int id) throws DAOException {
 		List<Integer> computersID = new ArrayList<>();
-		Connection conn = datasource.getConnection();
-		PreparedStatement ps = conn.prepareStatement(SELECT_RELATED_TO_COMPANY);
-		ps.setInt(1, id);
-		ResultSet res = ps.executeQuery();
-		while (res.next()) {
-			int computerID = res.getInt("computer.id");
-			computersID.add(computerID);				
+		try{
+			computersID = jdbcTemplate.queryForList(SELECT_RELATED_TO_COMPANY, new Object[] {id}, Integer.class);
+		} catch (NullPointerException | NestedRuntimeException e) {
+			logger.error("InstanceNotInDatabaseError: {}", e.getMessage(), e);
+			throw new InstanceNotInDatabaseException("InstanceNotInDatabaseError: computers not found");
 		}
 		return computersID;
 	}
@@ -176,6 +150,7 @@ public class ComputerDB {
 	
 	
 	public void create(Computer cmp) throws DAOException {
+		
 		try (Connection conn = datasource.getConnection();
 			PreparedStatement crt = conn.prepareStatement(CREATE_REQUEST); ){
 			crt.setString(1, cmp.getName());

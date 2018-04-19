@@ -17,18 +17,13 @@ import com.excilys.formation.cdb.model.Company;
 public class CompanyMapper {
 
 	private static org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(CompanyMapper.class);
-    
-    /** Construit un Mapper pour les entreprises.
-	 * @
-	 */
-	private CompanyMapper() {}
 
 	/** 
 	 * @param res Un ResultSet contenant les résultats des requêtes DAOs.
 	 * @return Un object Optional<Company> qui est vide si res est vide. 
 	 * @throws InstanceNotInDatabaseException 
 	 */
-    public Optional<Company> map(ResultSet res) throws InstanceNotInDatabaseException {
+    public Optional<Company> map(ResultSet res) throws SQLException {
 		Company cpn = null;		
 		try {
             if (res != null) {
@@ -37,8 +32,8 @@ public class CompanyMapper {
 				cpn = new Company(id, name);
 			}
 		} catch (SQLException e) {
-			logger.error("Error in database: {}", e.getMessage(), e);
-			throw new InstanceNotInDatabaseException("Error in database:", e);
+			logger.error("CompanyMapperException: {}", e.getMessage(), e);
+			throw e;
 		}
 		return Optional.ofNullable(cpn);
 	}

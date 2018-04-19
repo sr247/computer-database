@@ -20,12 +20,11 @@ public class CompanyMapperDTO {
 	 * @return Un object Optional<Company> qui est vide si res est vide. 
 	 */
     public CompanyDTO map(Company company) {
-		CompanyDTO compDTO = new CompanyDTO(company.getId(), company.getName());		
-		return compDTO;
+		return new CompanyDTO(company.getId(), company.getName());		
 	}    
     
     public List<CompanyDTO> map(List<Company> companyList) {
-    	List<CompanyDTO> cmpDTOList = new ArrayList<CompanyDTO>();
+    	List<CompanyDTO> cmpDTOList = new ArrayList<>();
 		for(Company company : companyList) {
 			CompanyDTO cpyDTO = map(company);
 			cmpDTOList.add(cpyDTO);

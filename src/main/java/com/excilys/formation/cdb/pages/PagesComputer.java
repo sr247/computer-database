@@ -37,7 +37,7 @@ public class PagesComputer<T extends ModelBase> extends Pages<T> {
 		} else if(index >= numberOfPages) {
 			CURRENT_PAGE = Optional.of(numberOfPages);
 		}
-		PAGE_OFFSET = (CURRENT_PAGE.get()-1) * PAGE_LIMIT;
+		PAGE_OFFSET = (CURRENT_PAGE.get() - 1) * PAGE_LIMIT;
 		this.content = (List<T>) serviceComputer.getList(PAGE_OFFSET, PAGE_LIMIT);
 	}
 	
@@ -52,7 +52,7 @@ public class PagesComputer<T extends ModelBase> extends Pages<T> {
 			if(CURRENT_PAGE.get() > numberOfPages) 
 				CURRENT_PAGE = Optional.of(numberOfPages);
 		}
-		PAGE_OFFSET = (CURRENT_PAGE.get()-1) * PAGE_LIMIT;
+		PAGE_OFFSET = (CURRENT_PAGE.get() - 1) * PAGE_LIMIT;
 		this.content = (List<T>) serviceComputer.getList(PAGE_OFFSET, PAGE_LIMIT);
 	}
 
@@ -67,7 +67,7 @@ public class PagesComputer<T extends ModelBase> extends Pages<T> {
 			if(CURRENT_PAGE.get() < 2 ) 
 				CURRENT_PAGE = Optional.of(1);
 		}
-		PAGE_OFFSET = (CURRENT_PAGE.get()-1) * PAGE_LIMIT;
+		PAGE_OFFSET = (CURRENT_PAGE.get() - 1) * PAGE_LIMIT;
 		this.content = (List<T>) serviceComputer.getList(PAGE_OFFSET, PAGE_LIMIT);
 	}
 
@@ -78,11 +78,7 @@ public class PagesComputer<T extends ModelBase> extends Pages<T> {
 
 	@Override
 	public int getNumberOfPages() throws ServiceManagerException {
-//		if(serviceComputer != null) {
-			numberOfElements = serviceComputer.getNumberOf();
-//		} else {
-//			logger.debug("ServiceComputer not initialized.");
-//		}
+		numberOfElements = serviceComputer.getNumberOf();
 		numberOfPages = (int) Math.ceil((double)numberOfElements / (double) PAGE_LIMIT);
 		return numberOfPages;
 	}

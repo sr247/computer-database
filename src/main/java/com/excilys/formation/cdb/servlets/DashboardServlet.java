@@ -85,6 +85,7 @@ public class DashboardServlet extends HttpServlet {
 			int offset = Pages.getPAGE_OFFSET();
 			int limit = Pages.getPAGE_LIMIT();
 			pageComputers.setContent(computerMDTO.map(serviceComputer.getList(offset, limit)));
+			
 			int maxNbPages = pageComputers.getNumberOfPages();
 			int current = Pages.getCURRENT_PAGE().get();
 			int mid = current < 3 ? 3 : (current >= 3 && current <= (maxNbPages-2) ? current : maxNbPages-2);
@@ -96,10 +97,10 @@ public class DashboardServlet extends HttpServlet {
 			request.setAttribute("current", current);
 			request.setAttribute("mid", mid);
 			
+			this.getServletContext().getRequestDispatcher("/WEB-INF/dashboard.jsp").forward(request, response);
 		} catch (Exception e) {
 			logger.error(DASHBOARD_EXCEPTION, e.getMessage(), e);
 		}
-		this.getServletContext().getRequestDispatcher("/WEB-INF/dashboard.jsp").forward(request, response);
 	}	
 	
 	/**
@@ -126,10 +127,10 @@ public class DashboardServlet extends HttpServlet {
 				String s = "No checkbox checked.";
 				logger.info(DASHBOARD_EXCEPTION, s);
 			}
+			doGet(request, response);
 		} catch (Exception e) {
 			logger.debug(DASHBOARD_EXCEPTION, e.getMessage(), e);
 		}
-		doGet(request, response);
 	}
 
 }

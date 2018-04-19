@@ -23,6 +23,7 @@ public class ComputerRowMapper implements RowMapper<Optional<Computer>> {
 	public Optional<Computer> mapRow(ResultSet res, int id) throws SQLException {
 		Computer computer = null;		
 		try {
+				int idComputer = res.getInt("cmpId");
 				String name = res.getString("cmpName");
 				Date intro = res.getDate("INTRODUCED");
 				Date discon = res.getDate("DISCONTINUED");
@@ -30,7 +31,7 @@ public class ComputerRowMapper implements RowMapper<Optional<Computer>> {
 				LocalDate discontinued = discon == null ? null : discon.toLocalDate();
 				Optional<Company> company = new CompanyMapper().map(res);
 				if(company.isPresent())
-					computer = new Computer(id, name, introduced, discontinued, company.get());
+					computer = new Computer(idComputer, name, introduced, discontinued, company.get());
 		}catch(SQLException e) {
 			logger.error("ComputerRowMapperException: {}", e.getMessage(), e);
 			throw e;

@@ -20,7 +20,7 @@ public abstract class Pages<T extends ModelBase> {
 	protected int numberOfPages;
 	protected List<T>content;	
 
-	public Pages() { }
+	public Pages() {}
 	
 	public Pages(List<T> page) {
 		this.content = page;
@@ -72,8 +72,7 @@ public abstract class Pages<T extends ModelBase> {
 		PAGE_LIMIT = pAGE_LIMIT;
 	}
 
-	public abstract int getNumberOfPages() throws ServiceManagerException;
-	
+	public abstract int getNumberOfPages() throws ServiceManagerException;	
 
 	public abstract void goTo(int index) throws ServiceManagerException;
 	

@@ -88,7 +88,7 @@ public class ComputerDB {
 		Computer computer = null;
 		try {
 			Optional<Computer> opt =
-					jdbcTemplate.queryForObject(SELECT_BY_ID, new Object[] {id}, new ComputerRowMapper());
+					jdbcTemplate.queryForObject(SELECT_BY_ID, new Object[] { id }, new ComputerRowMapper());
 			computer = opt.get();
 		} catch (NullPointerException | NestedRuntimeException e) {
 			logger.error("NumberOfInstanceError: ", e.getMessage(), e);

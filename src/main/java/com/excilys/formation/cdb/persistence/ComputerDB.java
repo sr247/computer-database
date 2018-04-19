@@ -14,8 +14,12 @@ import java.util.Optional;
 
 import javax.sql.DataSource;
 
+import org.omg.PortableInterceptor.INACTIVE;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.NestedRuntimeException;
 import org.springframework.stereotype.Repository;
+import org.springframework.jdbc.core.JdbcTemplate;
+
 
 import com.excilys.formation.cdb.config.SpringConfig;
 import com.excilys.formation.cdb.exceptions.DAOException;
@@ -30,17 +34,23 @@ public class ComputerDB {
 	
 	private static org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(CompanyDB.class);
 	
-	@Autowired
-	private ComputerMapper computerMapper;
-	
-	@Autowired
+	private ComputerMapper computerMapper;		
+	private JdbcTemplate jdbcTemplate;
 	private DataSource datasource;
+	
+	// Auto Autowired
+	public ComputerDB(ComputerMapper computerMapper, DataSource datasource) {
+		this.computerMapper = computerMapper;
+		this.datasource = datasource;
+		this.jdbcTemplate = new JdbcTemplate(datasource);
+	}
 	
 	// ça meriterait une petite enum pour retirer tout ça...
 	private static int numComputers;
-	private static final String COUNT_NUMBER_OF = "SELECT COUNT(*) AS NUM FROM computer;";
 	private static final String COMPANY_COLUMN = "company.id as caId, company.name as caName ";
 	private static final String LEFT_JOIN_ON_COMPANY = "LEFT JOIN company ON company.id = computer.company_id ";
+	
+	private static final String COUNT_NUMBER_OF = "SELECT COUNT(*) AS NUM FROM computer;";
 	private static final String SELECT_ONE = 
 			"SELECT computer.id as cmpId, computer.name as cmpName, introduced, discontinued, company_id, " 
 			+ COMPANY_COLUMN
@@ -65,24 +75,14 @@ public class ComputerDB {
 	private static final String SELECT_RELATED_TO_COMPANY =
 			"SELECT computer.id FROM computer WHERE company_id=?;";
 	
-	private static final String DELETE_LOGGER = "DeletionOfInstanceError: {}";
-	
-	private ComputerDB() {}
+	private static final String DELETE_LOGGER = "DeletionOfInstanceError: {}";	
 
-	public int getNumComputers() throws DAOException {
-		
-		try (Connection conn = datasource.getConnection();
-			Statement state = conn.createStatement(); 
-			ResultSet res = state.executeQuery(COUNT_NUMBER_OF); ){
-			logger.debug("HERE !!!");
-			res.next();
-			numComputers = res.getInt("NUM");
-		} catch (SQLException e) {
+	public int getNumComputers() throws DAOException {		
+		try {			
+			numComputers = jdbcTemplate.queryForObject(COUNT_NUMBER_OF, Integer.class);
+		} catch (NestedRuntimeException e) {
 			logger.error("NumberOfInstanceError: ", e.getMessage(), e);
 			throw new NumberOfInstanceException("NumberOfInstanceError: " + e.getMessage(), e);
-		} catch (NullPointerException e) {
-			logger.error("NullPointerException: ", e.getMessage(), e);
-			throw new NumberOfInstanceException("ComputerDB: " + e.getMessage(), e);
 		}
 		return numComputers;
 	}

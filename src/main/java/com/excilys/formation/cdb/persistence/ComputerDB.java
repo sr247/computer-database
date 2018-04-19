@@ -6,14 +6,22 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-
 import java.time.LocalDate;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
+import javax.sql.DataSource;
+
+import org.omg.PortableInterceptor.INACTIVE;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.NestedRuntimeException;
+import org.springframework.stereotype.Repository;
+import org.springframework.jdbc.core.JdbcTemplate;
+
+
+import com.excilys.formation.cdb.config.SpringConfig;
 import com.excilys.formation.cdb.exceptions.DAOException;
 import com.excilys.formation.cdb.exceptions.InstanceNotInDatabaseException;
 import com.excilys.formation.cdb.exceptions.ModifyDatabaseException;
@@ -21,15 +29,28 @@ import com.excilys.formation.cdb.exceptions.NumberOfInstanceException;
 import com.excilys.formation.cdb.mapper.ComputerMapper;
 import com.excilys.formation.cdb.model.Computer;
 
-public enum ComputerDB {
+@Repository
+public class ComputerDB {
 	
-	INSTANCE;
 	private static org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(CompanyDB.class);
 	
-	private static int numComputers = -1;	
-	private static final String COUNT_NUMBER_OF = "SELECT COUNT(*) AS NUM FROM computer;";
+	private ComputerMapper computerMapper;		
+	private JdbcTemplate jdbcTemplate;
+	private DataSource datasource;
+	
+	// Auto Autowired
+	public ComputerDB(ComputerMapper computerMapper, DataSource datasource) {
+		this.computerMapper = computerMapper;
+		this.datasource = datasource;
+		this.jdbcTemplate = new JdbcTemplate(datasource);
+	}
+	
+	// ça meriterait une petite enum pour retirer tout ça...
+	private static int numComputers;
 	private static final String COMPANY_COLUMN = "company.id as caId, company.name as caName ";
 	private static final String LEFT_JOIN_ON_COMPANY = "LEFT JOIN company ON company.id = computer.company_id ";
+	
+	private static final String COUNT_NUMBER_OF = "SELECT COUNT(*) AS NUM FROM computer;";
 	private static final String SELECT_ONE = 
 			"SELECT computer.id as cmpId, computer.name as cmpName, introduced, discontinued, company_id, " 
 			+ COMPANY_COLUMN
@@ -53,39 +74,29 @@ public enum ComputerDB {
 	
 	private static final String SELECT_RELATED_TO_COMPANY =
 			"SELECT computer.id FROM computer WHERE company_id=?;";
-		
-	private ComputerDB() {
-		
-	}
+	
+	private static final String DELETE_LOGGER = "DeletionOfInstanceError: {}";	
 
-	public int getNumComputers() throws DAOException {
-		
-		Statement state;
-		try (Connection conn = (Connection) DataSource.getConnection();){
-			state = conn.createStatement();
-			ResultSet res = state.executeQuery(COUNT_NUMBER_OF);
-			res.next();
-			numComputers = res.getInt("NUM");
-		} catch (SQLException e) {
+	public int getNumComputers() throws DAOException {		
+		try {			
+			numComputers = jdbcTemplate.queryForObject(COUNT_NUMBER_OF, Integer.class);
+		} catch (NestedRuntimeException e) {
 			logger.error("NumberOfInstanceError: ", e.getMessage(), e);
 			throw new NumberOfInstanceException("NumberOfInstanceError: " + e.getMessage(), e);
-		} catch (NullPointerException e) {
-			logger.error("NullPointerException: ", e.getMessage(), e);
-			throw new NumberOfInstanceException("ComputerDB: " + e.getMessage(), e);
 		}
 		return numComputers;
 	}
 	
 	public Computer getComputerByID(int id) throws DAOException {
-		
+		DataSource datasource = new SpringConfig().datasource();
 		ResultSet res = null;
 		Computer cmp = null;
-		try (Connection conn = (Connection) DataSource.getConnection();
-			 PreparedStatement ps = (PreparedStatement) conn.prepareStatement(SELECT_ONE);){
+		try (Connection conn = datasource.getConnection();
+			 PreparedStatement ps = conn.prepareStatement(SELECT_ONE);){
 			ps.setInt(1, id);
 			res = ps.executeQuery();
 			res.next();
-			cmp = ComputerMapper.map(res).get();
+			cmp = computerMapper.map(res).get();
 		} catch (SQLException | NoSuchElementException e) {
 			logger.error("InstanceNotInDatabaseError: {}", e.getMessage(), e);
 			throw new InstanceNotInDatabaseException("InstanceNotInDatabaseError: computer not found.");
@@ -94,14 +105,17 @@ public enum ComputerDB {
 	}
 	
 	public List<Computer> getComputerList() throws DAOException {
-		
+		DataSource datasource = new SpringConfig().datasource();
 		List<Computer> computers = new ArrayList<Computer>();
-		try (Connection conn = (Connection) DataSource.getConnection();
-			PreparedStatement ps = (PreparedStatement) conn.prepareStatement(SELECT_UNLIMITED_LIST);
+		try (Connection conn = datasource.getConnection();
+			PreparedStatement ps = conn.prepareStatement(SELECT_UNLIMITED_LIST);
 			ResultSet res = ps.executeQuery();) {
 			
-			while (res.next())
-				computers.add(ComputerMapper.map(res).get());
+			while (res.next()) {
+				Optional<Computer> computer = computerMapper.map(res);
+				if(computer.isPresent())
+					computers.add(computer.get());					
+			}
 			
 		} catch(SQLException e) {
 			logger.error("InstanceNotInDatabaseError: {}", e.getMessage(), e);
@@ -111,61 +125,62 @@ public enum ComputerDB {
 	}
 	
 	public List<Computer> getComputerList(int limit, int offset) throws DAOException {
-		
-		List<Computer> computers = new ArrayList<Computer>();
-		try (Connection conn = (Connection) DataSource.getConnection();){
-			PreparedStatement ps = (PreparedStatement) 
-					conn.prepareStatement(SELECT_LIMITED_LIST);
+		List<Computer> computers = new ArrayList<>();
+		ResultSet res = null;
+		try (Connection conn = datasource.getConnection();
+			PreparedStatement ps = conn.prepareStatement(SELECT_LIMITED_LIST); ){
 			ps.setInt(1, limit);
 			ps.setInt(2, offset);
-			ResultSet res = ps.executeQuery();
-			while (res.next())
-				computers.add(ComputerMapper.map(res).get());
-			
-		}catch(SQLException e) {
-			logger.error("InstanceNotInDatabaseError: {}", e.getMessage(), e);
+			res = ps.executeQuery();
+			while (res.next()) {
+				Optional<Computer> computer = computerMapper.map(res);
+				if(computer.isPresent())
+					computers.add(computer.get());
+			} 
+		}catch(SQLException e1) {
+			logger.error("InstanceNotInDatabaseError: {}", e1.getMessage(), e1);
 			throw new InstanceNotInDatabaseException("Erreur: ordinateur introuvable");
+		} finally {
+			if(res != null) {
+				try {
+					res.close();
+				} catch (SQLException e) {
+					logger.error("CloseConnectionException: {}", e.getMessage(), e);
+				}
+			}
 		}
 		return computers;
 	}
 	
 	public List<Integer> getAllComputersRelatedToCompanyWithID(int id) throws SQLException {
-		
 		List<Integer> computersID = new ArrayList<>();
-		Connection conn = (Connection) DataSource.getConnection();
-		PreparedStatement ps = (PreparedStatement) 
-				conn.prepareStatement(SELECT_RELATED_TO_COMPANY);
+		Connection conn = datasource.getConnection();
+		PreparedStatement ps = conn.prepareStatement(SELECT_RELATED_TO_COMPANY);
 		ps.setInt(1, id);
 		ResultSet res = ps.executeQuery();
 		while (res.next()) {
 			int computerID = res.getInt("computer.id");
 			computersID.add(computerID);				
-		
 		}
 		return computersID;
 	}
 	
-	public PreparedStatement setDateProperly(Optional<LocalDate> date, PreparedStatement ps, int i) throws SQLException {
-		
+	private void setDateProperly(Optional<LocalDate> date, PreparedStatement ps, int i) throws SQLException {
 		if(!date.isPresent()) {
 			ps.setNull(i, java.sql.Types.DATE);
 		} else {
 			Date dt = Date.valueOf(date.get());
 			ps.setDate(i, dt);				
 		} 
-		return ps;
 	}
 	
 	
 	public void create(Computer cmp) throws DAOException {
-		
-		PreparedStatement crt;
-		try (Connection conn = (Connection) DataSource.getConnection();){
-			crt = (PreparedStatement) 
-					conn.prepareStatement(CREATE_REQUEST);				
+		try (Connection conn = datasource.getConnection();
+			PreparedStatement crt = conn.prepareStatement(CREATE_REQUEST); ){
 			crt.setString(1, cmp.getName());
-			crt = setDateProperly(Optional.ofNullable(cmp.getIntroduced()), crt, 2);
-			crt = setDateProperly(Optional.ofNullable(cmp.getDiscontinued()), crt, 3);
+			setDateProperly(Optional.ofNullable(cmp.getIntroduced()), crt, 2);
+			setDateProperly(Optional.ofNullable(cmp.getDiscontinued()), crt, 3);
 			crt.setInt(4, cmp.getCompany().getId());
 			crt.executeUpdate();
 			logger.info("Created: {}", cmp);
@@ -176,10 +191,8 @@ public enum ComputerDB {
 	}
 	
 	public void update(Computer cmp) throws DAOException {
-		
-		PreparedStatement upd;
-		try (Connection conn = (Connection) DataSource.getConnection();){
-			upd = (PreparedStatement) conn.prepareStatement(UPDTATE_REQUEST);
+		try (Connection conn = datasource.getConnection();
+				PreparedStatement upd = conn.prepareStatement(UPDTATE_REQUEST);){
 			upd.setString(1, cmp.getName());
 			setDateProperly(Optional.ofNullable(cmp.getIntroduced()), upd, 2);
 			setDateProperly(Optional.ofNullable(cmp.getDiscontinued()), upd, 3);		
@@ -194,27 +207,25 @@ public enum ComputerDB {
 	}	
 	
 	public void delete(Computer cmp) throws DAOException {
-		
-		try (Connection conn = (Connection) DataSource.getConnection();){
-			PreparedStatement del = (PreparedStatement) conn.prepareStatement(DELETE_REQUEST);
+		try (Connection conn = datasource.getConnection();
+			PreparedStatement del = conn.prepareStatement(DELETE_REQUEST); ){
 			del.setInt(1, cmp.getId());
 			del.executeUpdate();
 			logger.info("Deleted: {}", cmp);
 		} catch (SQLException e) {
-			logger.error("DeletionOfInstanceError: {}", e.getMessage(), e);
+			logger.error(DELETE_LOGGER, e.getMessage(), e);
 			throw new ModifyDatabaseException("DeletionOfInstanceError: computer couldn't be deleted", e);
 		}
 	}
 	
-	public void deleteTransactionalFromIDList(List<Integer> idList, Connection connection) throws DAOException {
-
-        try (PreparedStatement ps = connection.prepareStatement(DELETE_REQUEST)) {
+	public static void deleteTransactionalFromIDList(List<Integer> idList, Connection conn) throws DAOException {
+        try (PreparedStatement ps = conn.prepareStatement(DELETE_REQUEST)) {
             for (Integer id : idList) {
                 ps.setInt(1, id);
                 ps.executeUpdate();
             }
         } catch (SQLException e) {
-            logger.error("DeletionOfInstanceError: {}", e);
+            logger.error(DELETE_LOGGER, e);
             throw new ModifyDatabaseException("Couldn't delete the provided computers' list.", e);
         }
 	}
@@ -222,9 +233,8 @@ public enum ComputerDB {
 	public void deleteFromIDList(List<Integer> idList) throws DAOException {
 		Connection conn = null;
 		PreparedStatement ps = null;
-		
 		try {
-			conn = (Connection) DataSource.getConnection();
+			conn = datasource.getConnection();
 			ps = conn.prepareStatement(DELETE_REQUEST);
 			conn.setAutoCommit(false);
             for (Integer id : idList) {
@@ -234,21 +244,22 @@ public enum ComputerDB {
             }
             conn.commit();
         } catch (SQLException e1) {
-            logger.error("DeletionOfInstanceError: {}", e1.getMessage(), e1);
+            logger.error(DELETE_LOGGER, e1.getMessage(), e1);
 			try {
-				conn.rollback();
+				if(conn != null)
+					conn.rollback();
 			}catch(SQLException e) {
-				logger.error("DeletionOfInstanceError: {}", e.getMessage(), e);
+				logger.error(DELETE_LOGGER, e.getMessage(), e);
 				throw new ModifyDatabaseException("DeletionOfInstanceError: Rolling back has failed.", e);
 			}
         } finally {
-        	// Envisager des optionnals ici aussi ?
 			try {
-				ps.close();
-				conn.close();
+				if(ps != null)
+					ps.close();
+				if(conn != null)
+					conn.close();
 			} catch (SQLException e) {
-				logger.error("DeletionOfInstanceError: {}", e.getMessage(), e);
-				// throw new ModifyDatabaseException("DeletionOfInstanceError: Closing connection has failed.", e);
+				logger.error("CloseConnectionException: {}", e.getMessage(), e);
 			}
 		}
 	}

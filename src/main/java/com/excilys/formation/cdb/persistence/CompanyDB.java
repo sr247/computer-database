@@ -9,6 +9,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import javax.sql.DataSource;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
+
 import com.excilys.formation.cdb.exceptions.DAOException;
 import com.excilys.formation.cdb.exceptions.InstanceNotInDatabaseException;
 import com.excilys.formation.cdb.exceptions.ModifyDatabaseException;
@@ -16,9 +21,9 @@ import com.excilys.formation.cdb.exceptions.NumberOfInstanceException;
 import com.excilys.formation.cdb.mapper.CompanyMapper;
 import com.excilys.formation.cdb.model.Company;
 
-public enum CompanyDB {
+@Repository
+public class CompanyDB {
 	
-	INSTANCE;
 	private static org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(CompanyDB.class);
 	
 	private static int numCompanies;	
@@ -29,142 +34,130 @@ public enum CompanyDB {
 	private static final String CREATE_REQUEST  = "INSERT INTO company NAME VALUES ?;";
 	private static final String UPDTATE_REQUEST = "UPDATE company SET ?=? WHERE ID=?;";
 	private static final String DELETE_REQUEST  = "DELETE FROM company WHERE ID=?";
+	private static final String INSTANCE_ERROR_LOGGER = "InstanceNotInDatabaseError: {}";
+	private static final String INSTANCE_ERROR_EXCEPTION = "InstanceNotInDatabaseError: %s";
+		
 	
-	private CompanyDB() {}
+	@Autowired
+	private ComputerDB computerDB;
+	
+	@Autowired
+	private CompanyMapper companyMapper;
+	
+	@Autowired
+	private DataSource datasource;
+	
 	
 	public int getNumCompanies() throws NumberOfInstanceException {
-		
-		Statement state;
-		try (Connection conn = (Connection) DataSource.getConnection();){
-			state = conn.createStatement();
-			ResultSet res = state.executeQuery(COUNT_NUMBER_OF);
+		ResultSet res = null;
+		try (Connection conn = datasource.getConnection();
+			Statement state = conn.createStatement(); ){
+			res = state.executeQuery(COUNT_NUMBER_OF);
 			res.next();
 			numCompanies = res.getInt("NUM");
 		} catch (SQLException e) {
 			logger.error("NumberOfInstanceException: {}", e.getMessage(), e);
-			throw new NumberOfInstanceException("NumberOfInstanceException: " + e.getMessage(), e);
+			throw new NumberOfInstanceException(String.format("NumberOfInstanceException: %s", e.getMessage()), e);
 		}
 		return numCompanies;
 	}
 	
 	public Optional <Company> getCompanyByID(int id) throws InstanceNotInDatabaseException {
-			PreparedStatement sel = null;
-			ResultSet res = null;
-			Company cpy = null;
-			try (Connection conn = (Connection) DataSource.getConnection();){
-				sel = (PreparedStatement)
-						conn.prepareStatement(SELECT_ONE);
-				sel.setInt(1, id);
-				res = sel.executeQuery();
-				res.next();
-				cpy = CompanyMapper.map(res).get();
-			} catch (SQLException e) {
-				logger.error("InstanceNotInDatabaseError: {}", e.getMessage(), e);
-				throw new InstanceNotInDatabaseException("NumberOfInstanceError: company not found", e);
-			}
-			return Optional.ofNullable(cpy);
+		PreparedStatement ps = null;
+		ResultSet res = null;
+		Optional<Company> cpy = Optional.empty();
+		try (Connection conn = datasource.getConnection();){
+			ps = conn.prepareStatement(SELECT_ONE);
+			ps.setInt(1, id);
+			res = ps.executeQuery();
+			res.next();
+			cpy = companyMapper.map(res);
+		} catch (SQLException e) {
+			logger.error(INSTANCE_ERROR_LOGGER, e.getMessage(), e);
+			throw new InstanceNotInDatabaseException(String.format(INSTANCE_ERROR_EXCEPTION, "company not found"), e);
+		}
+		return cpy;
 	}
 
 	public List<Company> getCompanyList() throws InstanceNotInDatabaseException {
-		List<Company> companies = new ArrayList<Company>();
-		try (Connection conn = (Connection) DataSource.getConnection();){
+		List<Company> companies = new ArrayList<>();
+		try (Connection conn = datasource.getConnection();
 			Statement state = conn.createStatement();
-			ResultSet res = state.executeQuery(SELECT_UNLIMITED_LIST);
-			
-			while (res.next())
-				companies.add(CompanyMapper.map(res).get());
-			
+			ResultSet res = state.executeQuery(SELECT_UNLIMITED_LIST); ){
+			while (res.next()) {
+				Optional<Company> company = companyMapper.map(res);
+				if(company.isPresent())
+					companies.add(company.get());				
+			}
 		}catch (SQLException e) {
-			logger.error("InstanceNotInDatabaseError: {}", e.getMessage(), e);
-			throw new InstanceNotInDatabaseException("InstanceNotInDatabaseError: companies not found", e);
-		}		
+			logger.error(INSTANCE_ERROR_LOGGER, e.getMessage(), e);
+			throw new InstanceNotInDatabaseException(String.format(INSTANCE_ERROR_EXCEPTION, "companies not found"), e);
+		}
 		return companies;
 	}
 	
-	public List<Company> getCompanyList(int limit, int offset) throws InstanceNotInDatabaseException {
-		List<Company> companies = new ArrayList<Company>();
-		try (Connection conn = (Connection) DataSource.getConnection();){
-			PreparedStatement ps = (PreparedStatement) 
-					conn.prepareStatement(SELECT_LIMITED_LIST);
+	public List<Company> getCompanyList(int limit, int offset) throws DAOException {
+		List<Company> companies = new ArrayList<>();
+		try (Connection conn = datasource.getConnection();
+			PreparedStatement ps = conn.prepareStatement(SELECT_LIMITED_LIST); ){
 			ps.setInt(1, limit);
 			ps.setInt(2, offset);
-			ResultSet res = ps.executeQuery();
-			
-			while (res.next())
-				companies.add(CompanyMapper.map(res).get());
-			
+			ResultSet res = ps.executeQuery();			
+			while (res.next()) {
+				Optional<Company> company = companyMapper.map(res);
+				if(company.isPresent())
+					companies.add(company.get());
+			}
 		}catch (SQLException e) {
-			logger.error("InstanceNotInDatabaseError: {}", e.getMessage(), e);
+			logger.error(INSTANCE_ERROR_LOGGER, e.getMessage(), e);
 			throw new InstanceNotInDatabaseException("InstanceNotInDatabaseError: companies not found", e);
 		}
-	
 		return companies;
 	}
 	
 
-	private void create(Company cpy) throws DAOException {
-		PreparedStatement crt;
-		ResultSet generatedKey = null;
-		try (Connection conn = (Connection) DataSource.getConnection();){
-			crt = (PreparedStatement) conn.prepareStatement(CREATE_REQUEST);			
-			crt.setString(2, cpy.getName());			
-			crt.executeUpdate();
-			
-			generatedKey = crt.getGeneratedKeys();
-			int id = generatedKey.getInt("ID");
-			
-			cpy.setId(id);
-			logger.info("Created: {}", cpy);		
-		} catch (SQLException e) {
-			logger.error("CreationOfInstanceError: {}", e.getMessage(), e);
-			throw new ModifyDatabaseException("CreationOfInstanceError: company couldn't be created", e);
-		}
+	private void create(Company cpy) throws DAOException { 
+		// Future
 	}
 
 	
 	private void update(String field, Company cmp) throws DAOException {
-		PreparedStatement upd;
-		try (Connection conn = (Connection) DataSource.getConnection();){
-			upd = (PreparedStatement) conn.prepareStatement(UPDTATE_REQUEST);
-
-			upd.setString(1, field);
-			if("NAME".equals(field)) {
-				upd.setString(2, cmp.getName());
-			}
-			upd.setInt(3, cmp.getId());
-			upd.executeUpdate();
-			// Can't call commit, when autocommit:true: commit the connexion
-		} catch (SQLException e) {
-			logger.error("UpdateOfInstanceError: ", e.getMessage(), e);
-			throw new ModifyDatabaseException("UpdateOfInstanceError: company couldn't be updated", e);
-		}
-		
+		// Future
 	}
 	
 	public void delete(Company cpy) throws DAOException {
-		ComputerDB computerDB = ComputerDB.INSTANCE;
 		Connection conn = null;
+		PreparedStatement upd = null;
 		try {
-			conn = (Connection) DataSource.getConnection();
+			conn = datasource.getConnection();
 			conn.setAutoCommit(false);
 			List<Integer> computers = computerDB.getAllComputersRelatedToCompanyWithID(cpy.getId());
-			computerDB.deleteTransactionalFromIDList(computers, conn);
-			PreparedStatement upd = (PreparedStatement) conn.prepareStatement(DELETE_REQUEST);
+			ComputerDB.deleteTransactionalFromIDList(computers, conn);
+			upd = conn.prepareStatement(DELETE_REQUEST);
 			upd.setInt(1, cpy.getId());
 			upd.executeQuery();
 			conn.commit();
 		} catch (SQLException e1) {
 			logger.error("DeletionOfInstanceError: {}", e1.getMessage(), e1);
 			try {
-				conn.rollback();
+				if(conn != null)
+					conn.rollback();
 			}catch(SQLException e) {
 				logger.error("DeletionOfInstanceError: {}", e.getMessage(), e);
-				throw new ModifyDatabaseException("DeletionOfInstanceError: Rollback have failed.", e);
+				throw new ModifyDatabaseException("DeletionOfInstanceError: Rollback has failed.", e);
 			}
 		} catch(InstanceNotInDatabaseException e2) {
 			logger.error("DeletionOfInstanceError: {}", e2.getMessage(), e2);
-		}
-			
+		} finally {
+			try {
+				if(upd != null)
+					upd.close();
+				if(conn != null)
+					conn.close();
+			} catch (SQLException e) {
+				logger.error("CloseConnectionException: {}", e.getMessage(), e);
+			}
+		}	
 	}
 	
 	

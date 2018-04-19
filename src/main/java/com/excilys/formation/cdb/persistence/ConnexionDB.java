@@ -7,15 +7,11 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Properties;
 
-public enum ConnexionDB {
-	
-	INSTANCE;
+public class ConnexionDB {
 	private Connection conn;
 	private static org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(ConnexionDB.class);
 	
-	private ConnexionDB () {
-
-	}
+	private ConnexionDB () {}
 	
 	public Connection getConnection() {
 		Properties prop = new Properties();

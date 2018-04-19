@@ -1,6 +1,6 @@
 package com.excilys.formation.cdb.model;
 
-public class ComputerDTO {
+public class ComputerDTO extends ModelBase {
 	private int id;
 	private String name;
 	private String introduced;

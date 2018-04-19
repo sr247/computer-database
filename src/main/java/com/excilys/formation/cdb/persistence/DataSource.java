@@ -27,7 +27,7 @@ public class DataSource {
 			config.addDataSourceProperty( "prepStmtCacheSqlLimit" , "2048" );
 			ds = new HikariDataSource(config);        
 		} catch (ClassNotFoundException | IOException e) {
-			logger.debug("DataSourceError: {}", e.getMessage(), e);
+			logger.error("DataSourceError: {}", e.getMessage(), e);
 		}
     }
  

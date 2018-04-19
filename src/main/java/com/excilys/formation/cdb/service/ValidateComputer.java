@@ -4,19 +4,22 @@ package com.excilys.formation.cdb.service;
 import java.time.LocalDate;
 import java.util.Optional;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import com.excilys.formation.cdb.exceptions.IncorrectFieldException;
 import com.excilys.formation.cdb.exceptions.InstanceNotInDatabaseException;
 import com.excilys.formation.cdb.model.Company;
 import com.excilys.formation.cdb.model.Computer;
 import com.excilys.formation.cdb.persistence.CompanyDB;
 
-// Cette classe devient un singleton
-public enum ValidateComputer {
-	INSTANCE;	
+@Component
+public class ValidateComputer {
 	
-	private ValidateComputer() {
-		
-	}	
+	@Autowired
+	private CompanyDB companyDB;
+	
+	private ValidateComputer() {}	
 	
 	public void validate(Computer cmp) throws IncorrectFieldException, InstanceNotInDatabaseException {
 		checkName(Optional.ofNullable(cmp.getName()));
@@ -32,23 +35,18 @@ public enum ValidateComputer {
 	
 	
 	private void checkDate(Optional<LocalDate> d1, Optional<LocalDate> d2) throws IncorrectFieldException {
-		if(d1.isPresent()) {
-			if(d1.get().isAfter(LocalDate.now())) {
+		if(d1.isPresent() && d1.get().isAfter(LocalDate.now())) {
 				throw new IncorrectFieldException("ValidateError: Computer can't have a introduced date in the future.");
-			}
 		}
-		if(d1.isPresent() && d2.isPresent()) {
-			if(d1.get().isAfter(d2.get())) {
+		if(d1.isPresent() && d2.isPresent() && d1.get().isAfter(d2.get())) {
 				throw new IncorrectFieldException("ValidateError: Computer can't have a introduced date after the discontinued date.");
-			}			
 		}
 	}
 	
 
 	private void checkCompany(Optional<Company> cpy) throws InstanceNotInDatabaseException {
-		CompanyDB cpyDB = CompanyDB.INSTANCE;
 		if(cpy.isPresent()) {
-			if(!cpyDB.getCompanyByID(cpy.get().getId()).isPresent()) {		
+			if(!companyDB.getCompanyByID(cpy.get().getId()).isPresent()) {		
 				throw new InstanceNotInDatabaseException("ValidateError: Company not in database");
 			}			
 		}else {

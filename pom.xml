@@ -1,39 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>com.excilys.formation.java</groupId>
+	<groupId>com.excilys.formation.java.cdb</groupId>
 	<artifactId>computer-database</artifactId>
 	<version>4.3.0-SNAPSHOT</version>
 	<packaging>war</packaging>
 
 	<name>computer-database</name>
 	<url>https://github.com/sr247/computer-database</url>
-	
-	<repositories>
-		<repository>
-		    <id>openqa.org</id>
-		    <name>Openqa Release Repository</name>
-		    <url>http://archiva.openqa.org/repository/releases</url>
-		    <layout>default</layout>
-		    <snapshots>
-		        <enabled>false</enabled>
-		    </snapshots>
-		    <releases>
-		        <enabled>true</enabled>
-		    </releases>
-		</repository>
-	</repositories>
 
 	<properties>
 		<!-- sets the projects encoding to UTF-8 -->
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		
+
 		<!-- compile -->
 		<java.version>1.8</java.version>
 		<javax.version>4.0.0</javax.version>
 		<mojo.version>1.2.1</mojo.version>
-		<jstl-version>1.2</jstl-version>
+		<jstl.version>1.2</jstl.version>
 
 		<!-- checkstyle -->
 		<checkstyle.version>3.0.0</checkstyle.version>
@@ -41,7 +27,7 @@
 		<!-- test -->
 		<junit.version>5.0.1</junit.version>
 		<mockito.version>1.9.5</mockito.version>
-		<sunfire-version>2.19.1</sunfire-version>
+		<sunfire.version>2.19.1</sunfire.version>
 
 		<!-- logs -->
 		<log4j.version>1.2.17</log4j.version>
@@ -51,16 +37,16 @@
 		<!-- runtime -->
 		<mysql.version>5.1.38</mysql.version>
 		<myqsl-jdbc.version>8.0.8-dmr</myqsl-jdbc.version>
-		<tomcat-plugin-version>2.2</tomcat-plugin-version>
-		
+		<tomcat-plugin.version>2.2</tomcat-plugin.version>
+
 		<!-- Connection pool -->
-		<hikariCP-version>3.0.0</hikariCP-version>
-		
+		<hikariCP.version>3.0.0</hikariCP.version>
+
 		<!-- Spring version -->
-    	<springframework.version>4.3.14.RELEASE</springframework.version>
-		
+		<springframework.version>5.0.4.RELEASE</springframework.version>
+
 	</properties>
-	
+
 	<dependencies>
 		<!-- tests -->
 		<dependency>
@@ -75,147 +61,77 @@
 			<version>${mockito.version}</version>
 			<scope>test</scope>
 		</dependency>
-		
-		<!-- tomcat -->
-		<dependency>
-    		<groupId>org.apache.tomcat.maven</groupId>
-    		<artifactId>tomcat7-maven-plugin</artifactId>
-    		<version>${tomcat-plugin-version}</version>
-		</dependency>
+
+		<!-- tomcat 
+		<dependency> 
+			<groupId>org.apache.tomcat.maven</groupId> 
+			<artifactId>tomcat7-maven-plugin</artifactId> 
+			<version>${tomcat-plugin.version}</version> 
+		</dependency> 
+		-->
 
 		<!-- logging -->
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-            <version>${slf4j.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>ch.qos.logback</groupId>
-            <artifactId>logback-core</artifactId>
-            <version>${logback.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>ch.qos.logback</groupId>
-            <artifactId>logback-classic</artifactId>
-            <version>${logback.version}</version>
-        </dependency>
-		
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>${slf4j.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-core</artifactId>
+			<version>${logback.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-classic</artifactId>
+			<version>${logback.version}</version>
+		</dependency>
+
 		<!-- database -->
 		<dependency>
 			<groupId>mysql</groupId>
 			<artifactId>mysql-connector-java</artifactId>
 			<version>${myqsl-jdbc.version}</version>
 		</dependency>
-		
+
 		<!-- httpServlet -->
 		<dependency>
-		    <groupId>javax.servlet</groupId>
-		    <artifactId>javax.servlet-api</artifactId>
-		    <version>${javax.version}</version>
-		    <scope>provided</scope>
-		</dependency>
-		
-		<!-- jstl -->
-		<dependency>
-    		<groupId>jstl</groupId>
-    		<artifactId>jstl</artifactId>
-    		<version>${jstl-version}</version>
-		</dependency>
-		
-		
-		<!-- connection pool -->
-		<dependency>
-    		<groupId>com.zaxxer</groupId>
-	    	<artifactId>HikariCP</artifactId>
-    		<version>${hikariCP-version}</version>
-		</dependency>
-		
-		<!-- Spring -->
-		<dependency>
-    		<groupId>org.springframework</groupId>
-    		<artifactId>spring-core</artifactId>
-		    <version>${springframework.version}</version>
-		</dependency>
-		
-		<dependency>
-    		<groupId>org.springframework</groupId>
-    		<artifactId>spring-context</artifactId>
-    		<version>${org.springframework.version}</version>
-    		<scope>runtime</scope>
-		</dependency>
-		
-		<!--
-    	Aspect Oriented Programming (AOP) Framework (depends on spring-core, spring-beans)
-    	Define this if you use Spring AOP APIs (org.springframework.aop.*)
-		-->
-		<dependency>
-  			<groupId>org.springframework</groupId>
-  			<artifactId>spring-aop</artifactId>
-  			<version>${springframework.version}</version>
+			<groupId>javax.servlet</groupId>
+			<artifactId>javax.servlet-api</artifactId>
+			<version>${javax.version}</version>
+			<scope>provided</scope>
 		</dependency>
 
-		<!--
-    	Application Context (depends on spring-core, spring-expression, spring-aop, spring-beans) 
-    	This is the central artifact for Spring's Dependency Injection Container and is generally always defined
-		-->
+		<!-- jstl -->
 		<dependency>
-  			<groupId>org.springframework</groupId>
-  			<artifactId>spring-context</artifactId>
-  			<version>${springframework.version}</version>
+			<groupId>jstl</groupId>
+			<artifactId>jstl</artifactId>
+			<version>${jstl.version}</version>
 		</dependency>
-		
-		<!--
-    	Transaction Management Abstraction (depends on spring-core, spring-beans, spring-aop, spring-context)
-    	Define this if you use Spring Transactions or DAO Exception Hierarchy
-    	(org.springframework.transaction.*/org.springframework.dao.*)
-		-->
+
+		<!-- connection pool -->
 		<dependency>
-  			<groupId>org.springframework</groupId>
-  			<artifactId>spring-tx</artifactId>
-  			<version>${springframework.version}</version>
+			<groupId>com.zaxxer</groupId>
+			<artifactId>HikariCP</artifactId>
+			<version>${hikariCP.version}</version>
 		</dependency>
-		
-		<!--
-    	Web application development utilities applicable to both Servlet and Portlet Environments
-    	(depends on spring-core, spring-beans, spring-context)
-    	Define this if you use Spring MVC, or wish to use Struts, JSF, or another web framework with Spring (org.springframework.web.*)
-		-->
-		<dependency>
-  			<groupId>org.springframework</groupId>
-  			<artifactId>spring-web</artifactId>
-  			<version>${springframework.version}</version>
-		</dependency>
-		
-		<!-- 
-    	Bean Factory and JavaBeans utilities (depends on spring-core)
-    	Define this if you use Spring Bean APIs (org.springframework.beans.*) 
-		-->
-		<dependency>
-  			<groupId>org.springframework</groupId>
-  			<artifactId>spring-beans</artifactId>
-  			<version>${springframework.version}</version>
-		</dependency>
-		
-		<!--
-    	JDBC Data Access Library (depends on spring-core, spring-beans, spring-context, spring-tx)
-    	Define this if you use Spring's JdbcTemplate API (org.springframework.jdbc.*)
-		-->
-		<dependency>
-  			<groupId>org.springframework</groupId>
-  			<artifactId>spring-jdbc</artifactId>
-  			<version>${springframework.version}</version>
-		</dependency>
-		<!--
-		Support for testing Spring applications with tools such as JUnit and TestNG
-		This artifact is generally always defined with a 'test' scope for the integration testing framework and unit testing stubs
-		-->
+
+		<!-- Spring -->
+		<!-- Spring MVC for Servlet Environments (depends on spring-core, spring-beans, 
+			spring-context, spring-web) Define this if you use Spring MVC with a Servlet 
+			Container such as Apache Tomcat (org.springframework.web.servlet.*) -->
 		<dependency>
 			<groupId>org.springframework</groupId>
-		  	<artifactId>spring-test</artifactId>
-		  	<version>${springframework.version}</version>
-		  	<scope>test</scope>
+			<artifactId>spring-webmvc</artifactId>
+			<version>${springframework.version}</version>
 		</dependency>
 		
+		<dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-jdbc</artifactId>
+            <version>${springframework.version}</version>
+        </dependency>
+
 	</dependencies>
 
 	<build>
@@ -231,53 +147,44 @@
 					<target>${java.version}</target>
 				</configuration>
 			</plugin>
-			
-			<!-- Plugin Tomcat8 -->
-			<plugin>
-    			<groupId>org.apache.tomcat.maven</groupId>
-    			<artifactId>tomcat7-maven-plugin</artifactId>
-    			<version>${tomcat-plugin-version}</version>
-    			<configuration>
-        			<url>http://localhost:8080/manager/text</url>
-        			<server>TomcatServer</server>
-        			<path>/computer-database</path>
-    			</configuration>
-			</plugin>
-			
+
+			<!-- Plugin Tomcat7 -->
+			<!-- <plugin> <groupId>org.apache.tomcat.maven</groupId> <artifactId>tomcat7-maven-plugin</artifactId> 
+				<version>${tomcat-plugin.version}</version> <configuration> <url>http://localhost:8080/manager/text</url> 
+				<server>TomcatServer</server> <path>/computer-database</path> </configuration> 
+				</plugin> -->
+
 			<!-- Plugin Selenium test -->
-        	<plugin>
-            	<groupId>org.codehaus.mojo</groupId>
-            	<artifactId>selenium-maven-plugin</artifactId>
-            	<executions>
-	                <execution>
-                    	<phase>pre-integration-test</phase>
-                    	<goals>
-	                        <goal>start-server</goal>
-                    	</goals>
-                    	<configuration>
-	                        <background>true</background>
-                        	<!--
-	                            To capture the logs from Selenium to a file, enable logOutput.
-                            	This will create a server.log that captures all of the output.
-                            	<logOutput>false</logOutput>
-                        	-->
-                    	</configuration>
-                	</execution>
-                	<execution>
-                    	<id>stop</id>
-                    	<phase>post-integration-test</phase>
-                    	<goals>
-	                        <goal>stop-server</goal>
-	                    </goals>
-                	</execution>
-            	</executions>
-        	</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>selenium-maven-plugin</artifactId>
+				<executions>
+					<execution>
+						<phase>pre-integration-test</phase>
+						<goals>
+							<goal>start-server</goal>
+						</goals>
+						<configuration>
+							<background>true</background>
+							<!-- To capture the logs from Selenium to a file, enable logOutput. 
+								This will create a server.log that captures all of the output. <logOutput>false</logOutput> -->
+						</configuration>
+					</execution>
+					<execution>
+						<id>stop</id>
+						<phase>post-integration-test</phase>
+						<goals>
+							<goal>stop-server</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
 
 			<!-- plugin maven for sunfire test -->
- 			<plugin>
+			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
-				<version>${sunfire-version}</version>
+				<version>${sunfire.version}</version>
 				<dependencies>
 					<dependency>
 						<groupId>org.junit.platform</groupId>
@@ -305,7 +212,7 @@
 					</execution>
 				</executions>
 				<configuration>
-					<mainClass>com.excilys.formation.java.ui.CLI_UI</mainClass>
+					<mainClass>com.excilys.formation.java.ui.CliUI</mainClass>
 				</configuration>
 			</plugin>
 		</plugins>

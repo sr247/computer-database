@@ -3,9 +3,13 @@ package com.excilys.formation.cdb.pages;
 import java.util.List;
 import java.util.Optional;
 
-import com.excilys.formation.cdb.exceptions.ServiceManagerException;
+import org.springframework.stereotype.Component;
 
-public abstract class Pages<T> {
+import com.excilys.formation.cdb.exceptions.ServiceManagerException;
+import com.excilys.formation.cdb.model.ModelBase;
+
+@Component
+public abstract class Pages<T extends ModelBase> {
 	
 	// Déterminer quel variables dointt etre static ou pas.
 	protected static int PAGE_LIMIT = 10;
@@ -14,54 +18,38 @@ public abstract class Pages<T> {
 	
 	protected int numberOfElements;
 	protected int numberOfPages;
-	protected List<T> content;	
-	
-	public Pages() {
-	}
+	protected List<T>content;	
+
+	public Pages() { }
 	
 	public Pages(List<T> page) {
 		this.content = page;
 	}
 
-
-	/**
-	 * @return the numberOfElements
-	 */
 	public int getNumberOfElements() {
 		return numberOfElements;
 	}
 
-	/**
-	 * @return the content
-	 */
 	public List<T> getContent() {
 		return content;
 	}
+	
+	public void setContent(List<T> content) {
+		this.content = content;
+	}
 
-	/**
-	 * @return the pAGE_OFFSET
-	 */
 	public static int getPAGE_OFFSET() {
 		return PAGE_OFFSET;
 	}
 	
-	/**
-	 * @return the pAGE_STRIDE
-	 */
 	public static int getPAGE_LIMIT() {
 		return PAGE_LIMIT;
 	}
 	
-	/**
-	 * @param pAGE_STRIDE the pAGE_STRIDE to set
-	 */
 	public static void setPAGE_LIMIT(int pAGE_LIMIT) {
 		PAGE_LIMIT = pAGE_LIMIT;
 	}
 
-	/**
-	 * @param pAGE_OFFSET the pAGE_OFFSET to set
-	 */
 	public static void setPAGE_OFFSET(int pAGE_OFFSET) {
 		PAGE_OFFSET = pAGE_OFFSET;
 	}
@@ -76,22 +64,17 @@ public abstract class Pages<T> {
 		content = null;
 	}	
 	
-	/**
-	 * @return the cURRENT_PAGE
-	 */
 	public static Optional<Integer> getCURRENT_PAGE() {
 		return CURRENT_PAGE;
 	}
 
 	public static void setStride(int pAGE_LIMIT) throws ServiceManagerException {
 		PAGE_LIMIT = pAGE_LIMIT;
-	};
+	}
+
+	public abstract int getNumberOfPages() throws ServiceManagerException;
 	
-	/**
-	 * @return the numberOfPage
-	 */
-	abstract public int getNumberOfPages() throws ServiceManagerException;
-	
+
 	public abstract void goTo(int index) throws ServiceManagerException;
 	
 	public abstract void next() throws ServiceManagerException;

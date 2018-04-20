@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	
+
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.excilys.formation.java.cdb</groupId>
 	<artifactId>computer-database</artifactId>
@@ -62,13 +62,8 @@
 			<scope>test</scope>
 		</dependency>
 
-		<!-- tomcat 
-		<dependency> 
-			<groupId>org.apache.tomcat.maven</groupId> 
-			<artifactId>tomcat7-maven-plugin</artifactId> 
-			<version>${tomcat-plugin.version}</version> 
-		</dependency> 
-		-->
+		<!-- tomcat <dependency> <groupId>org.apache.tomcat.maven</groupId> <artifactId>tomcat7-maven-plugin</artifactId> 
+			<version>${tomcat-plugin.version}</version> </dependency> -->
 
 		<!-- logging -->
 		<dependency>
@@ -125,12 +120,12 @@
 			<artifactId>spring-webmvc</artifactId>
 			<version>${springframework.version}</version>
 		</dependency>
-		
+
 		<dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-jdbc</artifactId>
-            <version>${springframework.version}</version>
-        </dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-jdbc</artifactId>
+			<version>${springframework.version}</version>
+		</dependency>
 
 	</dependencies>
 
@@ -148,37 +143,29 @@
 				</configuration>
 			</plugin>
 
+			<!-- Enables launching the CLI via command line using Maven -->
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>exec-maven-plugin</artifactId>
+				<version>${mojo.version}</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>java</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<mainClass>com.excilys.formation.java.ui.CliUI</mainClass>
+				</configuration>
+			</plugin>
+
+
 			<!-- Plugin Tomcat7 -->
 			<!-- <plugin> <groupId>org.apache.tomcat.maven</groupId> <artifactId>tomcat7-maven-plugin</artifactId> 
 				<version>${tomcat-plugin.version}</version> <configuration> <url>http://localhost:8080/manager/text</url> 
 				<server>TomcatServer</server> <path>/computer-database</path> </configuration> 
 				</plugin> -->
-
-			<!-- Plugin Selenium test -->
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>selenium-maven-plugin</artifactId>
-				<executions>
-					<execution>
-						<phase>pre-integration-test</phase>
-						<goals>
-							<goal>start-server</goal>
-						</goals>
-						<configuration>
-							<background>true</background>
-							<!-- To capture the logs from Selenium to a file, enable logOutput. 
-								This will create a server.log that captures all of the output. <logOutput>false</logOutput> -->
-						</configuration>
-					</execution>
-					<execution>
-						<id>stop</id>
-						<phase>post-integration-test</phase>
-						<goals>
-							<goal>stop-server</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
 
 			<!-- plugin maven for sunfire test -->
 			<plugin>
@@ -199,22 +186,6 @@
 				</dependencies>
 			</plugin>
 
-			<!-- Enables launching the CLI via command line using Maven -->
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>exec-maven-plugin</artifactId>
-				<version>${mojo.version}</version>
-				<executions>
-					<execution>
-						<goals>
-							<goal>java</goal>
-						</goals>
-					</execution>
-				</executions>
-				<configuration>
-					<mainClass>com.excilys.formation.java.ui.CliUI</mainClass>
-				</configuration>
-			</plugin>
 		</plugins>
 	</build>
 

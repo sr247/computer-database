@@ -6,17 +6,25 @@ public class NoNameProvidedException extends ValidatorException {
 
 	public NoNameProvidedException() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
-	public NoNameProvidedException(String arg0, Throwable arg1) {
-		super(arg0, arg1);
-		// TODO Auto-generated constructor stub
+	public NoNameProvidedException(String message, Throwable cause, boolean enableSuppression,
+			boolean writableStackTrace) {
+		super(message, cause, enableSuppression, writableStackTrace);
 	}
 
-	public NoNameProvidedException(String arg0) {
-		super(arg0);
-		// TODO Auto-generated constructor stub
+	public NoNameProvidedException(String message, Throwable cause) {
+		super(message, cause);
 	}
+
+	public NoNameProvidedException(String message) {
+		super(message);
+	}
+
+	public NoNameProvidedException(Throwable cause) {
+		super(cause);
+	}
+
+
 
 }

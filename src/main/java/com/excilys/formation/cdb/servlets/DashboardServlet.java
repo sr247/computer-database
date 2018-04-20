@@ -86,15 +86,16 @@ public class DashboardServlet extends HttpServlet {
 			int limit = Pages.getPAGE_LIMIT();
 			pageComputers.setContent(computerMDTO.map(serviceComputer.getList(offset, limit)));
 			
-			int maxNbPages = pageComputers.getNumberOfPages();
+			int maxPages = pageComputers.getNumberOfPages();
 			int current = Pages.getCURRENT_PAGE().get();
-			int mid = current < 3 ? 3 : (current >= 3 && current <= (maxNbPages-2) ? current : maxNbPages-2);
+			int mid = current < 3 ? 3 : (current >= 3 && current <= (maxPages-2) ? current : maxPages-2);
 			
 			logger.info("Page: {} {{}, {}}", current, Pages.getPAGE_LIMIT(), Pages.getPAGE_OFFSET());
-			logger.info("mid:{} maxPages:{}", mid, maxNbPages);
+			logger.info("mid:{} maxPages:{}", mid, maxPages);
 			
 			request.setAttribute("pageComputers", pageComputers);
 			request.setAttribute("current", current);
+			request.setAttribute("maxPages", maxPages);
 			request.setAttribute("mid", mid);
 			
 			this.getServletContext().getRequestDispatcher("/WEB-INF/dashboard.jsp").forward(request, response);
@@ -129,7 +130,7 @@ public class DashboardServlet extends HttpServlet {
 			}
 			doGet(request, response);
 		} catch (Exception e) {
-			logger.debug(DASHBOARD_EXCEPTION, e.getMessage(), e);
+			logger.error(DASHBOARD_EXCEPTION, e.getMessage(), e);
 		}
 	}
 

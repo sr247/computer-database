@@ -1,9 +1,12 @@
 package com.excilys.formation.cdb.service;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.excilys.formation.cdb.exceptions.DAOException;
 import com.excilys.formation.cdb.exceptions.ServiceManagerException;
@@ -12,6 +15,7 @@ import com.excilys.formation.cdb.model.Computer;
 import com.excilys.formation.cdb.persistence.ComputerDB;
 
 @Service
+@EnableTransactionManagement
 public class ServiceComputer {
 	
 	private static org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(ServiceComputer.class);
@@ -34,12 +38,15 @@ public class ServiceComputer {
 	}
 	
 	public Computer getComputer(int id) throws ServiceManagerException {
+		Optional<Computer> computer = Optional.empty();
 		try {
-			return computerDB.getComputerByID(id);
-		} catch (DAOException e) {
+			computer = computerDB.getComputerByID(id);
+			validateComputer.checkIsNull(computer);
+		} catch (ValidatorException e) {
 			logger.error(SERVICE_COMPUTER_LOGGER, e.getClass().getSimpleName(), e.getMessage(), e);
 			throw new ServiceManagerException(String.format(SERVICE_COMPUTER_EXCEPTION, e.getMessage()), e);
 		}
+		return computer.get();
 	}
 	
 	public List<Computer> getAllList() throws ServiceManagerException {
@@ -62,8 +69,7 @@ public class ServiceComputer {
 			throw new ServiceManagerException(String.format(SERVICE_COMPUTER_EXCEPTION, e.getMessage()), e);
 		}
 	}
-	
-	
+		
 	public void createComputer(Computer cmp) throws ServiceManagerException {
 		try {
 			validateComputer.validate(cmp);		
@@ -85,11 +91,13 @@ public class ServiceComputer {
 	}
 	
 	public void deleteComputer(int id) throws ServiceManagerException {
-		Computer cmp;
+		Optional<Computer> computer;
 		try {
-			cmp = computerDB.getComputerByID(id);
-			computerDB.delete(cmp);
-		} catch (DAOException e) {
+			computer = computerDB.getComputerByID(id);
+			validateComputer.checkIsNull(computer);
+			// Method orElseThrow de optional plus intéressante
+			computerDB.delete(computer.get()); 
+		} catch (DAOException | ValidatorException e) {
 			logger.error(SERVICE_COMPUTER_LOGGER, e.getClass().getSimpleName(), e.getMessage(), e);
 			throw new ServiceManagerException(String.format(SERVICE_COMPUTER_EXCEPTION, e.getMessage()), e);
 		}

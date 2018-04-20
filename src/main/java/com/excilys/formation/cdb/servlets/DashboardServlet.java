@@ -37,7 +37,7 @@ public class DashboardServlet extends HttpServlet {
 
 	@Autowired
 	private ServiceComputer serviceComputer;
-	@Autowired
+	@Autowired 
 	private ComputerMapperDTO computerMDTO;
 	@Autowired
 	private PagesComputer<ComputerDTO> pageComputers;

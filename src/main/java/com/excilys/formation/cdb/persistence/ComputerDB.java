@@ -11,8 +11,9 @@ import java.util.stream.Collectors;
 import javax.sql.DataSource;
 
 import org.springframework.core.NestedRuntimeException;
-import org.springframework.stereotype.Repository;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+import org.springframework.stereotype.Repository;
 
 import com.excilys.formation.cdb.exceptions.DAOException;
 import com.excilys.formation.cdb.exceptions.InstanceNotInDatabaseException;
@@ -26,13 +27,16 @@ public class ComputerDB {
 
 	private static org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(CompanyDB.class);
 
-	private JdbcTemplate jdbcTemplate;
 	private DataSource datasource;
+	private DataSourceTransactionManager txDataSource;
+	private JdbcTemplate jdbcTemplate;
+	private JdbcTemplate txJdbcTemplate;
 
 	// Auto Autowired
-	public ComputerDB(DataSource datasource) {
+	public ComputerDB(DataSource datasource, DataSourceTransactionManager txDataSource) {
 		this.datasource = datasource;
-		this.jdbcTemplate = new JdbcTemplate(datasource);
+		this.txDataSource = txDataSource;
+		this.jdbcTemplate = new JdbcTemplate(datasource);		
 	}
 
 	// ça meriterait une petite enum pour retirer tout ça...

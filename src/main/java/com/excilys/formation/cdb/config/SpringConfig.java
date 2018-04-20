@@ -10,6 +10,9 @@ import javax.sql.DataSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.web.WebApplicationInitializer;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
 import org.springframework.web.servlet.DispatcherServlet;
@@ -26,6 +29,7 @@ import com.zaxxer.hikari.HikariDataSource;
 
 @Configuration
 @EnableWebMvc
+@PropertySource("classpath:/datasource.properties")
 @ComponentScan(basePackages = {"com.excilys.formation.cdb.mapper", 
 		"com.excilys.formation.cdb.persistence", 
 		"com.excilys.formation.cdb.service", 
@@ -34,40 +38,33 @@ public class SpringConfig implements WebApplicationInitializer, WebMvcConfigurer
 	
 	private static org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(SpringConfig.class);
 
-		// Créer un DatabaseConfig pour générer la datasource 
-		// Remplacer HikariDataSource par DataSourceUtils de Spring jdbc
-	    @Bean
-	    public DataSource datasource() {
-	    	HikariConfig config = null;
-	        HikariDataSource ds = null;
-	    	Properties prop = new Properties();
-	    	InputStream pathDB = SpringConfig.class.getClassLoader().getResourceAsStream("datasource.properties");
-	    	try {
-				prop.load(pathDB);
-				Class.forName(prop.getProperty("dataSource.driver"));
-				config = new HikariConfig(prop);
-				config.addDataSourceProperty( "cachePrepStmts" , "true" );
-				config.addDataSourceProperty( "prepStmtCacheSize" , "250" );
-				config.addDataSourceProperty( "prepStmtCacheSqlLimit" , "2048" );
-				ds = new HikariDataSource(config);
-			} catch (Exception e) {
-	    		logger.error(String.format("%s: {%s, %s, %s}", e.getClass().getSimpleName(), config, ds, prop));
-	    	}
-	    	if(ds != null)
-	    		logger.info(String.format("OK: {%s, %s, %s}", config, ds, prop));
-	    	return ds;
-	    }
+//	    @Bean
+//	    public DataSource dataSourceOld() {
+//	    	HikariConfig config = null;
+//	        HikariDataSource ds = null;
+//	    	Properties prop = new Properties();
+//	    	InputStream pathDB = SpringConfig.class.getClassLoader().getResourceAsStream("datasource.properties");
+//	    	try {
+//				prop.load(pathDB);
+//				Class.forName(prop.getProperty("dataSource.driver"));
+//				config = new HikariConfig(prop);
+//				config.addDataSourceProperty( "cachePrepStmts" , "true" );
+//				config.addDataSourceProperty( "prepStmtCacheSize" , "250" );
+//				config.addDataSourceProperty( "prepStmtCacheSqlLimit" , "2048" );
+//				ds = new HikariDataSource(config);
+//			} catch (Exception e) {
+//	    		logger.error("{: {{}, {}, {}}", e.getClass().getSimpleName(), config, ds, prop);
+//	    	}
+//	    	if(ds != null)
+//	    		logger.info("OK: {{}, {}, {}}", config, ds, prop);
+//	    	return ds;
+//	    }
 
 		@Override
 		public void onStartup(ServletContext container) throws ServletException {
 			AnnotationConfigWebApplicationContext springContext = new AnnotationConfigWebApplicationContext();
 			springContext.register(SpringConfig.class);
 			springContext.setServletContext(container);
-			
-//		      // Create the dispatcher servlet's Spring application context
-//			AnnotationConfigWebApplicationContext dispatcherContext = new AnnotationConfigWebApplicationContext();
-//		    dispatcherContext.register(DispatcherConfig.class);
-//			dispatcherContext.setServletContext(container);
 			
 			ServletRegistration.Dynamic dispatcher = container.addServlet("dashboard", new DispatcherServlet(springContext));
 	        dispatcher.setLoadOnStartup(1);
@@ -90,8 +87,22 @@ public class SpringConfig implements WebApplicationInitializer, WebMvcConfigurer
 	    
 	    @Override
 	    public void addResourceHandlers(ResourceHandlerRegistry registry) {
-	        //specifying static resource location for themes related files(css etc)
+	        // Specifying static resource location for themes related files(css etc)
 	    	registry.addResourceHandler("/static/**")
 	    		.addResourceLocations("/static/");
 	    }
+	    
+	    @Bean
+	    public DataSource datasource() {
+	    	DriverManagerDataSource driverManagerDataSource = new DriverManagerDataSource("jdbcUrl", "dataSource.user", "dataSource.password");
+	    	driverManagerDataSource.setDriverClassName("dataSource.driver");
+	    	return driverManagerDataSource;	    	
+	    }
+	    
+	    @Bean
+	    public DataSourceTransactionManager txManager() {
+	        return new DataSourceTransactionManager(dataSource());
+	    }
+	    
+
 }

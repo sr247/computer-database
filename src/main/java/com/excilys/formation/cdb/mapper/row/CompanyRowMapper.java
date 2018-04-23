@@ -16,8 +16,9 @@ public class CompanyRowMapper implements RowMapper<Optional<Company>> {
 	public Optional<Company> mapRow(ResultSet res, int id) throws SQLException {
 		Company company = null;		
 		try {
-			String name = res.getString("caName");
-			company = new Company(id, name);
+			int idCompany = res.getInt("id");
+			String name = res.getString("name");
+			company = new Company(idCompany, name);
 		} catch (SQLException e) {
 			logger.error("CompanyRowMapperException: {}", e.getMessage(), e);
 			throw e;

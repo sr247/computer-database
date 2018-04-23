@@ -26,7 +26,7 @@ import com.excilys.formation.cdb.service.ServiceComputer;
 /**
  * Servlet implementation class addComputerServlet
  */
-@WebServlet("/addComputer")
+@WebServlet("/addComputer.bak")
 @Controller
 public class AddComputerServlet extends HttpServlet {
 
@@ -84,7 +84,6 @@ public class AddComputerServlet extends HttpServlet {
 			Company company = serviceCompany.getCompany(cpyFromSel);
 			Computer cmp = new Computer(computerName, introduced, discontinued, company);
 			serviceComputer.createComputer(cmp);
-			logger.debug("Created: {}", cmp);
 			doGet(request, response);
 		} catch (Exception e) {
 			logger.debug("AddComputerServletException: {}", e.getMessage(), e);

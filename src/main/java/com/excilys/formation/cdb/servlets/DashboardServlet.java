@@ -27,7 +27,7 @@ import com.excilys.formation.cdb.service.ServiceComputer;
 /**
  * Servlet implementation class AcceuilServlet
  */
-@WebServlet("/dashboard")
+@WebServlet("/dashboard.bak")
 @Controller
 public class DashboardServlet extends HttpServlet {
 	

@@ -64,20 +64,16 @@ public class ServiceCompany {
 			throw new ServiceManagerException(String.format(SERVICE_COMPANY_EXCEPTION, e.getMessage()), e);
 		}
 		return optCompany.isPresent() ? optCompany.get() : null;
-	}
+	}	
 	
-	
-	public void deleteCompany(String id) throws ServiceManagerException {
-		Company company = null;
-		try {
-			company  = getCompany(id);
-			companyDB.delete(company);
-		} catch (DAOException e) {
-			logger.error(SERVICE_COMPANY_LOGGER, e.getClass().getSimpleName(), e.getMessage(), e);
-			throw new ServiceManagerException(String.format(SERVICE_COMPANY_EXCEPTION, e.getMessage()), e);
-		}
-	}
-
-	
-	
+//	public void deleteCompany(String id) throws ServiceManagerException {
+//		Company company = null;
+//		try {
+//			company  = getCompany(id);
+//			companyDB.delete(company);
+//		} catch (DAOException e) {
+//			logger.error(SERVICE_COMPANY_LOGGER, e.getClass().getSimpleName(), e.getMessage(), e);
+//			throw new ServiceManagerException(String.format(SERVICE_COMPANY_EXCEPTION, e.getMessage()), e);
+//		}
+//	}
 }

@@ -16,7 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
-import com.excilys.formation.cdb.exceptions.ServiceManagerException;
 import com.excilys.formation.cdb.mapper.CompanyMapperDTO;
 import com.excilys.formation.cdb.mapper.ComputerMapperDTO;
 import com.excilys.formation.cdb.model.Company;
@@ -29,7 +28,7 @@ import com.excilys.formation.cdb.service.ServiceComputer;
 /**
  * Servlet implementation class EditComputerServlet
  */
-@WebServlet("/editComputer")
+@WebServlet("/editComputer.bak")
 @Controller
 public class EditComputerServlet extends HttpServlet {
 	
@@ -121,7 +120,6 @@ public class EditComputerServlet extends HttpServlet {
 				}
 				
 				serviceComputer.updateComputer(computer);
-				logger.debug("Updated: {}", computer);
 				doGet(request, response);
 				
 			} catch (Exception e) {

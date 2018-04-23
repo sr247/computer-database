@@ -1,17 +1,20 @@
 package com.excilys.formation.cdb.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.excilys.formation.cdb.exceptions.DAOException;
 import com.excilys.formation.cdb.exceptions.ServiceManagerException;
 import com.excilys.formation.cdb.exceptions.ValidatorException;
+import com.excilys.formation.cdb.mapper.ComputerMapperDTO;
 import com.excilys.formation.cdb.model.Computer;
+import com.excilys.formation.cdb.model.ComputerDTO;
+import com.excilys.formation.cdb.model.ModelBase;
 import com.excilys.formation.cdb.persistence.ComputerDB;
 
 @Service
@@ -27,6 +30,9 @@ public class ServiceComputer {
 	
 	@Autowired
 	private ValidateComputer validateComputer;
+	
+	@Autowired
+	private ComputerMapperDTO computerMDTO;
 	
 	public int getNumberOf() throws ServiceManagerException{
 		try {
@@ -60,10 +66,14 @@ public class ServiceComputer {
 	
 	public List<Computer> getList(int limit, int offset) throws ServiceManagerException {
 		try {
+			List<Computer> computerList = new ArrayList<>();			
 			if(limit == 0 && offset == 0) {
-				return computerDB.getComputerList();
+				computerList =  computerDB.getComputerList();
+			} else {
+				computerList = computerDB.getComputerList(limit, offset);
 			}
-			return computerDB.getComputerList(limit, offset);
+			return computerList;
+			
 		} catch (DAOException e) {
 			logger.error(SERVICE_COMPUTER_LOGGER, e.getClass().getSimpleName(), e.getMessage(), e);
 			throw new ServiceManagerException(String.format(SERVICE_COMPUTER_EXCEPTION, e.getMessage()), e);

@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.excilys.formation.cdb.exceptions.ServiceManagerException;
+import com.excilys.formation.cdb.model.ComputerDTO;
 import com.excilys.formation.cdb.model.ModelBase;
 import com.excilys.formation.cdb.service.ServiceComputer;
 

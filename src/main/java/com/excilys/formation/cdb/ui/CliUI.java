@@ -181,7 +181,7 @@ public class CliUI {
 		if(COMPUTER_TABLE.equals(table)) {
 			wscmp.deleteComputer(i);
 		}else if ("company".equals(table)) {
-			wscpy.deleteCompany(t[2]);
+//			wscpy.deleteCompany(t[2]);
 		}
 	}
 	

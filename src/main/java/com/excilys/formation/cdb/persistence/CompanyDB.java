@@ -1,10 +1,5 @@
 package com.excilys.formation.cdb.persistence;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -12,18 +7,16 @@ import java.util.stream.Collectors;
 
 import javax.sql.DataSource;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.NestedRuntimeException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import com.excilys.formation.cdb.exceptions.DAOException;
 import com.excilys.formation.cdb.exceptions.InstanceNotInDatabaseException;
-import com.excilys.formation.cdb.exceptions.ModifyDatabaseException;
 import com.excilys.formation.cdb.exceptions.NumberOfInstanceException;
 import com.excilys.formation.cdb.mapper.row.CompanyRowMapper;
-import com.excilys.formation.cdb.mapper.row.ComputerRowMapper;
 import com.excilys.formation.cdb.model.Company;
-import com.excilys.formation.cdb.model.Computer;
 
 @Repository
 public class CompanyDB {
@@ -32,9 +25,9 @@ public class CompanyDB {
 	
 	private static int numCompanies;	
 	private static final String COUNT_NUMBER_OF = "SELECT COUNT(*) AS NUM FROM company;";
-	private static final String SELECT_BY_ID = "SELECT ID as caId, NAME as caName FROM company WHERE ID=?;";
-	private static final String SELECT_UNLIMITED_LIST = "SELECT ID as caId, NAME as caName FROM company ca ORDER BY ID;";
-	private static final String SELECT_LIMITED_LIST = "SELECT ID as caId, NAME as caName FROM company ORDER BY ID LIMIT ?, ?;";
+	private static final String SELECT_BY_ID = "SELECT ID as id, NAME as name FROM company WHERE ID=?;";
+	private static final String SELECT_UNLIMITED_LIST = "SELECT ID as id, NAME as name FROM company ca ORDER BY ID;";
+	private static final String SELECT_LIMITED_LIST = "SELECT ID as id, NAME as name FROM company ORDER BY ID LIMIT ?, ?;";
 	private static final String CREATE_REQUEST  = "INSERT INTO company NAME VALUES ?;";
 	private static final String UPDTATE_REQUEST = "UPDATE company SET ?=? WHERE ID=?;";
 	private static final String DELETE_REQUEST  = "DELETE FROM company WHERE ID=?";
@@ -42,13 +35,11 @@ public class CompanyDB {
 	private static final String INSTANCE_ERROR_EXCEPTION = "InstanceNotInDatabaseError: %s";
 	
 	private JdbcTemplate jdbcTemplate;
-	private DataSource datasource;
 	private ComputerDB computerDB;
 	
-	// Auto Autowired
+	@Autowired
 	public CompanyDB(DataSource datasource, ComputerDB computerDB) {
 		this.computerDB = computerDB;
-		this.datasource = datasource;
 		this.jdbcTemplate = new JdbcTemplate(datasource);
 	}
 	
@@ -113,43 +104,43 @@ public class CompanyDB {
 	private void update(String field, Company cmp) throws DAOException {
 		// Future
 	}
-	
-	public void delete(Company cpy) throws DAOException {
-		Connection conn = null;
-		PreparedStatement upd = null;
-		try {
-			conn = datasource.getConnection();
-			conn.setAutoCommit(false);
-			List<Integer> computers = computerDB.getAllComputersRelatedToCompanyWithID(cpy.getId());
-			ComputerDB.deleteTransactionalFromIDList(computers, conn);
-			upd = conn.prepareStatement(DELETE_REQUEST);
-			upd.setInt(1, cpy.getId());
-			upd.executeQuery();
-			conn.commit();
-		} catch (SQLException e1) {
-			logger.error("DeletionOfInstanceError: {}", e1.getMessage(), e1);
-			try {
-				if(conn != null)
-					conn.rollback();
-			}catch(SQLException e) {
-				logger.error("DeletionOfInstanceError: {}", e.getMessage(), e);
-				throw new ModifyDatabaseException("DeletionOfInstanceError: Rollback has failed.", e);
-			}
-		} catch(InstanceNotInDatabaseException e2) {
-			logger.error("DeletionOfInstanceError: {}", e2.getMessage(), e2);
-		} finally {
-			try {
-				if(upd != null)
-					upd.close();
-				if(conn != null)
-					conn.close();
-			} catch (SQLException e) {
-				logger.error("CloseConnectionException: {}", e.getMessage(), e);
-			}
-		}	
-	}
-	
-	
+	 
+//	public void delete(Company cpy) throws DAOException {
+//		Connection conn = null;
+//		PreparedStatement upd = null;
+//		try {
+//			conn = datasource.getConnection();
+//			conn.setAutoCommit(false);
+//			List<Integer> computers = computerDB.getAllComputersRelatedToCompanyWithID(cpy.getId());
+//			ComputerDB.deleteTransactionalFromIDList(computers, conn);
+//			upd = conn.prepareStatement(DELETE_REQUEST);
+//			upd.setInt(1, cpy.getId());
+//			upd.executeQuery();
+//			conn.commit();
+//		} catch (SQLException e1) {
+//			logger.error("DeletionOfInstanceError: {}", e1.getMessage(), e1);
+//			try {
+//				if(conn != null)
+//					conn.rollback();
+//			}catch(SQLException e) {
+//				logger.error("DeletionOfInstanceError: {}", e.getMessage(), e);
+//				throw new ModifyDatabaseException("DeletionOfInstanceError: Rollback has failed.", e);
+//			}
+//		} catch(InstanceNotInDatabaseException e2) {
+//			logger.error("DeletionOfInstanceError: {}", e2.getMessage(), e2);
+//		} finally {
+//			try {
+//				if(upd != null)
+//					upd.close();
+//				if(conn != null)
+//					conn.close();
+//			} catch (SQLException e) {
+//				logger.error("CloseConnectionException: {}", e.getMessage(), e);
+//			}
+//		}	
+//	}
+//	
+//	
 	
 	
 }

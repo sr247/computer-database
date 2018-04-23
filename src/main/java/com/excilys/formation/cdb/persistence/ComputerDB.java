@@ -12,6 +12,7 @@ import javax.sql.DataSource;
 
 import org.springframework.core.NestedRuntimeException;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.stereotype.Repository;
 
@@ -28,14 +29,14 @@ public class ComputerDB {
 	private static org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(CompanyDB.class);
 
 	private DataSource datasource;
-	private DataSourceTransactionManager txDataSource;
+	//private DataSourceTransactionManager txDataSource;
 	private JdbcTemplate jdbcTemplate;
 	private JdbcTemplate txJdbcTemplate;
 
 	// Auto Autowired
-	public ComputerDB(DataSource datasource, DataSourceTransactionManager txDataSource) {
+	public ComputerDB(DataSource datasource) {
 		this.datasource = datasource;
-		this.txDataSource = txDataSource;
+		//this.txDataSource = txDataSource;
 		this.jdbcTemplate = new JdbcTemplate(datasource);		
 	}
 
@@ -45,11 +46,11 @@ public class ComputerDB {
 	private static final String LEFT_JOIN_ON_COMPANY = "LEFT JOIN company ON company.id = computer.company_id ";
 
 	private static final String COUNT_NUMBER_OF = "SELECT COUNT(*) AS NUM FROM computer;";
-	private static final String SELECT_BY_ID = "SELECT computer.id as cmpId, computer.name as cmpName, introduced, discontinued, company_id, "
+	private static final String SELECT_BY_ID = "SELECT computer.id as id, computer.name as name, introduced, discontinued, company_id, "
 			+ COMPANY_COLUMN + "FROM computer " + LEFT_JOIN_ON_COMPANY + "WHERE computer.id = ?;";
-	private static final String SELECT_UNLIMITED_LIST = "SELECT computer.id as cmpId, computer.name as cmpName, introduced, discontinued, "
+	private static final String SELECT_UNLIMITED_LIST = "SELECT computer.id as id, computer.name as name, introduced, discontinued, "
 			+ COMPANY_COLUMN + "FROM computer " + LEFT_JOIN_ON_COMPANY + "ORDER BY computer.id;";
-	private static final String SELECT_LIMITED_LIST = "SELECT computer.id as cmpId, computer.name as cmpName, introduced, discontinued, "
+	private static final String SELECT_LIMITED_LIST = "SELECT computer.id as id, computer.name as name, introduced, discontinued, "
 			+ COMPANY_COLUMN + "FROM computer " + LEFT_JOIN_ON_COMPANY + "ORDER BY computer.id LIMIT ?, ?;";
 	private static final String CREATE_REQUEST = "INSERT INTO computer (NAME, INTRODUCED, DISCONTINUED, COMPANY_ID) VALUES (?, ?, ?, ?);";
 
@@ -119,7 +120,7 @@ public class ComputerDB {
 
 	public void create(Computer cmp) throws DAOException {
 		try {
-			Object[] params = { cmp.getName(), cmp.getIntroduced(), cmp.getDiscontinued(), cmp.getCompany().getId() };
+			Object[] params = { cmp.getName(), cmp.getIntroduced(), cmp.getDiscontinued(), cmp.getCompany().getId() };			
 			jdbcTemplate.update(CREATE_REQUEST, params);
 			logger.info("Created: {}", cmp);
 		} catch (NullPointerException | NestedRuntimeException e) {

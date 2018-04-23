@@ -101,7 +101,7 @@ public class SpringConfig implements WebApplicationInitializer, WebMvcConfigurer
 	    
 	    @Bean
 	    public DataSourceTransactionManager txManager() {
-	        return new DataSourceTransactionManager(dataSource());
+	        return new DataSourceTransactionManager(datasource());
 	    }
 	    
 

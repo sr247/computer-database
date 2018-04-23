@@ -7,15 +7,11 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Properties;
 
-public enum ConnexionDB {
-	
-	INSTANCE;
+public class ConnexionDB {
 	private Connection conn;
 	private static org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(ConnexionDB.class);
 	
-	private ConnexionDB () {
-
-	}
+	private ConnexionDB () {}
 	
 	public Connection getConnection() {
 		Properties prop = new Properties();
@@ -24,7 +20,6 @@ public enum ConnexionDB {
 		try {
 			prop.load(pathDB);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			logger.error("ConnexionDBError: {}", e.getMessage(), e);
 		}	
 		
@@ -35,16 +30,10 @@ public enum ConnexionDB {
 			String passwd = prop.getProperty("mysql.password");
 			conn = DriverManager.getConnection(urlDB, user, passwd);
 		}catch(SQLException | ClassNotFoundException e) {
-			// TODO Auto-generated catch block
 			logger.error("ConnexionDBError: {}", e.getMessage(), e);
 			
 		}
 		return conn;
-	}
-	
-	public static void main (String[] args) throws SQLException {
-		Connection conn = ConnexionDB.INSTANCE.getConnection();
-		conn.close();
 	}
 	
 }

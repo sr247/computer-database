@@ -1,22 +1,30 @@
 package com.excilys.formation.cdb.exceptions;
 
-public class NoNameProvidedException extends ValidateException {
+public class NoNameProvidedException extends ValidatorException {
 
 	private static final long serialVersionUID = -5102850543650694510L;
 
 	public NoNameProvidedException() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
-	public NoNameProvidedException(String arg0, Throwable arg1) {
-		super(arg0, arg1);
-		// TODO Auto-generated constructor stub
+	public NoNameProvidedException(String message, Throwable cause, boolean enableSuppression,
+			boolean writableStackTrace) {
+		super(message, cause, enableSuppression, writableStackTrace);
 	}
 
-	public NoNameProvidedException(String arg0) {
-		super(arg0);
-		// TODO Auto-generated constructor stub
+	public NoNameProvidedException(String message, Throwable cause) {
+		super(message, cause);
 	}
+
+	public NoNameProvidedException(String message) {
+		super(message);
+	}
+
+	public NoNameProvidedException(Throwable cause) {
+		super(cause);
+	}
+
+
 
 }

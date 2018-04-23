@@ -1,108 +1,137 @@
 package com.excilys.formation.cdb.servlets;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
+import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.context.support.SpringBeanAutowiringSupport;
+
 import com.excilys.formation.cdb.exceptions.ServiceManagerException;
 import com.excilys.formation.cdb.mapper.ComputerMapperDTO;
 import com.excilys.formation.cdb.model.ComputerDTO;
 import com.excilys.formation.cdb.pages.Pages;
 import com.excilys.formation.cdb.pages.PagesComputer;
-import com.excilys.formation.cdb.service.WebServiceComputer;
-
-// StringUtils, lib interessant
-// Methode isBlank = test: (isNull && isEmpty && hasNoCharacters)
+import com.excilys.formation.cdb.service.ServiceComputer;
 
 /**
  * Servlet implementation class AcceuilServlet
  */
 @WebServlet("/dashboard")
+@Controller
 public class DashboardServlet extends HttpServlet {
 	
 	private static final long serialVersionUID = 7292200966426509099L;
 	private static org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(DashboardServlet.class);
+	private static final String DASHBOARD_EXCEPTION = "DashBoardServletException: {}";
+
+	@Autowired
+	private ServiceComputer serviceComputer;
+	@Autowired 
+	private ComputerMapperDTO computerMDTO;
+	@Autowired
+	private PagesComputer<ComputerDTO> pageComputers;
 	
-    /**
-     * @see HttpServlet#HttpServlet()
-     */
-    public DashboardServlet() {
-        super();
-        // TODO Auto-generated constructor stub
+    @Override
+    public void init(ServletConfig config) throws ServletException {
+        super.init(config);
+        SpringBeanAutowiringSupport.processInjectionBasedOnServletContext(this, config.getServletContext());
     }
 
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
+    @Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
 		response.getWriter().append("Served at: ").append(request.getContextPath());
-		WebServiceComputer webServComp = WebServiceComputer.INSTANCE;
 		String parameter = null;
 		int numComputers = 0;
 		try {
-			numComputers = webServComp.getNumberOf();
+			numComputers = serviceComputer.getNumberOf();
 			request.setAttribute("numComputers", numComputers);
 		} catch (ServiceManagerException e) {
-			// TODO Auto-generated catch block
-			logger.debug("DashBoardServletException: {}", e.getMessage(), e);
-			throw new ServletException(e.getMessage(), e);
+			logger.error(DASHBOARD_EXCEPTION, e.getMessage(), e);
 		}
 		
-		if((parameter = request.getParameter("stride")) != null) {				
+		if((parameter = request.getParameter("stride")) != null) {
 			try {
 				Pages.setStride(Integer.valueOf(parameter));
 			} catch (NumberFormatException | ServiceManagerException e) {
-				// TODO Auto-generated catch block
-				logger.debug("DashBoardServletException: {}", e.getMessage(), e);
+				logger.error(DASHBOARD_EXCEPTION, e.getMessage(), e);
 			}			
 		} else {
-			logger.debug("DashBoardServletException: No stride provided");
+			String s = "No stride provided";
+			logger.debug(DASHBOARD_EXCEPTION, s);
 		}
 		
-		PagesComputer<ComputerDTO> pageComputers = new PagesComputer<>();
 		try {
-			if((parameter = (String) request.getParameter("page")) != null){
-				int page = Integer.valueOf(parameter);
+			if((parameter = request.getParameter("page")) != null){
+				int page = Integer.parseInt(parameter);
 				pageComputers.goTo(page);
 			}else {
-				logger.debug("DashBoardServletException: No page provided");
+				String s = "No page provided";
+				logger.debug(DASHBOARD_EXCEPTION, s);
 			}
 			int offset = Pages.getPAGE_OFFSET();
 			int limit = Pages.getPAGE_LIMIT();
-			pageComputers = 
-					new PagesComputer<ComputerDTO>
-						(ComputerMapperDTO.map(webServComp.getList(offset, limit)));
-			int maxNbPages = pageComputers.getNumberOfPages();
-			int current = Pages.getCURRENT_PAGE().get();
-			int mid = current < 3 ? 3 : ( current >= 3 && current <= (maxNbPages-2) ? current : maxNbPages-2 );
+			pageComputers.setContent(computerMDTO.map(serviceComputer.getList(offset, limit)));
 			
-			System.out.println(String.format("Page: %s {%s, %s}", current, Pages.getPAGE_LIMIT(), Pages.getPAGE_OFFSET()));
-			System.out.println(String.format("mid: {%s}, maxPages: {%s}", mid, maxNbPages));
-			logger.debug(String.format("Page: %s {%s, %s}", current, Pages.getPAGE_LIMIT(), Pages.getPAGE_OFFSET()));
-			logger.debug(String.format("mid: {%s} maxPages:{%s}", mid, maxNbPages));
+			int maxPages = pageComputers.getNumberOfPages();
+			int current = Pages.getCURRENT_PAGE().get();
+			int mid = current < 3 ? 3 : (current >= 3 && current <= (maxPages-2) ? current : maxPages-2);
+			
+			logger.info("Page: {} {{}, {}}", current, Pages.getPAGE_LIMIT(), Pages.getPAGE_OFFSET());
+			logger.info("mid:{} maxPages:{}", mid, maxPages);
+			
 			request.setAttribute("pageComputers", pageComputers);
 			request.setAttribute("current", current);
+			request.setAttribute("maxPages", maxPages);
 			request.setAttribute("mid", mid);
 			
-		} catch (ServiceManagerException e) {
-			// TODO Auto-generated catch block
-			logger.debug("DashBoardServletException: {}", e.getMessage(), e);
-			throw new ServletException(e.getMessage(), e);
+			this.getServletContext().getRequestDispatcher("/WEB-INF/dashboard.jsp").forward(request, response);
+		} catch (Exception e) {
+			logger.error(DASHBOARD_EXCEPTION, e.getMessage(), e);
 		}
-		this.getServletContext().getRequestDispatcher("/WEB-INF/dashboard.jsp").forward(request, response);
 	}	
 	
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
+	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
-		doGet(request, response);
+		try {
+			Optional<String[]> ids = Optional.ofNullable(request.getParameterValues("selection"));
+			if(ids.isPresent()) {
+				List<String> idListString = new ArrayList<>();
+				for(String s : ids.get()) {
+					for(String ss : s.split(",")){
+						idListString.add(ss);
+					}
+				}
+				
+				List<Integer> idListInteger =  idListString.stream()
+						.map(Integer::parseInt)
+						.collect(Collectors.toList());
+				logger.info("Liste des checkboxes: {}", idListInteger.toString());
+				serviceComputer.deleteComputerFromIDList(idListInteger);
+			} else {
+				String s = "No checkbox checked.";
+				logger.info(DASHBOARD_EXCEPTION, s);
+			}
+			doGet(request, response);
+		} catch (Exception e) {
+			logger.error(DASHBOARD_EXCEPTION, e.getMessage(), e);
+		}
 	}
 
 }

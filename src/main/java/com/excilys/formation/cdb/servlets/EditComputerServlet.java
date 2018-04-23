@@ -3,12 +3,18 @@ package com.excilys.formation.cdb.servlets;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
+import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
 import com.excilys.formation.cdb.exceptions.ServiceManagerException;
 import com.excilys.formation.cdb.mapper.CompanyMapperDTO;
@@ -17,99 +23,112 @@ import com.excilys.formation.cdb.model.Company;
 import com.excilys.formation.cdb.model.CompanyDTO;
 import com.excilys.formation.cdb.model.Computer;
 import com.excilys.formation.cdb.model.ComputerDTO;
-import com.excilys.formation.cdb.service.WebServiceCompany;
-import com.excilys.formation.cdb.service.WebServiceComputer;
+import com.excilys.formation.cdb.service.ServiceCompany;
+import com.excilys.formation.cdb.service.ServiceComputer;
 
 /**
  * Servlet implementation class EditComputerServlet
  */
 @WebServlet("/editComputer")
+@Controller
 public class EditComputerServlet extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
 	private static org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(EditComputerServlet.class);
-    /**
-     * @see HttpServlet#HttpServlet()
-     */
-    public EditComputerServlet() {
-        super();
-        // TODO Auto-generated constructor stub
+	
+	// Attribut de servlet visible par tous les instances ( as static )
+	@Autowired
+	private ServiceCompany serviceCompany;
+	@Autowired
+	private ServiceComputer serviceComputer;
+	@Autowired
+	private ComputerMapperDTO computerMDTO;	
+	@Autowired
+	private CompanyMapperDTO companyMDTO;
+    
+    @Override
+    public void init(ServletConfig config) throws ServletException {
+        super.init(config);
+        SpringBeanAutowiringSupport.processInjectionBasedOnServletContext(this, config.getServletContext());
     }
 
-	/**
+    /**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
+    @Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
-		response.getWriter().append("Served at: ").append(request.getContextPath());
 		
-		WebServiceComputer webServComputer = WebServiceComputer.INSTANCE;
-		WebServiceCompany webServCompany = WebServiceCompany.INSTANCE;
-
 		String parameter = null;
-		if((parameter = request.getParameter("id")) != null){
-			ComputerDTO computer = null;
-			try {
-				int id = Integer.valueOf(parameter);
-				computer = ComputerMapperDTO.map(webServComputer.getComputer(id));
+		ComputerDTO computer = null;
+		try {
+			response.getWriter().append("Served at: ").append(request.getContextPath());
+			if((parameter = request.getParameter("id")) != null){
+					
+				int id = Integer.parseInt(parameter);
+				logger.debug("EditComputerServletLogger: {}", id);
+				computer = computerMDTO.map(serviceComputer.getComputer(id));
+				List<CompanyDTO> companies = companyMDTO.map(serviceCompany.getAllList());
+				
 				request.setAttribute("idComputer", id);
 				request.setAttribute("computer", computer);
-				logger.debug("Intro: {} \nDiscon: {}",computer.getIntroduced().toString(), computer.getDiscontinued().toString());
-				
-			} catch (ServiceManagerException e) {
-				// TODO Auto-generated catch block
-				logger.debug("EditComputerServletException: {}", e.getMessage(), e);
+				request.setAttribute("companies", companies);
+				this.getServletContext().getRequestDispatcher("/WEB-INF/editComputer.jsp").forward(request, response);
 			}
+		} catch (Exception e) {
+			logger.error("EditComputerServletException: {}", e.getMessage(), e);
 		}
-        try {
-            List<CompanyDTO> companies = CompanyMapperDTO.map(webServCompany.getAllList());
-            request.setAttribute("companies", companies);
-        } catch (ServiceManagerException e) {
-            // TODO Auto-generated catch block
-            logger.debug("AddComputerError: {}", e.getMessage(), e);
-            // throw new ServletException(e.getMessage(), e);
-        }
-		this.getServletContext().getRequestDispatcher("/WEB-INF/editComputer.jsp").forward(request, response);
+
 	}
 
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
-		WebServiceComputer webServComputer = WebServiceComputer.INSTANCE;
-		WebServiceCompany webServCompany = WebServiceCompany.INSTANCE;
-		
-		String attribute = null;
+	@Override
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {		
+		Optional<String> attribute = null;
 		Computer computer = null;
 		String parameter = null;
 		if((parameter = request.getParameter("id")) != null){
 			try {
-				int id = Integer.valueOf(parameter);
-				computer = webServComputer.getComputer(id);
+				int id = Integer.parseInt(parameter);
+				LocalDate introduced = null;
+				LocalDate discontinued = null;
+				computer = serviceComputer.getComputer(id);
 			
-				if((attribute = (String) request.getAttribute("computerName")) != null) {
-					computer.setName(attribute);
+				if((attribute = Optional.ofNullable((String) request.getParameter("computerName"))).isPresent() ) {
+					computer.setName(attribute.get());
 				}
-				if((attribute = (String) request.getAttribute("introducted")) != null) {
-					computer.setIntroduced(LocalDate.parse(attribute));
+								
+				
+				
+				if((attribute = Optional.ofNullable((String) request.getParameter("introducted"))).isPresent() ) {
+					if(attribute.get() != "") {
+						introduced = LocalDate.parse(attribute.get());
+					}
+					computer.setIntroduced(introduced);
+				}	
+					
+				if((attribute = Optional.ofNullable((String) request.getParameter("discontinued"))).isPresent() ) {
+					if(attribute.get() != "") {
+						discontinued = LocalDate.parse(attribute.get());
+					}
+					computer.setDiscontinued(discontinued);
 				}
-				if((attribute = (String) request.getAttribute("computerName")) != null) {
-					computer.setDiscontinued(LocalDate.parse(attribute));
-				}
-				if((attribute = (String) request.getAttribute("companyId")) != null) {
-					Company company = webServCompany.getCompany(attribute);
+				
+				if((attribute = Optional.ofNullable((String) request.getParameter("companyId"))).isPresent() ) {
+					Company company = serviceCompany.getCompany(attribute.get());
 					computer.setCompany(company);
 				}
-				webServComputer.updateComputer(computer);
-				request.setAttribute("computer", computer);
-			} catch (NumberFormatException | ServiceManagerException e) {
-				// TODO Auto-generated catch block
+				
+				serviceComputer.updateComputer(computer);
+				logger.debug("Updated: {}", computer);
+				doGet(request, response);
+				
+			} catch (Exception e) {
+				logger.error("Fail to Update: {}", computer);
 				logger.error("EditComputerServletException: {}", e.getMessage(), e);
 			}
 		}
-
-		doGet(request, response);
 	}
 
 }

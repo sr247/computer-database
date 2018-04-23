@@ -13,7 +13,8 @@ import com.excilys.formation.cdb.service.ServiceCompany;
 @Component
 public class PagesCompany<T extends ModelBase> extends Pages<T> {
 
-
+	private static org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(PagesCompany.class);
+	
 	@Autowired
 	private ServiceCompany serviceCompany;
 
@@ -28,59 +29,64 @@ public class PagesCompany<T extends ModelBase> extends Pages<T> {
 	@Override
 	public void goTo(int index) throws ServiceManagerException {
 		numberOfElements = serviceCompany.getNumberOf();
-		numberOfPages = (int) Math.ceil((double)numberOfElements / (double) PAGE_LIMIT);
-		if(index < 2) {
-			CURRENT_PAGE = Optional.of(1);
+		numberOfPages = (int) Math.ceil((double)numberOfElements / (double) stride);
+		if(index <= 1) {
+			currentPage = Optional.of(1);
 		}else if(index > 1 && index < numberOfPages) {
-			CURRENT_PAGE = Optional.of(index);
+			currentPage = Optional.of(index);
 		} else if(index >= numberOfPages) {
-			CURRENT_PAGE = Optional.of(numberOfPages);
+			currentPage = Optional.of(numberOfPages);
 		}
-		PAGE_OFFSET = (CURRENT_PAGE.get()-1) * PAGE_LIMIT;
-		this.content = (List<T>) serviceCompany.getList(PAGE_OFFSET, PAGE_LIMIT);
+		offset = (currentPage.get()-1) * stride;
+		this.content = (List<T>) serviceCompany.getList(offset, stride);
 	}
 	
 	
 	@Override
 	public void next() throws ServiceManagerException  {
 		numberOfElements = serviceCompany.getNumberOf();
-		numberOfPages = (int) Math.ceil((double)numberOfElements / (double) PAGE_LIMIT);
+		numberOfPages = (int) Math.ceil((double)numberOfElements / (double) stride);
 				
-		if(CURRENT_PAGE.isPresent()) {
-			CURRENT_PAGE = Optional.of(CURRENT_PAGE.get()+1);
-			if(CURRENT_PAGE.get() > numberOfPages) 
-				CURRENT_PAGE = Optional.of(numberOfPages);
+		if(currentPage.isPresent()) {
+			currentPage = Optional.of(currentPage.get() + 1);
+			if(currentPage.get() > numberOfPages) 
+				currentPage = Optional.of(numberOfPages);
 		}
-		PAGE_OFFSET = (CURRENT_PAGE.get()-1) * PAGE_LIMIT;
-		this.content = (List<T>) serviceCompany.getList(PAGE_OFFSET, PAGE_LIMIT);
+		offset = (currentPage.get()-1) * stride;
+		this.content = (List<T>) serviceCompany.getList(offset, stride);
 	}
 	
 
 	@Override
 	public void preview() throws ServiceManagerException  {
 		numberOfElements = serviceCompany.getNumberOf();
-		numberOfPages = (int) Math.ceil((double)numberOfElements / (double) PAGE_LIMIT);
+		numberOfPages = (int) Math.ceil((double)numberOfElements / (double) stride);
 		
-		if(CURRENT_PAGE.isPresent()) {
-			CURRENT_PAGE = Optional.of(CURRENT_PAGE.get()-1);
-			if(CURRENT_PAGE.get() < 2 ) 
-				CURRENT_PAGE = Optional.of(1);
+		if(currentPage.isPresent()) {
+			currentPage = Optional.of(currentPage.get()-1);
+			if(currentPage.get() < 2) 
+				currentPage = Optional.of(1);
 		}
-		PAGE_OFFSET = (CURRENT_PAGE.get()-1) * PAGE_LIMIT;
-		this.content = (List<T>) serviceCompany.getList(PAGE_OFFSET, PAGE_LIMIT);
+		offset = (currentPage.get()-1) * stride;
+		this.content = (List<T>) serviceCompany.getList(offset, stride);
 	}
 
-	public void update() throws ServiceManagerException {
-		numberOfElements = serviceCompany.getNumberOf();
-		numberOfPages = (int) Math.ceil((double)numberOfElements / (double) PAGE_LIMIT);
-
-	}
+//	public void update() throws ServiceManagerException {
+//		numberOfElements = serviceCompany.getNumberOf();
+//		numberOfPages = (int) Math.ceil((double)numberOfElements / (double) stride);
+//	}
 
 	@Override
 	public int getNumberOfPages() throws ServiceManagerException {
 		numberOfElements = serviceCompany.getNumberOf();
-		numberOfPages = (int) Math.ceil((double)numberOfElements / (double) PAGE_LIMIT);
+		numberOfPages = (int) Math.ceil((double)numberOfElements / (double) stride);
 		return numberOfPages;
+	}
+
+	@Override
+	public int getNumberOfElements() throws ServiceManagerException {
+		numberOfElements = serviceCompany.getNumberOf();
+		return numberOfElements;
 	}
 
 	

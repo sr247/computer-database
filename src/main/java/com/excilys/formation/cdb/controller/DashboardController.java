@@ -2,12 +2,14 @@ package com.excilys.formation.cdb.controller;
 
 import java.util.Map;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.excilys.formation.cdb.exceptions.ServiceManagerException;
@@ -36,18 +38,41 @@ public class DashboardController {
 	}
 	
     @GetMapping("/dashboard")
-    public ModelAndView dashboard(@RequestParam Map<String, String> params) {
+    public ModelAndView dashboard(@RequestParam Map<String, String> params,
+    		@RequestParam(value = "page", defaultValue = "1") int pageUrlParam,
+    		@RequestParam(value = "stride", defaultValue = "10") int strideUrlParam) throws ServiceManagerException {
     	ModelAndView modelAndView = new ModelAndView();
-    	int offset = Pages.getPAGE_OFFSET();
-		int limit = Pages.getPAGE_LIMIT();
+
+    	logger.info(String.valueOf(pageUrlParam));
+    	logger.info(String.valueOf(strideUrlParam));	
+
+    	int offset = Pages.getOffset();
+    	int stride = Pages.getStride();
+    	
 		try {
-			pagesComputer.setContent(computerMDTO.map(service.getList(offset, limit)));
-		} catch (ServiceManagerException e) {
+			pagesComputer.setContent(computerMDTO.map(service.getList(offset, strideUrlParam)));
+			Pages.setStride(pageUrlParam);
+			pagesComputer.setCurrentPage(pageUrlParam);
+		} catch (Exception e) {
 			logger.error(DASHBOARD_EXCEPTION, e.getMessage(), e);
 		}
-    	logger.info(params.toString());
-    	logger.info("{} {}\n{}", offset, limit, pagesComputer.getContent());
-    	modelAndView.addObject("computers", pagesComputer.getContent());
+
+		int numberOfPages = pagesComputer.getNumberOfPages();
+		int currentPage = pagesComputer.getCurrentPage();
+		int focus = currentPage < 3 ? 3 : (currentPage >= 3 && currentPage <= (numberOfPages - 2) ? currentPage : numberOfPages - 2);
+		
+    	logger.info("{}; {}; {}; {}; {}", offset, stride, numberOfPages, currentPage, focus);
+    	modelAndView.addObject("pagesComputer", pagesComputer);
+    	modelAndView.addObject("numberOfPages", numberOfPages);
+    	modelAndView.addObject("current", currentPage);
+    	modelAndView.addObject("focus", focus);
         return modelAndView;
     }
+    
+    
+   @PostMapping("/dashboard")
+   public @ResponseBody ResponseEntity<String> postDelete(){
+	   
+	   return new ResponseEntity<>(HttpStatus.OK);
+   }
 }

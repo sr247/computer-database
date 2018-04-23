@@ -75,7 +75,7 @@ public class CliUI {
 				for(Object c : p.getContent()) {
 					System.out.println(c);
 				}
-				System.out.println("Page " + (Pages.getCURRENT_PAGE().isPresent() ? Pages.getCURRENT_PAGE().get() : "None"));
+				System.out.println("Page " + (p.getCurrentPage()));
 				System.out.println("Type n for next, p for precedent, q for quit: ");
 				String reponse = sc.nextLine();
 				try {
@@ -102,8 +102,8 @@ public class CliUI {
 			if(all) {
 				p = new PagesComputer<>(wscmp.getAllList());
 			}else {
-				int offset = Pages.getPAGE_OFFSET();
-				int stride = Pages.getPAGE_LIMIT();
+				int offset = Pages.getOffset();
+				int stride = Pages.getStride();
 				p = new PagesComputer<>(wscmp.getList(offset, stride));
 			}			
 			printList(all, p);
@@ -113,8 +113,8 @@ public class CliUI {
 			if(all) {
 				p = new PagesCompany<>(wscpy.getAllList());
 			}else {
-				int offset = Pages.getPAGE_OFFSET();
-				int stride = Pages.getPAGE_LIMIT();
+				int offset = Pages.getOffset();
+				int stride = Pages.getStride();
 				p = new PagesCompany<>(wscpy.getList(offset, stride));
 			}
 			printList(all, p);

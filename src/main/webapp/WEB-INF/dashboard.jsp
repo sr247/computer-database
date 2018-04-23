@@ -1,6 +1,14 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+    
     <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+    <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
+    
+<%--     <c:url value="dashboard.jsp" var="dash">
+	 	<c:param name="page"   value="${pagesComputer.current}" />
+	 	<c:param name="stride"    value="${pagesComputer.stride}" />
+	</c:url> --%>
+    
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
@@ -23,7 +31,7 @@
     <section id="main">
         <div class="container">
             <h1 id="homeTitle">
-               ${numComputers} Computers found
+               ${pagesComputer.numberOfElements} Computers found
             </h1>
             <div id="actions" class="form-horizontal">
                 <div class="pull-left">
@@ -76,7 +84,7 @@
                 </thead>
                 <!-- Browse attribute computers -->
 	            <tbody id="results">
-	            	<c:forEach var="computer" items="${pageComputers.content}">
+	            	<c:forEach var="computer" items="${pagesComputer.content}">
     	                <tr>
 	                        <td class="editMode">
 	                            <input type="checkbox" name="cb" class="cb" value="${computer.id}">
@@ -106,7 +114,7 @@
 					</a>
 				</li>				
 				<!-- Focus de Pages -->
-				<c:forEach var="i" begin="${mid-2}" end="${mid+2}" step="1">
+				<c:forEach var="i" begin="${focus-2}" end="${focus+2}" step="1">
 					<c:choose>
 						<c:when test="${i == current}">
 						<li><a style="background-color:WhiteSmoke;" href="#" onclick="location.href='dashboard?page=${i}'">${i}</a></li>

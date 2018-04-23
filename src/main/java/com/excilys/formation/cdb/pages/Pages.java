@@ -11,13 +11,14 @@ import com.excilys.formation.cdb.model.ModelBase;
 @Component
 public abstract class Pages<T extends ModelBase> {
 	
-	// Déterminer quel variables dointt etre static ou pas.
-	protected static int PAGE_LIMIT = 10;
-	protected static int PAGE_OFFSET = 0;
-	protected static Optional<Integer> CURRENT_PAGE = Optional.of(1);
+	// Déterminer quelles variables doivent être static ou pas.
+	protected static int stride = 10;
+	protected static int offset = 0;
 	
+	protected Optional<Integer> currentPage = Optional.of(1);
 	protected int numberOfElements;
 	protected int numberOfPages;
+	protected int focus;
 	protected List<T>content;	
 
 	public Pages() {}
@@ -25,11 +26,7 @@ public abstract class Pages<T extends ModelBase> {
 	public Pages(List<T> page) {
 		this.content = page;
 	}
-
-	public int getNumberOfElements() {
-		return numberOfElements;
-	}
-
+	
 	public List<T> getContent() {
 		return content;
 	}
@@ -38,41 +35,46 @@ public abstract class Pages<T extends ModelBase> {
 		this.content = content;
 	}
 
-	public static int getPAGE_OFFSET() {
-		return PAGE_OFFSET;
+	public int getCurrentPage() {
+		return currentPage.isPresent() ? currentPage.get() : 1;
 	}
 	
-	public static int getPAGE_LIMIT() {
-		return PAGE_LIMIT;
+	public void setCurrentPage(int currentPage) {
+		if(currentPage >= 1 && currentPage <= numberOfPages)
+			this.currentPage = Optional.of(currentPage);
 	}
 	
-	public static void setPAGE_LIMIT(int pAGE_LIMIT) {
-		PAGE_LIMIT = pAGE_LIMIT;
-	}
-
-	public static void setPAGE_OFFSET(int pAGE_OFFSET) {
-		PAGE_OFFSET = pAGE_OFFSET;
-	}
-
 	public void reset() {
-		PAGE_LIMIT = 10;
-		PAGE_OFFSET = 0;
-		CURRENT_PAGE = Optional.of(1);
+		Pages.setStride(10);
+		Pages.setOffset(0);
 		
+		currentPage = Optional.of(1);		
 		numberOfElements = 0;
 		numberOfPages = 0;
 		content = null;
-	}	
+	}
 	
-	public static Optional<Integer> getCURRENT_PAGE() {
-		return CURRENT_PAGE;
+	public static int getOffset() {
+		return offset;
+	}
+	
+	public static void setOffset(int pageOffset) {
+		offset = pageOffset;
+	}
+	
+
+
+	public static int getStride() {
+		return stride;
 	}
 
-	public static void setStride(int pAGE_LIMIT) throws ServiceManagerException {
-		PAGE_LIMIT = pAGE_LIMIT;
+	public static void setStride(int stride) {
+		Pages.stride = stride;
 	}
+	
 
-	public abstract int getNumberOfPages() throws ServiceManagerException;	
+	public abstract int getNumberOfPages() throws ServiceManagerException;
+	public abstract int getNumberOfElements() throws ServiceManagerException;
 
 	public abstract void goTo(int index) throws ServiceManagerException;
 	

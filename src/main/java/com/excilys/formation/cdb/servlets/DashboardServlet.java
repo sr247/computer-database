@@ -17,7 +17,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
-import com.excilys.formation.cdb.exceptions.ServiceManagerException;
 import com.excilys.formation.cdb.mapper.ComputerMapperDTO;
 import com.excilys.formation.cdb.model.ComputerDTO;
 import com.excilys.formation.cdb.pages.Pages;
@@ -40,7 +39,7 @@ public class DashboardServlet extends HttpServlet {
 	@Autowired 
 	private ComputerMapperDTO computerMDTO;
 	@Autowired
-	private PagesComputer<ComputerDTO> pageComputers;
+	private PagesComputer<ComputerDTO> pagesComputer;
 	
     @Override
     public void init(ServletConfig config) throws ServletException {
@@ -48,25 +47,22 @@ public class DashboardServlet extends HttpServlet {
         SpringBeanAutowiringSupport.processInjectionBasedOnServletContext(this, config.getServletContext());
     }
 
-	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
-	 */
     @Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		response.getWriter().append("Served at: ").append(request.getContextPath());
 		String parameter = null;
 		int numComputers = 0;
 		try {
+			response.getWriter().append("Served at: ").append(request.getContextPath());
 			numComputers = serviceComputer.getNumberOf();
 			request.setAttribute("numComputers", numComputers);
-		} catch (ServiceManagerException e) {
+		} catch (Exception e) {
 			logger.error(DASHBOARD_EXCEPTION, e.getMessage(), e);
 		}
 		
 		if((parameter = request.getParameter("stride")) != null) {
 			try {
 				Pages.setStride(Integer.valueOf(parameter));
-			} catch (NumberFormatException | ServiceManagerException e) {
+			} catch (NumberFormatException e) {
 				logger.error(DASHBOARD_EXCEPTION, e.getMessage(), e);
 			}			
 		} else {
@@ -77,23 +73,23 @@ public class DashboardServlet extends HttpServlet {
 		try {
 			if((parameter = request.getParameter("page")) != null){
 				int page = Integer.parseInt(parameter);
-				pageComputers.goTo(page);
+				pagesComputer.goTo(page);
 			}else {
 				String s = "No page provided";
 				logger.debug(DASHBOARD_EXCEPTION, s);
 			}
-			int offset = Pages.getPAGE_OFFSET();
-			int limit = Pages.getPAGE_LIMIT();
-			pageComputers.setContent(computerMDTO.map(serviceComputer.getList(offset, limit)));
+			int offset = Pages.getOffset();
+			int limit = Pages.getStride();
+			pagesComputer.setContent(computerMDTO.map(serviceComputer.getList(offset, limit)));
 			
-			int maxPages = pageComputers.getNumberOfPages();
-			int current = Pages.getCURRENT_PAGE().get();
+			int maxPages = pagesComputer.getNumberOfPages();
+			int current = pagesComputer.getCurrentPage();
 			int mid = current < 3 ? 3 : (current >= 3 && current <= (maxPages-2) ? current : maxPages-2);
 			
-			logger.info("Page: {} {{}, {}}", current, Pages.getPAGE_LIMIT(), Pages.getPAGE_OFFSET());
+			logger.info("Page: {} {{}, {}}", current, Pages.getStride(), Pages.getOffset());
 			logger.info("mid:{} maxPages:{}", mid, maxPages);
 			
-			request.setAttribute("pageComputers", pageComputers);
+			request.setAttribute("pagesComputer", pagesComputer);
 			request.setAttribute("current", current);
 			request.setAttribute("maxPages", maxPages);
 			request.setAttribute("mid", mid);
@@ -104,9 +100,7 @@ public class DashboardServlet extends HttpServlet {
 		}
 	}	
 	
-	/**
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
-	 */
+
 	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		try {
@@ -118,7 +112,6 @@ public class DashboardServlet extends HttpServlet {
 						idListString.add(ss);
 					}
 				}
-				
 				List<Integer> idListInteger =  idListString.stream()
 						.map(Integer::parseInt)
 						.collect(Collectors.toList());

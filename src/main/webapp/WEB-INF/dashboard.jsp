@@ -98,9 +98,11 @@
         <div class="container text-center">
             <ul class="pagination">
                 <li>
-					<c:set var="way" value="prev" scope="request"/>
+					<a href="#" aria-label="Next" onclick="location.href='dashboard?page=1'">
+                    	<span aria-hidden="true">First</span>
+                	</a> 
                     <a href="#" aria-label="Previous" onclick="location.href='dashboard?page=${current-1}'">
-                    	<span aria-hidden="true">&laquo;</span>
+                    	<span aria-hidden="true">&larr;</span>
 					</a>
 				</li>				
 				<!-- Focus de Pages -->
@@ -116,8 +118,11 @@
 				</c:forEach>
 				<li>
                 	<a href="#" aria-label="Next" onclick="location.href='dashboard?page=${current+1}'">
-                    	<span aria-hidden="true">&raquo;</span>
-                	</a>
+                    	<span aria-hidden="true">&rarr;</span>
+                	</a>     
+                	<a href="#" aria-label="Next" onclick="location.href='dashboard?page=${maxPages}'">
+                    	<span aria-hidden="true">Last</span>
+                	</a>            	
             	</li> 
         	</ul>
         	

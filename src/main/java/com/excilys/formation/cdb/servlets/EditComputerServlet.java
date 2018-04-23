@@ -45,13 +45,6 @@ public class EditComputerServlet extends HttpServlet {
 	private ComputerMapperDTO computerMDTO;	
 	@Autowired
 	private CompanyMapperDTO companyMDTO;
-	
-    /**
-     * @see HttpServlet#HttpServlet()
-     */
-    public EditComputerServlet() {
-        super();
-    }
     
     @Override
     public void init(ServletConfig config) throws ServletException {
@@ -59,37 +52,38 @@ public class EditComputerServlet extends HttpServlet {
         SpringBeanAutowiringSupport.processInjectionBasedOnServletContext(this, config.getServletContext());
     }
 
-
-	/**
+    /**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
+    @Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		response.getWriter().append("Served at: ").append(request.getContextPath());
 		
 		String parameter = null;
-		if((parameter = request.getParameter("id")) != null){
-			ComputerDTO computer = null;
-			try {
+		ComputerDTO computer = null;
+		try {
+			response.getWriter().append("Served at: ").append(request.getContextPath());
+			if((parameter = request.getParameter("id")) != null){
+					
 				int id = Integer.parseInt(parameter);
+				logger.debug("EditComputerServletLogger: {}", id);
 				computer = computerMDTO.map(serviceComputer.getComputer(id));
+				List<CompanyDTO> companies = companyMDTO.map(serviceCompany.getAllList());
+				
 				request.setAttribute("idComputer", id);
 				request.setAttribute("computer", computer);
-			} catch (Exception e) {
-				logger.error("EditComputerServletException: {}", e.getMessage(), e);
+				request.setAttribute("companies", companies);
+				this.getServletContext().getRequestDispatcher("/WEB-INF/editComputer.jsp").forward(request, response);
 			}
+		} catch (Exception e) {
+			logger.error("EditComputerServletException: {}", e.getMessage(), e);
 		}
-        try {
-            List<CompanyDTO> companies = companyMDTO.map(serviceCompany.getAllList());
-            request.setAttribute("companies", companies);
-        } catch (Exception e) {
-            logger.debug("EditComputerServletException: {}", e.getMessage(), e);
-        }
-		this.getServletContext().getRequestDispatcher("/WEB-INF/editComputer.jsp").forward(request, response);
+
 	}
 
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
+	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {		
 		Optional<String> attribute = null;
 		Computer computer = null;
@@ -104,6 +98,7 @@ public class EditComputerServlet extends HttpServlet {
 				if((attribute = Optional.ofNullable((String) request.getParameter("computerName"))).isPresent() ) {
 					computer.setName(attribute.get());
 				}
+								
 				
 				
 				if((attribute = Optional.ofNullable((String) request.getParameter("introducted"))).isPresent() ) {
@@ -127,13 +122,13 @@ public class EditComputerServlet extends HttpServlet {
 				
 				serviceComputer.updateComputer(computer);
 				logger.debug("Updated: {}", computer);
+				doGet(request, response);
 				
-			} catch (NumberFormatException | ServiceManagerException e) {
+			} catch (Exception e) {
 				logger.error("Fail to Update: {}", computer);
 				logger.error("EditComputerServletException: {}", e.getMessage(), e);
 			}
 		}
-		doGet(request, response);
 	}
 
 }

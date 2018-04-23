@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import com.excilys.formation.cdb.exceptions.DAOException;
 import com.excilys.formation.cdb.exceptions.ServiceManagerException;
@@ -12,6 +13,7 @@ import com.excilys.formation.cdb.model.Company;
 import com.excilys.formation.cdb.persistence.CompanyDB;
 
 @Service
+@EnableTransactionManagement
 public class ServiceCompany {
 	
 	private static org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(ServiceCompany.class);
@@ -57,7 +59,7 @@ public class ServiceCompany {
 		Optional<Company> optCompany = Optional.empty();
 		try {
 			optCompany = companyDB.getCompanyByID(Integer.valueOf(id));
-		}catch(NumberFormatException|DAOException e) {
+		}catch(NumberFormatException e) {
 			logger.error(SERVICE_COMPANY_LOGGER, e.getMessage(), e);
 			throw new ServiceManagerException(String.format(SERVICE_COMPANY_EXCEPTION, e.getMessage()), e);
 		}

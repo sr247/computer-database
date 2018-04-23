@@ -8,18 +8,22 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.sql.DataSource;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.NestedRuntimeException;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import com.excilys.formation.cdb.exceptions.DAOException;
 import com.excilys.formation.cdb.exceptions.InstanceNotInDatabaseException;
 import com.excilys.formation.cdb.exceptions.ModifyDatabaseException;
 import com.excilys.formation.cdb.exceptions.NumberOfInstanceException;
-import com.excilys.formation.cdb.mapper.CompanyMapper;
+import com.excilys.formation.cdb.mapper.row.CompanyRowMapper;
+import com.excilys.formation.cdb.mapper.row.ComputerRowMapper;
 import com.excilys.formation.cdb.model.Company;
+import com.excilys.formation.cdb.model.Computer;
 
 @Repository
 public class CompanyDB {
@@ -28,7 +32,7 @@ public class CompanyDB {
 	
 	private static int numCompanies;	
 	private static final String COUNT_NUMBER_OF = "SELECT COUNT(*) AS NUM FROM company;";
-	private static final String SELECT_ONE = "SELECT ID as caId, NAME as caName FROM company WHERE ID=?;";
+	private static final String SELECT_BY_ID = "SELECT ID as caId, NAME as caName FROM company WHERE ID=?;";
 	private static final String SELECT_UNLIMITED_LIST = "SELECT ID as caId, NAME as caName FROM company ca ORDER BY ID;";
 	private static final String SELECT_LIMITED_LIST = "SELECT ID as caId, NAME as caName FROM company ORDER BY ID LIMIT ?, ?;";
 	private static final String CREATE_REQUEST  = "INSERT INTO company NAME VALUES ?;";
@@ -36,81 +40,66 @@ public class CompanyDB {
 	private static final String DELETE_REQUEST  = "DELETE FROM company WHERE ID=?";
 	private static final String INSTANCE_ERROR_LOGGER = "InstanceNotInDatabaseError: {}";
 	private static final String INSTANCE_ERROR_EXCEPTION = "InstanceNotInDatabaseError: %s";
-		
 	
-	@Autowired
+	private JdbcTemplate jdbcTemplate;
+	private DataSource datasource;
 	private ComputerDB computerDB;
 	
-	@Autowired
-	private CompanyMapper companyMapper;
+	// Auto Autowired
+	public CompanyDB(DataSource datasource, ComputerDB computerDB) {
+		this.computerDB = computerDB;
+		this.datasource = datasource;
+		this.jdbcTemplate = new JdbcTemplate(datasource);
+	}
 	
-	@Autowired
-	private DataSource datasource;
+	
+	private static synchronized void updateNumberOfComputer(int num) {
+		numCompanies = num;
+	}
 	
 	
-	public int getNumCompanies() throws NumberOfInstanceException {
-		ResultSet res = null;
-		try (Connection conn = datasource.getConnection();
-			Statement state = conn.createStatement(); ){
-			res = state.executeQuery(COUNT_NUMBER_OF);
-			res.next();
-			numCompanies = res.getInt("NUM");
-		} catch (SQLException e) {
-			logger.error("NumberOfInstanceException: {}", e.getMessage(), e);
-			throw new NumberOfInstanceException(String.format("NumberOfInstanceException: %s", e.getMessage()), e);
+	public int getNumCompanies() throws DAOException {
+		try {			
+			updateNumberOfComputer(jdbcTemplate.queryForObject(COUNT_NUMBER_OF, Integer.class));
+		} catch (NestedRuntimeException e) {
+			logger.error("NumberOfInstanceError: {}", e.getMessage(), e);
+			throw new NumberOfInstanceException(String.format("NumberOfInstanceError: %s", e.getMessage()), e);
 		}
 		return numCompanies;
 	}
 	
-	public Optional <Company> getCompanyByID(int id) throws InstanceNotInDatabaseException {
-		PreparedStatement ps = null;
-		ResultSet res = null;
-		Optional<Company> cpy = Optional.empty();
-		try (Connection conn = datasource.getConnection();){
-			ps = conn.prepareStatement(SELECT_ONE);
-			ps.setInt(1, id);
-			res = ps.executeQuery();
-			res.next();
-			cpy = companyMapper.map(res);
-		} catch (SQLException e) {
-			logger.error(INSTANCE_ERROR_LOGGER, e.getMessage(), e);
-			throw new InstanceNotInDatabaseException(String.format(INSTANCE_ERROR_EXCEPTION, "company not found"), e);
-		}
-		return cpy;
+	public Optional<Company> getCompanyByID(int id) {
+			Object[] params = {id};
+			return jdbcTemplate.queryForObject(SELECT_BY_ID, params, new CompanyRowMapper());
 	}
 
-	public List<Company> getCompanyList() throws InstanceNotInDatabaseException {
+	public List<Company> getCompanyList() throws DAOException {
 		List<Company> companies = new ArrayList<>();
-		try (Connection conn = datasource.getConnection();
-			Statement state = conn.createStatement();
-			ResultSet res = state.executeQuery(SELECT_UNLIMITED_LIST); ){
-			while (res.next()) {
-				Optional<Company> company = companyMapper.map(res);
-				if(company.isPresent())
-					companies.add(company.get());				
-			}
-		}catch (SQLException e) {
+		try {
+			companies =
+					jdbcTemplate.query(SELECT_UNLIMITED_LIST, new CompanyRowMapper())
+					.stream()
+					.map(o -> o.get())
+					.collect(Collectors.toList());
+		} catch (NullPointerException | NestedRuntimeException e) {
 			logger.error(INSTANCE_ERROR_LOGGER, e.getMessage(), e);
-			throw new InstanceNotInDatabaseException(String.format(INSTANCE_ERROR_EXCEPTION, "companies not found"), e);
+			throw new InstanceNotInDatabaseException(String.format(INSTANCE_ERROR_EXCEPTION, "computers not found."), e);
 		}
 		return companies;
 	}
 	
 	public List<Company> getCompanyList(int limit, int offset) throws DAOException {
 		List<Company> companies = new ArrayList<>();
-		try (Connection conn = datasource.getConnection();
-			PreparedStatement ps = conn.prepareStatement(SELECT_LIMITED_LIST); ){
-			ps.setInt(1, limit);
-			ps.setInt(2, offset);
-			ResultSet res = ps.executeQuery();			
-			while (res.next()) {
-				Optional<Company> company = companyMapper.map(res);
-				if(company.isPresent())
-					companies.add(company.get());
-			}
-		}catch (SQLException e) {
+		try {
+			Object[] params = {limit, offset};
+			companies =
+					jdbcTemplate.query(SELECT_LIMITED_LIST, params, new CompanyRowMapper())
+					.stream()
+					.map(o -> o.get())
+					.collect(Collectors.toList());
+		} catch (NullPointerException | NestedRuntimeException e) {
 			logger.error(INSTANCE_ERROR_LOGGER, e.getMessage(), e);
-			throw new InstanceNotInDatabaseException("InstanceNotInDatabaseError: companies not found", e);
+			throw new InstanceNotInDatabaseException(String.format(INSTANCE_ERROR_EXCEPTION, "computers not found"), e);
 		}
 		return companies;
 	}

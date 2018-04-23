@@ -1,235 +1,168 @@
 package com.excilys.formation.cdb.persistence;
 
 import java.sql.Connection;
-import java.sql.Date;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.sql.DataSource;
 
-import org.omg.PortableInterceptor.INACTIVE;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.NestedRuntimeException;
-import org.springframework.stereotype.Repository;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+import org.springframework.stereotype.Repository;
 
-
-import com.excilys.formation.cdb.config.SpringConfig;
 import com.excilys.formation.cdb.exceptions.DAOException;
 import com.excilys.formation.cdb.exceptions.InstanceNotInDatabaseException;
 import com.excilys.formation.cdb.exceptions.ModifyDatabaseException;
 import com.excilys.formation.cdb.exceptions.NumberOfInstanceException;
-import com.excilys.formation.cdb.mapper.ComputerMapper;
+import com.excilys.formation.cdb.mapper.row.ComputerRowMapper;
 import com.excilys.formation.cdb.model.Computer;
 
 @Repository
 public class ComputerDB {
-	
+
 	private static org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(CompanyDB.class);
-	
-	private ComputerMapper computerMapper;		
-	private JdbcTemplate jdbcTemplate;
+
 	private DataSource datasource;
-	
+	private DataSourceTransactionManager txDataSource;
+	private JdbcTemplate jdbcTemplate;
+	private JdbcTemplate txJdbcTemplate;
+
 	// Auto Autowired
-	public ComputerDB(ComputerMapper computerMapper, DataSource datasource) {
-		this.computerMapper = computerMapper;
+	public ComputerDB(DataSource datasource, DataSourceTransactionManager txDataSource) {
 		this.datasource = datasource;
-		this.jdbcTemplate = new JdbcTemplate(datasource);
+		this.txDataSource = txDataSource;
+		this.jdbcTemplate = new JdbcTemplate(datasource);		
 	}
-	
+
 	// ça meriterait une petite enum pour retirer tout ça...
 	private static int numComputers;
 	private static final String COMPANY_COLUMN = "company.id as caId, company.name as caName ";
 	private static final String LEFT_JOIN_ON_COMPANY = "LEFT JOIN company ON company.id = computer.company_id ";
-	
-	private static final String COUNT_NUMBER_OF = "SELECT COUNT(*) AS NUM FROM computer;";
-	private static final String SELECT_ONE = 
-			"SELECT computer.id as cmpId, computer.name as cmpName, introduced, discontinued, company_id, " 
-			+ COMPANY_COLUMN
-			+ "FROM computer "
-			+ LEFT_JOIN_ON_COMPANY
-			+ "WHERE computer.id = ?;"; 
-	private static final String SELECT_UNLIMITED_LIST = "SELECT computer.id as cmpId, computer.name as cmpName, introduced, discontinued, " 
-			+ COMPANY_COLUMN
-			+ "FROM computer "
-			+ LEFT_JOIN_ON_COMPANY
-			+ "ORDER BY computer.id;";
-	private static final String SELECT_LIMITED_LIST = "SELECT computer.id as cmpId, computer.name as cmpName, introduced, discontinued, " 
-			+ COMPANY_COLUMN
-			+ "FROM computer "
-			+ LEFT_JOIN_ON_COMPANY
-			+ "ORDER BY computer.id LIMIT ?, ?;";
-	private static final String CREATE_REQUEST  = "INSERT INTO computer (NAME, INTRODUCED, DISCONTINUED, COMPANY_ID) VALUES (?, ?, ?, ?);";
-	private static final String UPDTATE_REQUEST = 
-			"UPDATE computer SET NAME=?, INTRODUCED=?, DISCONTINUED=?, COMPANY_ID=? WHERE ID=?;";
-	private static final String DELETE_REQUEST = "DELETE FROM computer WHERE ID=?;";
-	
-	private static final String SELECT_RELATED_TO_COMPANY =
-			"SELECT computer.id FROM computer WHERE company_id=?;";
-	
-	private static final String DELETE_LOGGER = "DeletionOfInstanceError: {}";	
 
-	public int getNumComputers() throws DAOException {		
-		try {			
-			numComputers = jdbcTemplate.queryForObject(COUNT_NUMBER_OF, Integer.class);
+	private static final String COUNT_NUMBER_OF = "SELECT COUNT(*) AS NUM FROM computer;";
+	private static final String SELECT_BY_ID = "SELECT computer.id as cmpId, computer.name as cmpName, introduced, discontinued, company_id, "
+			+ COMPANY_COLUMN + "FROM computer " + LEFT_JOIN_ON_COMPANY + "WHERE computer.id = ?;";
+	private static final String SELECT_UNLIMITED_LIST = "SELECT computer.id as cmpId, computer.name as cmpName, introduced, discontinued, "
+			+ COMPANY_COLUMN + "FROM computer " + LEFT_JOIN_ON_COMPANY + "ORDER BY computer.id;";
+	private static final String SELECT_LIMITED_LIST = "SELECT computer.id as cmpId, computer.name as cmpName, introduced, discontinued, "
+			+ COMPANY_COLUMN + "FROM computer " + LEFT_JOIN_ON_COMPANY + "ORDER BY computer.id LIMIT ?, ?;";
+	private static final String CREATE_REQUEST = "INSERT INTO computer (NAME, INTRODUCED, DISCONTINUED, COMPANY_ID) VALUES (?, ?, ?, ?);";
+
+	private static final String UPDTATE_REQUEST = "UPDATE computer SET NAME=?, INTRODUCED=?, DISCONTINUED=?, COMPANY_ID=? WHERE ID=?;";
+
+	private static final String DELETE_REQUEST = "DELETE FROM computer WHERE ID=?;";
+
+	private static final String SELECT_RELATED_TO_COMPANY = "SELECT computer.id FROM computer WHERE company_id=?;";
+
+	private static final String DELETE_LOGGER = "DeletionOfInstanceError: {}";
+
+	private static synchronized void updateNumberOfComputer(int num) {
+		numComputers = num;
+	}
+
+	public int getNumComputers() throws DAOException {
+		try {
+			updateNumberOfComputer(jdbcTemplate.queryForObject(COUNT_NUMBER_OF, Integer.class));
 		} catch (NestedRuntimeException e) {
-			logger.error("NumberOfInstanceError: ", e.getMessage(), e);
+			logger.error("NumberOfInstanceError: {}", e.getMessage(), e);
 			throw new NumberOfInstanceException("NumberOfInstanceError: " + e.getMessage(), e);
 		}
 		return numComputers;
 	}
-	
-	public Computer getComputerByID(int id) throws DAOException {
-		DataSource datasource = new SpringConfig().datasource();
-		ResultSet res = null;
-		Computer cmp = null;
-		try (Connection conn = datasource.getConnection();
-			 PreparedStatement ps = conn.prepareStatement(SELECT_ONE);){
-			ps.setInt(1, id);
-			res = ps.executeQuery();
-			res.next();
-			cmp = computerMapper.map(res).get();
-		} catch (SQLException | NoSuchElementException e) {
-			logger.error("InstanceNotInDatabaseError: {}", e.getMessage(), e);
-			throw new InstanceNotInDatabaseException("InstanceNotInDatabaseError: computer not found.");
-		}
-		return cmp;
+
+	public Optional<Computer> getComputerByID(int id) {
+		Object[] params = { id };
+		return jdbcTemplate.queryForObject(SELECT_BY_ID, params, new ComputerRowMapper());
 	}
-	
+
 	public List<Computer> getComputerList() throws DAOException {
-		DataSource datasource = new SpringConfig().datasource();
-		List<Computer> computers = new ArrayList<Computer>();
-		try (Connection conn = datasource.getConnection();
-			PreparedStatement ps = conn.prepareStatement(SELECT_UNLIMITED_LIST);
-			ResultSet res = ps.executeQuery();) {
-			
-			while (res.next()) {
-				Optional<Computer> computer = computerMapper.map(res);
-				if(computer.isPresent())
-					computers.add(computer.get());					
-			}
-			
-		} catch(SQLException e) {
+		List<Computer> computers = new ArrayList<>();
+		try {
+			computers = jdbcTemplate.query(SELECT_UNLIMITED_LIST, new ComputerRowMapper()).stream().map(o -> o.get())
+					.collect(Collectors.toList());
+		} catch (NullPointerException | NestedRuntimeException e) {
 			logger.error("InstanceNotInDatabaseError: {}", e.getMessage(), e);
 			throw new InstanceNotInDatabaseException("InstanceNotInDatabaseError: computers not found");
 		}
 		return computers;
 	}
-	
+
 	public List<Computer> getComputerList(int limit, int offset) throws DAOException {
 		List<Computer> computers = new ArrayList<>();
-		ResultSet res = null;
-		try (Connection conn = datasource.getConnection();
-			PreparedStatement ps = conn.prepareStatement(SELECT_LIMITED_LIST); ){
-			ps.setInt(1, limit);
-			ps.setInt(2, offset);
-			res = ps.executeQuery();
-			while (res.next()) {
-				Optional<Computer> computer = computerMapper.map(res);
-				if(computer.isPresent())
-					computers.add(computer.get());
-			} 
-		}catch(SQLException e1) {
-			logger.error("InstanceNotInDatabaseError: {}", e1.getMessage(), e1);
-			throw new InstanceNotInDatabaseException("Erreur: ordinateur introuvable");
-		} finally {
-			if(res != null) {
-				try {
-					res.close();
-				} catch (SQLException e) {
-					logger.error("CloseConnectionException: {}", e.getMessage(), e);
-				}
-			}
+		try {
+			Object[] params = { limit, offset };
+			computers = jdbcTemplate.query(SELECT_LIMITED_LIST, params, new ComputerRowMapper()).stream()
+					.map(o -> o.get()).collect(Collectors.toList());
+		} catch (NullPointerException | NestedRuntimeException e) {
+			logger.error("InstanceNotInDatabaseError: {}", e.getMessage(), e);
+			throw new InstanceNotInDatabaseException("InstanceNotInDatabaseError: computers not found");
 		}
 		return computers;
 	}
-	
-	public List<Integer> getAllComputersRelatedToCompanyWithID(int id) throws SQLException {
+
+	public List<Integer> getAllComputersRelatedToCompanyWithID(int id) throws DAOException {
 		List<Integer> computersID = new ArrayList<>();
-		Connection conn = datasource.getConnection();
-		PreparedStatement ps = conn.prepareStatement(SELECT_RELATED_TO_COMPANY);
-		ps.setInt(1, id);
-		ResultSet res = ps.executeQuery();
-		while (res.next()) {
-			int computerID = res.getInt("computer.id");
-			computersID.add(computerID);				
+		try {
+			Object[] params = { id };
+			computersID = jdbcTemplate.queryForList(SELECT_RELATED_TO_COMPANY, params, Integer.class);
+		} catch (NullPointerException | NestedRuntimeException e) {
+			logger.error("InstanceNotInDatabaseError: {}", e.getMessage(), e);
+			throw new InstanceNotInDatabaseException("InstanceNotInDatabaseError: computers not found");
 		}
 		return computersID;
 	}
-	
-	private void setDateProperly(Optional<LocalDate> date, PreparedStatement ps, int i) throws SQLException {
-		if(!date.isPresent()) {
-			ps.setNull(i, java.sql.Types.DATE);
-		} else {
-			Date dt = Date.valueOf(date.get());
-			ps.setDate(i, dt);				
-		} 
-	}
-	
-	
+
 	public void create(Computer cmp) throws DAOException {
-		try (Connection conn = datasource.getConnection();
-			PreparedStatement crt = conn.prepareStatement(CREATE_REQUEST); ){
-			crt.setString(1, cmp.getName());
-			setDateProperly(Optional.ofNullable(cmp.getIntroduced()), crt, 2);
-			setDateProperly(Optional.ofNullable(cmp.getDiscontinued()), crt, 3);
-			crt.setInt(4, cmp.getCompany().getId());
-			crt.executeUpdate();
+		try {
+			Object[] params = { cmp.getName(), cmp.getIntroduced(), cmp.getDiscontinued(), cmp.getCompany().getId() };
+			jdbcTemplate.update(CREATE_REQUEST, params);
 			logger.info("Created: {}", cmp);
-		} catch (SQLException e) {
+		} catch (NullPointerException | NestedRuntimeException e) {
 			logger.error("CreationOfInstanceError: {}", e.getMessage(), e);
 			throw new ModifyDatabaseException("CreationOfInstanceError: computer couldn't be created", e);
-		} 
+		}
 	}
-	
+
 	public void update(Computer cmp) throws DAOException {
-		try (Connection conn = datasource.getConnection();
-				PreparedStatement upd = conn.prepareStatement(UPDTATE_REQUEST);){
-			upd.setString(1, cmp.getName());
-			setDateProperly(Optional.ofNullable(cmp.getIntroduced()), upd, 2);
-			setDateProperly(Optional.ofNullable(cmp.getDiscontinued()), upd, 3);		
-			upd.setInt(4, cmp.getCompany().getId());		
-			upd.setInt(5, cmp.getId());
-			upd.executeUpdate();
+		try {
+			Object[] params = { cmp.getName(), cmp.getIntroduced(), cmp.getDiscontinued(), cmp.getCompany(),
+					cmp.getId() };
+			jdbcTemplate.update(UPDTATE_REQUEST, params);
 			logger.info("Updated: {}", cmp);
-		} catch (SQLException e) {
+		} catch (NullPointerException | NestedRuntimeException e) {
 			logger.error("UpdateOfInstanceError: {}", e.getMessage(), e);
 			throw new ModifyDatabaseException("UpdateOfInstanceError: computer couldn't be updated", e);
 		}
-	}	
-	
+	}
+
 	public void delete(Computer cmp) throws DAOException {
-		try (Connection conn = datasource.getConnection();
-			PreparedStatement del = conn.prepareStatement(DELETE_REQUEST); ){
-			del.setInt(1, cmp.getId());
-			del.executeUpdate();
+		try {
+			Object[] params = { cmp.getId() };
+			jdbcTemplate.update(DELETE_REQUEST, params);
 			logger.info("Deleted: {}", cmp);
-		} catch (SQLException e) {
+		} catch (NullPointerException | NestedRuntimeException e) {
 			logger.error(DELETE_LOGGER, e.getMessage(), e);
 			throw new ModifyDatabaseException("DeletionOfInstanceError: computer couldn't be deleted", e);
 		}
 	}
-	
+
 	public static void deleteTransactionalFromIDList(List<Integer> idList, Connection conn) throws DAOException {
-        try (PreparedStatement ps = conn.prepareStatement(DELETE_REQUEST)) {
-            for (Integer id : idList) {
-                ps.setInt(1, id);
-                ps.executeUpdate();
-            }
-        } catch (SQLException e) {
-            logger.error(DELETE_LOGGER, e);
-            throw new ModifyDatabaseException("Couldn't delete the provided computers' list.", e);
-        }
+		try (PreparedStatement ps = conn.prepareStatement(DELETE_REQUEST)) {
+			for (Integer id : idList) {
+				ps.setInt(1, id);
+				ps.executeUpdate();
+			}
+		} catch (SQLException e) {
+			logger.error(DELETE_LOGGER, e);
+			throw new ModifyDatabaseException("Couldn't delete the provided computers' list.", e);
+		}
 	}
-	
+
 	public void deleteFromIDList(List<Integer> idList) throws DAOException {
 		Connection conn = null;
 		PreparedStatement ps = null;
@@ -237,26 +170,26 @@ public class ComputerDB {
 			conn = datasource.getConnection();
 			ps = conn.prepareStatement(DELETE_REQUEST);
 			conn.setAutoCommit(false);
-            for (Integer id : idList) {
-                ps.setInt(1, id);
-                ps.executeUpdate();
-                logger.info("Delete: {}", id);
-            }
-            conn.commit();
-        } catch (SQLException e1) {
-            logger.error(DELETE_LOGGER, e1.getMessage(), e1);
+			for (Integer id : idList) {
+				ps.setInt(1, id);
+				ps.executeUpdate();
+				logger.info("Delete: {}", id);
+			}
+			conn.commit();
+		} catch (SQLException e1) {
+			logger.error(DELETE_LOGGER, e1.getMessage(), e1);
 			try {
-				if(conn != null)
+				if (conn != null)
 					conn.rollback();
-			}catch(SQLException e) {
+			} catch (SQLException e) {
 				logger.error(DELETE_LOGGER, e.getMessage(), e);
 				throw new ModifyDatabaseException("DeletionOfInstanceError: Rolling back has failed.", e);
 			}
-        } finally {
+		} finally {
 			try {
-				if(ps != null)
+				if (ps != null)
 					ps.close();
-				if(conn != null)
+				if (conn != null)
 					conn.close();
 			} catch (SQLException e) {
 				logger.error("CloseConnectionException: {}", e.getMessage(), e);

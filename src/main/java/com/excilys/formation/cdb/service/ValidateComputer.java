@@ -8,7 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.excilys.formation.cdb.exceptions.IncorrectFieldException;
-import com.excilys.formation.cdb.exceptions.InstanceNotInDatabaseException;
+import com.excilys.formation.cdb.exceptions.InexistentEntityException;
+import com.excilys.formation.cdb.exceptions.NullValueException;
+import com.excilys.formation.cdb.exceptions.ValidatorException;
 import com.excilys.formation.cdb.model.Company;
 import com.excilys.formation.cdb.model.Computer;
 import com.excilys.formation.cdb.persistence.CompanyDB;
@@ -21,36 +23,40 @@ public class ValidateComputer {
 	
 	private ValidateComputer() {}	
 	
-	public void validate(Computer cmp) throws IncorrectFieldException, InstanceNotInDatabaseException {
-		checkName(Optional.ofNullable(cmp.getName()));
-		checkDate(Optional.ofNullable(cmp.getIntroduced()), Optional.ofNullable(cmp.getDiscontinued()) );
-		checkCompany(Optional.ofNullable(cmp.getCompany()));
+	public void validate(Computer computer) throws ValidatorException {
+		checkName(Optional.ofNullable(computer.getName()));
+		checkDate(Optional.ofNullable(computer.getIntroduced()), Optional.ofNullable(computer.getDiscontinued()) );
+		checkCompany(Optional.ofNullable(computer.getCompany()));
 	}
 	
-	private void checkName(Optional<String> name) throws IncorrectFieldException {
-		if(!name.isPresent() || name.get().equals("")) {
-			throw new IncorrectFieldException("ValidateError: Computer must have a name.");
+	public void checkIsNull(Optional<Computer> computer) throws ValidatorException {
+		if(!computer.isPresent()) {
+			throw new NullValueException("ValidatorException: Computer must have a name.");
 		}
 	}
 	
+	private void checkName(Optional<String> name) throws ValidatorException {
+		if(!name.isPresent() || name.get().equals("")) {
+			throw new IncorrectFieldException("ValidatorException: Computer must have a name.");
+		}
+	}	
 	
-	private void checkDate(Optional<LocalDate> d1, Optional<LocalDate> d2) throws IncorrectFieldException {
+	private void checkDate(Optional<LocalDate> d1, Optional<LocalDate> d2) throws ValidatorException {
 		if(d1.isPresent() && d1.get().isAfter(LocalDate.now())) {
-				throw new IncorrectFieldException("ValidateError: Computer can't have a introduced date in the future.");
+				throw new IncorrectFieldException("ValidatorException: Computer can't have a introduced date in the future.");
 		}
 		if(d1.isPresent() && d2.isPresent() && d1.get().isAfter(d2.get())) {
-				throw new IncorrectFieldException("ValidateError: Computer can't have a introduced date after the discontinued date.");
+				throw new IncorrectFieldException("ValidatorException: Computer can't have a introduced date after the discontinued date.");
 		}
 	}
 	
-
-	private void checkCompany(Optional<Company> cpy) throws InstanceNotInDatabaseException {
-		if(cpy.isPresent()) {
-			if(!companyDB.getCompanyByID(cpy.get().getId()).isPresent()) {		
-				throw new InstanceNotInDatabaseException("ValidateError: Company not in database");
-			}			
+	private void checkCompany(Optional<Company> company) throws ValidatorException {
+		if(company.isPresent()) {			
+			if(!companyDB.getCompanyByID(company.get().getId()).isPresent()) {		
+				throw new InexistentEntityException("ValidatorException: Company not in database");
+			}
 		}else {
-			throw new InstanceNotInDatabaseException("ValidateError: Empty company field.");
+			throw new InexistentEntityException("ValidatorException: Empty company field.");
 		}
 	}
 

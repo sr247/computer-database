@@ -16,7 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
-import com.excilys.formation.cdb.exceptions.ServiceManagerException;
 import com.excilys.formation.cdb.mapper.CompanyMapperDTO;
 import com.excilys.formation.cdb.model.Company;
 import com.excilys.formation.cdb.model.CompanyDTO;
@@ -41,13 +40,6 @@ public class AddComputerServlet extends HttpServlet {
 	@Autowired
 	private CompanyMapperDTO companyMDTO;
     
-	/**
-     * @see HttpServlet#HttpServlet()
-     */
-    public AddComputerServlet() {
-        super();
-    }
-    
     @Override
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
@@ -57,40 +49,35 @@ public class AddComputerServlet extends HttpServlet {
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
+    @Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		response.getWriter().append("Served at: ").append(request.getContextPath());
 		try {
+			response.getWriter().append("Served at: ").append(request.getContextPath());
 			List<CompanyDTO> companies = companyMDTO.map(serviceCompany.getAllList());
 			request.setAttribute("companies", companies);
-		} catch (ServiceManagerException e) {
+			this.getServletContext().getRequestDispatcher("/WEB-INF/addComputer.jsp").forward(request, response);
+		} catch (Exception e) {
 			logger.debug("AddComputerServletException: {}", e.getMessage(), e);
 		}
-		
-		this.getServletContext().getRequestDispatcher("/WEB-INF/addComputer.jsp").forward(request, response);
 	}
 
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
+    @Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		try {
 			String computerName = (String) request.getParameter("computerName");
-			
 			Optional<String> intro = Optional.ofNullable(request.getParameter("introduced"));
 			Optional<String> discon = Optional.ofNullable(request.getParameter("discontinued"));
-			
 			LocalDate introduced = null;
 			LocalDate discontinued = null;
 			
-			if(intro.isPresent()) {
-				if(intro.get() != "") {
-					introduced = LocalDate.parse(intro.get());							
-				}
+			if(intro.isPresent() && intro.get() != "") {
+				introduced = LocalDate.parse(intro.get());							
 			}	
-			if(discon.isPresent()) {
-				if(discon.get() != "") {
-					discontinued = LocalDate.parse(discon.get());							
-				}
+			if(discon.isPresent() && discon.get() != "") {
+				discontinued = LocalDate.parse(discon.get());							
 			}
 			
 			String cpyFromSel = request.getParameter("companyId");
@@ -98,10 +85,10 @@ public class AddComputerServlet extends HttpServlet {
 			Computer cmp = new Computer(computerName, introduced, discontinued, company);
 			serviceComputer.createComputer(cmp);
 			logger.debug("Created: {}", cmp);
-		} catch (ServiceManagerException e) {
+			doGet(request, response);
+		} catch (Exception e) {
 			logger.debug("AddComputerServletException: {}", e.getMessage(), e);
 		}
-		doGet(request, response);
 	}
 
 }

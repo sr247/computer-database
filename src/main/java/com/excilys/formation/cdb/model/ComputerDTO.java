@@ -99,7 +99,6 @@ public class ComputerDTO extends ModelBase {
 	}
 
 
-
 	/**
 	 * @param company_id the company_id to set
 	 */
@@ -130,13 +129,12 @@ public class ComputerDTO extends ModelBase {
 	}
 	
 	@Override
-	public boolean equals(Object  o) {
+	public boolean equals(Object o) {
 		ComputerDTO cmp = (ComputerDTO) o;
 		return this.id == cmp.id
 				&& this.name.equals(cmp.name)
 				&& this.introduced.equals(cmp.introduced)
 				&& this.discontinued.equals(cmp.discontinued)
 				&& this.companyName.equals(cmp.companyName);
-		
 	}
 }

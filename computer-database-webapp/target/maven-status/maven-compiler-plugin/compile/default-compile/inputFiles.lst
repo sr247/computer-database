@@ -1,0 +1,7 @@
+/home/excilys/Documents/computer-database-m2/computer-database/computer-database-webapp/src/main/java/com/excilys/formation/cdb/webapp/servlets/DashboardServlet.java
+/home/excilys/Documents/computer-database-m2/computer-database/computer-database-webapp/src/main/java/com/excilys/formation/cdb/webapp/servlets/EditComputerServlet.java
+/home/excilys/Documents/computer-database-m2/computer-database/computer-database-webapp/src/main/java/com/excilys/formation/cdb/webapp/servlets/AddComputerServlet.java
+/home/excilys/Documents/computer-database-m2/computer-database/computer-database-webapp/src/main/java/com/excilys/formation/cdb/webapp/config/SpringMvcConfig.java
+/home/excilys/Documents/computer-database-m2/computer-database/computer-database-webapp/src/main/java/com/excilys/formation/cdb/webapp/config/ApplicationInitializer.java
+/home/excilys/Documents/computer-database-m2/computer-database/computer-database-webapp/src/main/java/com/excilys/formation/cdb/webapp/controller/DashboardController.java
+/home/excilys/Documents/computer-database-m2/computer-database/computer-database-webapp/src/main/java/com/excilys/formation/cdb/webapp/config/DataBaseConfig.java

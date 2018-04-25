@@ -11,7 +11,8 @@ import com.excilys.formation.cdb.core.ModelBase;
 @Component
 public abstract class Pages<T extends ModelBase> {
 	
-	// Déterminer quelles variables doivent être static ou pas.
+	private static org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(Pages.class);
+	
 	protected static int stride = 10;
 	protected static int offset = 0;
 	
@@ -19,7 +20,7 @@ public abstract class Pages<T extends ModelBase> {
 	protected int numberOfElements;
 	protected int numberOfPages;
 	protected int focus;
-	protected List<T>content;	
+	protected List<T> content;	
 
 	public Pages() {}
 	
@@ -42,11 +43,13 @@ public abstract class Pages<T extends ModelBase> {
 	public void setCurrentPage(int currentPage) {
 		if(currentPage >= 1 && currentPage <= numberOfPages)
 			this.currentPage = Optional.of(currentPage);
+		else
+			this.currentPage = Optional.of(1);
 	}
 	
 	public void reset() {
-		Pages.setStride(10);
-		Pages.setOffset(0);
+		setStride(10);
+		setOffset(0);
 		
 		currentPage = Optional.of(1);		
 		numberOfElements = 0;
@@ -54,26 +57,36 @@ public abstract class Pages<T extends ModelBase> {
 		content = null;
 	}
 	
-	public static int getOffset() {
+	public int getOffset() {
 		return offset;
 	}
 	
-	public static void setOffset(int pageOffset) {
-		offset = pageOffset;
+	public void setOffset(int pageOffset) {
+		setPageOffset(pageOffset);
 	}
-	
-
-
-	public static int getStride() {
+	 
+	public int getStride() {
 		return stride;
 	}
 
-	public static void setStride(int stride) {
+	public void setStride(int stride) {
+		if(stride != 10 && stride != 50 && stride != 100) {
+			setPageStride(10);
+		} else {
+			setPageStride(stride);			
+		}
+	}
+	
+	private static synchronized void setPageStride(int stride) {
 		Pages.stride = stride;
 	}
 	
-
+	private static synchronized void setPageOffset(int offset) {
+		Pages.offset = offset;
+	}
+	
 	public abstract int getNumberOfPages() throws ServiceManagerException;
+	
 	public abstract int getNumberOfElements() throws ServiceManagerException;
 
 	public abstract void goTo(int index) throws ServiceManagerException;

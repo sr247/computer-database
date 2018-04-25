@@ -98,30 +98,30 @@
 	<footer class="navbar-fixed-bottom">
 	<div class="container text-center">
 		<ul class="pagination">
-			<li><a href="#" aria-label="Next"
-				onclick="location.href='dashboard?page=1'"> <span
+			<li><a href="#" aria-label="Previous"
+				onclick="location.href='dashboard?page=1&stride=${pagesComputer.stride}'"> <span
 					aria-hidden="true">First</span>
 			</a> <a href="#" aria-label="Previous"
-				onclick="location.href='dashboard?page=${current-1}'"> <span
+				onclick="location.href='dashboard?page=${pagesComputer.currentPage > 1 ? pagesComputer.currentPage-1 : 1}&stride=${pagesComputer.stride}'"> <span
 					aria-hidden="true">&larr;</span>
 			</a></li>
 			<!-- Focus de Pages -->
-			<c:forEach var="i" begin="1" end="5" step="1">
+			<c:forEach var="i" begin="${focus-2}" end="${focus+2}" step="1">
 				<c:choose>
-					<c:when test="${i == currentPage}">
+					<c:when test="${i == pagesComputer.currentPage}">
 						<li><a style="background-color: WhiteSmoke;" href="#"
-							onclick="location.href='dashboard?page=${i}'">${i}</a></li>
+							onclick="location.href='dashboard?page=${i}&stride=${pagesComputer.stride}'">${i}</a></li>
 					</c:when>
-					<c:when test="${i != currentPage}">
-						<li><a href="#" onclick="location.href='dashboard?page=${i}'">${i}</a></li>
+					<c:when test="${i != pagesComputer.currentPage}">
+						<li><a href="#" onclick="location.href='dashboard?page=${i}&stride=${pagesComputer.stride}'">${i}</a></li>
 					</c:when>
 				</c:choose>
 			</c:forEach>
 			<li><a href="#" aria-label="Next"
-				onclick="location.href='dashboard?page=${currentPage+1}'"> <span
+				onclick="location.href='dashboard?page=${pagesComputer.currentPage < pagesComputer.numberOfPages ? pagesComputer.currentPage+1 : pagesComputer.numberOfPages}&stride=${pagesComputer.stride}'"> <span
 					aria-hidden="true">&rarr;</span>
 			</a> <a href="#" aria-label="Next"
-				onclick="location.href='dashboard?page=${pagesComputer.numberOfPages}'">
+				onclick="location.href='dashboard?page=${pagesComputer.numberOfPages}&stride=${pagesComputer.stride}'">
 					<span aria-hidden="true">Last</span>
 			</a></li>
 		</ul>
@@ -129,11 +129,11 @@
 		<div class="btn-group btn-group-sm pull-right" role="group">
 			<!-- Gérer les url via tag lib -->
 			<button type="button" class="btn btn-default"
-				onclick="location.href='dashboard?stride=10'">10</button>
+				onclick="location.href='dashboard?page=${pagesComputer.currentPage}&stride=10'">10</button>
 			<button type="button" class="btn btn-default"
-				onclick="location.href='dashboard?stride=50'">50</button>
+				onclick="location.href='dashboard?page=${pagesComputer.currentPage}&stride=50'">50</button>
 			<button type="button" class="btn btn-default"
-				onclick="location.href='dashboard?stride=100'">100</button>
+				onclick="location.href='dashboard?page=${pagesComputer.currentPage}&stride=100'">100</button>
 		</div>
 	</div>
 	</footer>

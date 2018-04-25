@@ -37,8 +37,7 @@ public class PagesComputer<T extends ModelBase> extends Pages<T> {
 		} else if(index >= numberOfPages) {
 			currentPage = Optional.of(numberOfPages);
 		}
-		Pages.setOffset((currentPage.get() - 1) * stride);
-		this.content = (List<T>) serviceComputer.getList(offset, stride);
+		setOffset((currentPage.get() - 1) * stride);
 	}
 	
 	
@@ -46,13 +45,12 @@ public class PagesComputer<T extends ModelBase> extends Pages<T> {
 	public void next() throws ServiceManagerException {
 		numberOfElements = serviceComputer.getNumberOf();
 		numberOfPages = (int) Math.ceil((double) numberOfElements / (double) stride);
-		
 		if(currentPage.isPresent()) {
 			currentPage = Optional.of(currentPage.get() + 1);
 			if(currentPage.get() > numberOfPages) 
 				currentPage = Optional.of(numberOfPages);
 		}
-		Pages.setOffset((currentPage.get() - 1) * stride);
+		setOffset((currentPage.get() - 1) * stride);
 		this.content = (List<T>) serviceComputer.getList(offset, stride);
 	}
 
@@ -61,13 +59,12 @@ public class PagesComputer<T extends ModelBase> extends Pages<T> {
 	public void preview() throws ServiceManagerException  {
 		numberOfElements = serviceComputer.getNumberOf();
 		numberOfPages = (int) Math.ceil((double)numberOfElements / (double) stride);
-		
 		if(currentPage.isPresent()) {
-			currentPage = Optional.of(currentPage.get()-1);
+			currentPage = Optional.of(currentPage.get() - 1);
 			if(currentPage.get() < 2 ) 
 				currentPage = Optional.of(1);
 		}
-		Pages.setOffset((currentPage.get() - 1) * stride);
+		setOffset((currentPage.get() - 1) * stride);
 		this.content = (List<T>) serviceComputer.getList(offset, stride);
 	}
 
@@ -80,6 +77,7 @@ public class PagesComputer<T extends ModelBase> extends Pages<T> {
 	public int getNumberOfPages() throws ServiceManagerException {
 		numberOfElements = serviceComputer.getNumberOf();
 		numberOfPages = (int) Math.ceil((double)numberOfElements / (double) stride);
+		logger.info("\nNumber of pages in PagesComputer : {}\nNumber of Elements: {}", numberOfPages, numberOfElements);
 		return numberOfPages;
 	}
 
@@ -88,6 +86,5 @@ public class PagesComputer<T extends ModelBase> extends Pages<T> {
 		numberOfElements = serviceComputer.getNumberOf();
 		return numberOfElements;
 	}
-	
 	
 }

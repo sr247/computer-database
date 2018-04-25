@@ -17,7 +17,6 @@ import com.excilys.formation.cdb.binding.ComputerMapperDTO;
 import com.excilys.formation.cdb.core.ComputerDTO;
 import com.excilys.formation.cdb.service.ServiceComputer;
 import com.excilys.formation.cdb.service.ServiceManagerException;
-import com.excilys.formation.cdb.service.pages.Pages;
 import com.excilys.formation.cdb.service.pages.PagesComputer;
 
  
@@ -47,14 +46,11 @@ public class DashboardController {
 
     	logger.info(String.valueOf(pageUrlParam));
     	logger.info(String.valueOf(strideUrlParam));	
-
-    	int offset = Pages.getOffset();
-    	int stride = Pages.getStride();
     	
 		try {
-			pagesComputer.setContent(computerMDTO.map(service.getList(offset, strideUrlParam)));
-			Pages.setStride(pageUrlParam);
-			pagesComputer.setCurrentPage(pageUrlParam);
+			pagesComputer.setStride(strideUrlParam);
+			pagesComputer.goTo(pageUrlParam);
+			pagesComputer.setContent(computerMDTO.map(service.getList(pagesComputer.getOffset(), pagesComputer.getStride())));
 		} catch (Exception e) {
 			logger.error(DASHBOARD_EXCEPTION, e.getMessage(), e);
 		}
@@ -63,10 +59,9 @@ public class DashboardController {
 		int currentPage = pagesComputer.getCurrentPage();
 		int focus = currentPage < 3 ? 3 : (currentPage >= 3 && currentPage <= (numberOfPages - 2) ? currentPage : numberOfPages - 2);
 		
-    	logger.info("{}; {}; {}; {}; {}", offset, stride, numberOfPages, currentPage, focus);
+    	logger.info("{}; {}; {}; {}; {}", pagesComputer.getOffset(), pagesComputer.getStride(), numberOfPages, currentPage, focus);
+    	
     	modelAndView.addObject("pagesComputer", pagesComputer);
-    	modelAndView.addObject("numberOfPages", numberOfPages);
-    	modelAndView.addObject("currentPage", currentPage);
     	modelAndView.addObject("focus", focus);
         return modelAndView;
     }

@@ -61,7 +61,7 @@ public class DashboardServlet extends HttpServlet {
 		
 		if((parameter = request.getParameter("stride")) != null) {
 			try {
-				Pages.setStride(Integer.valueOf(parameter));
+				pagesComputer.setStride(Integer.valueOf(parameter));
 			} catch (NumberFormatException e) {
 				logger.error(DASHBOARD_EXCEPTION, e.getMessage(), e);
 			}			
@@ -78,20 +78,19 @@ public class DashboardServlet extends HttpServlet {
 				String s = "No page provided";
 				logger.debug(DASHBOARD_EXCEPTION, s);
 			}
-			int offset = Pages.getOffset();
-			int limit = Pages.getStride();
+			int offset = pagesComputer.getOffset();
+			int limit = pagesComputer.getStride();
 			pagesComputer.setContent(computerMDTO.map(serviceComputer.getList(offset, limit)));
 			
-			int maxPages = pagesComputer.getNumberOfPages();
+			int numberOfPages = pagesComputer.getNumberOfPages();
 			int currentPage = pagesComputer.getCurrentPage();
-			int focusPage = currentPage < 3 ? 3 : (currentPage >= 3 && currentPage <= (maxPages-2) ? currentPage : maxPages-2);
+			int focusPage = currentPage < 3 ? 3 : (currentPage >= 3 && currentPage <= (numberOfPages-2) ? currentPage : numberOfPages-2);
 			
-			logger.info("Page: {} {{}, {}}", currentPage, Pages.getStride(), Pages.getOffset());
-			logger.info("mid:{} maxPages:{}", focusPage, maxPages);
+			logger.info("Page: {} {{}, {}}", currentPage, pagesComputer.getStride(), pagesComputer.getOffset());
+			logger.info("mid:{} maxPages:{}", focusPage, numberOfPages);
 			
 			request.setAttribute("pagesComputer", pagesComputer);
 			request.setAttribute("current", currentPage);
-			request.setAttribute("maxPages", maxPages);
 			request.setAttribute("focusPage", focusPage);
 			
 			this.getServletContext().getRequestDispatcher("/WEB-INF/dashboard.jsp").forward(request, response);

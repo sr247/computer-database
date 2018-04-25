@@ -30,3 +30,25 @@ hs_err_pid*
 # Idea xml configurations files
 .idea/
 *iml
+
+# Maven 
+# Pom misc
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+dependency-reduced-pom.xml
+
+# Properties misc
+release.properties
+buildNumber.properties
+.mvn/timing.properties
+
+# Settings & project
+.project*
+.settings/
+/computer-database-*/target/*
+computer-database-*/.project
+computer-database-*/.classpath
+computer-database-*/.settings/
+

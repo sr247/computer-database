@@ -45,11 +45,11 @@
 		<!-- Connection pool -->
 		<hikariCP.version>3.0.0</hikariCP.version>
 
-	<!-- Spring version -->
-	<springframework.version>5.0.4.RELEASE</springframework.version>
+		<!-- Spring version -->
+		<springframework.version>5.0.4.RELEASE</springframework.version>
 
 	</properties>
-	
+
 	<modules>
 		<module>computer-database-core</module>
 		<module>computer-database-persistence</module>
@@ -59,25 +59,8 @@
 		<module>computer-database-webapp</module>
 	</modules>
 
+
 	<dependencies>
-		<!-- tests -->
-		<dependency>
-			<groupId>org.junit.jupiter</groupId>
-			<artifactId>junit-jupiter-api</artifactId>
-			<version>${junit.version}</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.mockito</groupId>
-			<artifactId>mockito-all</artifactId>
-			<version>${mockito.version}</version>
-			<scope>test</scope>
-		</dependency>
-
-		<!-- tomcat --> 
-		<!-- <dependency> <groupId>org.apache.tomcat.maven</groupId> <artifactId>tomcat7-maven-plugin</artifactId> 
-			<version>${tomcat-plugin.version}</version> </dependency> -->
-
 		<!-- logging -->
 		<dependency>
 			<groupId>org.slf4j</groupId>
@@ -94,6 +77,24 @@
 			<artifactId>logback-classic</artifactId>
 			<version>${logback.version}</version>
 		</dependency>
+
+		<!-- tests -->
+		<dependency>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter-api</artifactId>
+			<version>${junit.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-all</artifactId>
+			<version>${mockito.version}</version>
+			<scope>test</scope>
+		</dependency>
+
+		<!-- tomcat -->
+		<!-- <dependency> <groupId>org.apache.tomcat.maven</groupId> <artifactId>tomcat7-maven-plugin</artifactId> 
+			<version>${tomcat-plugin.version}</version> </dependency> -->
 
 		<!-- database -->
 		<dependency>
@@ -140,6 +141,7 @@
 			<version>${springframework.version}</version>
 		</dependency>
 	</dependencies>
+
 
 	<!-- =============================================================== -->
 	<!-- Gestion des dépendances -->
@@ -228,7 +230,7 @@
 			</plugins>
 		</pluginManagement>
 	</build>
-		
+
 	<reporting>
 		<plugins>
 			<plugin>
@@ -242,5 +244,5 @@
 			</plugin>
 		</plugins>
 	</reporting>
-	
+
 </project>

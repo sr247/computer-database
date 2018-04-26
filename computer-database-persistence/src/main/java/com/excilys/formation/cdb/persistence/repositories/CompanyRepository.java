@@ -3,9 +3,11 @@ package com.excilys.formation.cdb.persistence.repositories;
 import java.util.Optional;
 
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.stereotype.Repository;
 
 import com.excilys.formation.cdb.core.entity.CompanyEntity;
 
+@Repository
 public interface CompanyRepository extends CrudRepository<CompanyEntity, Long>  {
 
 	@Override

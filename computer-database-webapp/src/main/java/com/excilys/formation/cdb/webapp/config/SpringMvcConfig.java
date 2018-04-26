@@ -12,14 +12,14 @@ import org.springframework.web.servlet.view.JstlView;
 
 
 
-@ComponentScan(basePackages = { "com.excilys.formation.cdb.binding",
-		"com.excilys.formation.cdb.binding.row",
-		"com.excilys.formation.cdb.persistence",
-		"com.excilys.formation.cdb.service",
-		"com.excilys.formation.cdb.service.pages",
-		"com.excilys.formation.cdb.service.validator",
-		"com.excilys.formation.cdb.webapp.controller",
-		"com.excilys.formation.cdb.webapp.servlets"})
+//@ComponentScan(basePackages = { "com.excilys.formation.cdb.binding",
+//		"com.excilys.formation.cdb.binding.row",
+//		"com.excilys.formation.cdb.persistence",
+//		"com.excilys.formation.cdb.service",
+//		"com.excilys.formation.cdb.service.pages",
+//		"com.excilys.formation.cdb.service.validator",
+//		"com.excilys.formation.cdb.webapp.controller",
+//		"com.excilys.formation.cdb.webapp.servlets"})
 public class SpringMvcConfig implements WebMvcConfigurer {
 	
 	private static org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(SpringMvcConfig.class);

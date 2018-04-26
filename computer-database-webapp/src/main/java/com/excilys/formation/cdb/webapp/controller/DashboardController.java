@@ -47,7 +47,8 @@ public class DashboardController {
     	ModelAndView modelAndView = new ModelAndView();
 
     	logger.info(String.valueOf(pageUrlParam));
-    	logger.info(String.valueOf(strideUrlParam));	
+    	logger.info(String.valueOf(strideUrlParam));
+    	
     	Page<ComputerEntity> pageComputer = Page.empty();
     	Page<ComputerDTO> mappedPageComputer = Page.empty();
 		try {

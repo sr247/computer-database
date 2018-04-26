@@ -17,7 +17,6 @@ import org.springframework.stereotype.Repository;
 import com.excilys.formation.cdb.binding.row.CompanyRowMapper;
 import com.excilys.formation.cdb.core.Company;
 
-@Repository
 public class CompanyDB {
 	
 	private static org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(CompanyDB.class);
@@ -36,7 +35,6 @@ public class CompanyDB {
 	private JdbcTemplate jdbcTemplate;
 	private ComputerDB computerDB;
 	
-	@Autowired
 	public CompanyDB(DataSource datasource, ComputerDB computerDB) {
 		this.computerDB = computerDB;
 		this.jdbcTemplate = new JdbcTemplate(datasource);

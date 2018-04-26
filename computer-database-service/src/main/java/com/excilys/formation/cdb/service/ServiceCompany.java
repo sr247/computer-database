@@ -11,8 +11,8 @@ import com.excilys.formation.cdb.persistence.DAOException;
 import com.excilys.formation.cdb.core.Company;
 import com.excilys.formation.cdb.persistence.CompanyDB;
 
-//@Service
-//@EnableTransactionManagement
+@Service
+@EnableTransactionManagement
 public class ServiceCompany {
 	
 	private static org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(ServiceCompany.class);

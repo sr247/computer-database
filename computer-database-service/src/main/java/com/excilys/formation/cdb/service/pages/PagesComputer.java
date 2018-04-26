@@ -40,7 +40,6 @@ public class PagesComputer<T extends ModelBase> extends Pages<T> {
 		setOffset((currentPage.get() - 1) * stride);
 	}
 	
-	
 	@Override
 	public void next() throws ServiceManagerException {
 		numberOfElements = serviceComputer.getNumberOf();
@@ -53,7 +52,6 @@ public class PagesComputer<T extends ModelBase> extends Pages<T> {
 		setOffset((currentPage.get() - 1) * stride);
 	}
 
-	
 	@Override
 	public void preview() throws ServiceManagerException  {
 		numberOfElements = serviceComputer.getNumberOf();
@@ -84,5 +82,4 @@ public class PagesComputer<T extends ModelBase> extends Pages<T> {
 		numberOfElements = serviceComputer.getNumberOf();
 		return numberOfElements;
 	}
-	
 }

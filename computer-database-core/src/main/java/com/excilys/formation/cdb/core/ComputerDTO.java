@@ -1,13 +1,13 @@
 package com.excilys.formation.cdb.core;
 
 public class ComputerDTO extends ModelBase {
-	private int id;
+	private long id;
 	private String name;
 	private String introduced;
 	private String discontinued;
 	private String companyName;
 	
-	public ComputerDTO(int id, String name, String introduced, String discontinued, String companyName) {
+	public ComputerDTO(long id, String name, String introduced, String discontinued, String companyName) {
 		this.id = id;
 		this.name = name;
 		this.introduced = introduced;
@@ -24,84 +24,45 @@ public class ComputerDTO extends ModelBase {
 		this.companyName = companyName;
 	}
 	
-	/**
-	 * @return the id
-	 */
-	public int getId() {
+
+	public long getId() {
 		return id;
 	}
 
 
-	/**
-	 * @param id the id to set
-	 */
 	public void setId(int id) {
 		this.id = id;
 	}
 
 
-	/**
-	 * @return the name
-	 */
 	public String getName() {
 		return name;
 	}
 
-
-	/**
-	 * @param name the name to set
-	 */
 	public void setName(String name) {
 		this.name = name;
 	}
 
-
-	/**
-	 * @return the introduced
-	 */
 	public String getIntroduced() {
 		return introduced;
 	}
 
-
-	/**
-	 * @param introduced the introduced to set
-	 */
 	public void setIntroduced(String introduced) {
 		this.introduced = introduced;
 	}
 
-
-
-	/**
-	 * @return the discontinued
-	 */
 	public String getDiscontinued() {
 		return discontinued;
 	}
 
-
-
-	/**
-	 * @param discontinued the discontinued to set
-	 */
 	public void setDiscontinued(String discontinued) {
 		this.discontinued = discontinued;
 	}
 
-
-
-	/**
-	 * @return the company_id
-	 */
 	public String getCompanyName() {
 		return companyName;
 	}
 
-
-	/**
-	 * @param company_id the company_id to set
-	 */
 	public void setCompany(String companyName) {
 		this.companyName = companyName;
 	}

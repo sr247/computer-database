@@ -11,22 +11,22 @@ import com.excilys.formation.cdb.persistence.DAOException;
 import com.excilys.formation.cdb.core.Company;
 import com.excilys.formation.cdb.persistence.CompanyDB;
 
-@Service
-@EnableTransactionManagement
+//@Service
+//@EnableTransactionManagement
 public class ServiceCompany {
 	
 	private static org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(ServiceCompany.class);
 	private static final String SERVICE_COMPANY_EXCEPTION = "ServiceCompany: %s";
 	private static final String SERVICE_COMPANY_LOGGER = "ServiceCompany: {}";
 	
-	@Autowired
+//	@Autowired
 	private CompanyDB companyDB;
 	
 	private ServiceCompany() {}
 
-	public int getNumberOf() throws ServiceManagerException {
+	public Long getNumberOf() throws ServiceManagerException {
 		try {
-			return companyDB.getNumCompanies();			
+			return (long)companyDB.getNumCompanies();			
 		}catch(DAOException e) {
 			logger.error(SERVICE_COMPANY_LOGGER, e.getMessage(), e);
 			throw new ServiceManagerException(String.format(SERVICE_COMPANY_EXCEPTION, e.getMessage()), e);
@@ -65,14 +65,9 @@ public class ServiceCompany {
 		return optCompany.isPresent() ? optCompany.get() : null;
 	}	
 	
-//	public void deleteCompany(String id) throws ServiceManagerException {
-//		Company company = null;
-//		try {
-//			company  = getCompany(id);
+	public void deleteCompany(String id) throws ServiceManagerException {
+		Company company = null;
+		company  = getCompany(id);
 //			companyDB.delete(company);
-//		} catch (DAOException e) {
-//			logger.error(SERVICE_COMPANY_LOGGER, e.getClass().getSimpleName(), e.getMessage(), e);
-//			throw new ServiceManagerException(String.format(SERVICE_COMPANY_EXCEPTION, e.getMessage()), e);
-//		}
-//	}
+	}
 }

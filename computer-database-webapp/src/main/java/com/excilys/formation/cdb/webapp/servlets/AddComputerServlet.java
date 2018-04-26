@@ -77,7 +77,7 @@ public class AddComputerServlet extends HttpServlet {
 			String cpyFromSel = request.getParameter("companyId");
 			Company company = serviceCompany.getCompany(cpyFromSel);
 			Computer cmp = new Computer(computerName, introduced, discontinued, company);
-			serviceComputer.createComputer(cmp);
+//			serviceComputer.createComputer(cmp);
 			doGet(request, response);
 		} catch (Exception e) {
 			logger.debug("AddComputerServletException: {}", e.getMessage(), e);

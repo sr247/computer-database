@@ -20,7 +20,7 @@ public class ValidateComputer {
 	public void validate(Computer computer) throws ValidatorException {
 		checkName(Optional.ofNullable(computer.getName()));
 		checkDate(Optional.ofNullable(computer.getIntroduced()), Optional.ofNullable(computer.getDiscontinued()) );
-		checkCompany(Optional.ofNullable(computer.getCompany()));
+//		checkCompany(Optional.ofNullable(computer.getCompany()));
 	}
 	
 	public void checkIsNull(Optional<Computer> computer) throws ValidatorException {
@@ -44,14 +44,14 @@ public class ValidateComputer {
 		}
 	}
 	
-	private void checkCompany(Optional<Company> company) throws ValidatorException {
-		if(company.isPresent()) {			
-			if(!companyDB.getCompanyByID(company.get().getId()).isPresent()) {		
-				throw new InexistentEntityException("ValidatorException: Company not in database");
-			}
-		}else {
-			throw new InexistentEntityException("ValidatorException: Empty company field.");
-		}
-	}
+//	private void checkCompany(Optional<Company> company) throws ValidatorException {
+//		if(company.isPresent()) {			
+//			if(!companyDB.getCompanyByID(company.get().getId()).isPresent()) {		
+//				throw new InexistentEntityException("ValidatorException: Company not in database");
+//			}
+//		}else {
+//			throw new InexistentEntityException("ValidatorException: Empty company field.");
+//		}
+//	}
 
 }

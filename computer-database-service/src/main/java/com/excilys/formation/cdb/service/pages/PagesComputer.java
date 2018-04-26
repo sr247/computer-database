@@ -51,7 +51,6 @@ public class PagesComputer<T extends ModelBase> extends Pages<T> {
 				currentPage = Optional.of(numberOfPages);
 		}
 		setOffset((currentPage.get() - 1) * stride);
-		this.content = (List<T>) serviceComputer.getList(offset, stride);
 	}
 
 	
@@ -65,7 +64,6 @@ public class PagesComputer<T extends ModelBase> extends Pages<T> {
 				currentPage = Optional.of(1);
 		}
 		setOffset((currentPage.get() - 1) * stride);
-		this.content = (List<T>) serviceComputer.getList(offset, stride);
 	}
 
 	public void update() throws ServiceManagerException {
@@ -82,7 +80,7 @@ public class PagesComputer<T extends ModelBase> extends Pages<T> {
 	}
 
 	@Override
-	public int getNumberOfElements() throws ServiceManagerException {
+	public Long getNumberOfElements() throws ServiceManagerException {
 		numberOfElements = serviceComputer.getNumberOf();
 		return numberOfElements;
 	}

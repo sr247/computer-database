@@ -11,8 +11,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
-@Configuration
-@PropertySource("classpath:/datasource.properties")
+
 public class DataBaseConfig {
 
 	private static org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(DataBaseConfig.class);
@@ -20,7 +19,7 @@ public class DataBaseConfig {
 	@Resource
 	private Environment environment;
 	
-	@Bean
+//	@Bean
 	public DataSource dataSource() {
 //		DriverManagerDataSource driverManagerDataSource = new DriverManagerDataSource("jdbcUrl", "dataSource.username",
 //				"dataSource.password");
@@ -34,7 +33,7 @@ public class DataBaseConfig {
         return dataSource;
 	}
 
-	@Bean
+//	@Bean
 	public DataSourceTransactionManager txManager() {
 		return new DataSourceTransactionManager(dataSource());
 	}

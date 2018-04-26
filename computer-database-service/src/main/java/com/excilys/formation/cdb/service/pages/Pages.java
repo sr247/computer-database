@@ -17,7 +17,7 @@ public abstract class Pages<T extends ModelBase> {
 	protected static int offset = 0;
 	
 	protected Optional<Integer> currentPage = Optional.of(1);
-	protected int numberOfElements;
+	protected Long numberOfElements;
 	protected int numberOfPages;
 	protected int focus;
 	protected List<T> content;	
@@ -52,7 +52,7 @@ public abstract class Pages<T extends ModelBase> {
 		setOffset(0);
 		
 		currentPage = Optional.of(1);		
-		numberOfElements = 0;
+		numberOfElements = 0L;
 		numberOfPages = 0;
 		content = null;
 	}
@@ -87,7 +87,7 @@ public abstract class Pages<T extends ModelBase> {
 	
 	public abstract int getNumberOfPages() throws ServiceManagerException;
 	
-	public abstract int getNumberOfElements() throws ServiceManagerException;
+	public abstract Long getNumberOfElements() throws ServiceManagerException;
 
 	public abstract void goTo(int index) throws ServiceManagerException;
 	

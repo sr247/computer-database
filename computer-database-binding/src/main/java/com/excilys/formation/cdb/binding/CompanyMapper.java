@@ -28,7 +28,7 @@ public class CompanyMapper {
             if (res != null) {
 				int id = res.getInt("caId");
 				String name = res.getString("caName");
-				cpn = new Company(id, name);
+				cpn = new Company((long)id, name);
 			}
 		} catch (SQLException e) {
 			logger.error("CompanyMapperException: {}", e.getMessage(), e);

@@ -84,7 +84,7 @@ public class PagesCompany<T extends ModelBase> extends Pages<T> {
 	}
 
 	@Override
-	public int getNumberOfElements() throws ServiceManagerException {
+	public Long getNumberOfElements() throws ServiceManagerException {
 		numberOfElements = serviceCompany.getNumberOf();
 		return numberOfElements;
 	}

@@ -4,30 +4,32 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Table;
 
 
 @Entity
+@Table(name = "company")
 public class CompanyEntity {
 	
 	@Id
 	@GeneratedValue
 	@Column(name = "id")
-	private Integer id;
+	private Long id;
 	
 	@Column(name = "name")
 	private String name;
 
-	public CompanyEntity(Integer id, String name) {
+	public CompanyEntity(Long id, String name) {
 		super();
 		this.id = id;
 		this.name = name;
 	}
 
-	public Integer getId() {
+	public Long getId() {
 		return id;
 	}
 
-	public void setId(Integer id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 
@@ -42,7 +44,7 @@ public class CompanyEntity {
 	@Override
 	public int hashCode() {
 		final int prime = 31;
-		int result = 1;
+		int result = 7;
 		result = result << prime * result + ((id == null) ? 0 : id.hashCode());
 		result = result << prime * result + ((name == null) ? 0 : name.hashCode());
 		return result;

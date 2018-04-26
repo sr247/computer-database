@@ -11,8 +11,7 @@ import org.springframework.web.servlet.view.InternalResourceViewResolver;
 import org.springframework.web.servlet.view.JstlView;
 
 
-@Configuration
-@EnableWebMvc
+
 @ComponentScan(basePackages = { "com.excilys.formation.cdb.binding",
 		"com.excilys.formation.cdb.binding.row",
 		"com.excilys.formation.cdb.persistence",
@@ -25,7 +24,7 @@ public class SpringMvcConfig implements WebMvcConfigurer {
 	
 	private static org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(SpringMvcConfig.class);
 	
-	    @Bean
+//	    @Bean
 	    public ViewResolver viewResolver() {
 	        InternalResourceViewResolver bean = new InternalResourceViewResolver();
 	        bean.setViewClass(JstlView.class);

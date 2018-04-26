@@ -18,7 +18,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @Configuration
 @EnableTransactionManagement
-@EnableJpaRepositories("com.excilys.formation.cdb.persistence.jpa")
+@EnableJpaRepositories("com.excilys.formation.cdb.persistence.repositories")
 public class PersistenceJPAConfig {
 
 
@@ -55,7 +55,11 @@ public class PersistenceJPAConfig {
 		LocalContainerEntityManagerFactoryBean lemfb = new LocalContainerEntityManagerFactoryBean();
 		lemfb.setDataSource(dataSource());
 		lemfb.setJpaVendorAdapter(jpaVendorAdapter());
-		lemfb.setPackagesToScan("com.excilys.formation.cdb.core.entity", "com.excilys.formation.cdb.persistence.*");
+		lemfb.setPackagesToScan("com.excilys.formation.cdb.core.entity", 
+				"com.excilys.formation.cdb.persistence",
+				"com.excilys.formation.cdb.persistence.repositories",
+				"com.excilys.formation.cdb.binding",
+				"com.excilys.formation.cdb.binding.row");
 		return lemfb;
 	}
 }

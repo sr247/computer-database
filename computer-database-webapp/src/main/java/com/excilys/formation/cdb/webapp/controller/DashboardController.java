@@ -3,6 +3,7 @@ package com.excilys.formation.cdb.webapp.controller;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -15,6 +16,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.excilys.formation.cdb.binding.ComputerMapperDTO;
 import com.excilys.formation.cdb.core.ComputerDTO;
+import com.excilys.formation.cdb.core.entity.ComputerEntity;
 import com.excilys.formation.cdb.service.ServiceComputer;
 import com.excilys.formation.cdb.service.ServiceManagerException;
 import com.excilys.formation.cdb.service.pages.PagesComputer;
@@ -46,11 +48,13 @@ public class DashboardController {
 
     	logger.info(String.valueOf(pageUrlParam));
     	logger.info(String.valueOf(strideUrlParam));	
-    	
+    	Page<ComputerEntity> pageComputer = Page.empty();
+    	Page<ComputerDTO> mappedPageComputer = Page.empty();
 		try {
 			pagesComputer.setStride(strideUrlParam);
 			pagesComputer.goTo(pageUrlParam);
-			pagesComputer.setContent(computerMDTO.map(service.getList(pagesComputer.getOffset(), pagesComputer.getStride())));
+			pageComputer = service.getList(pagesComputer.getCurrentPage(), pagesComputer.getStride());
+			mappedPageComputer = pageComputer.map((ComputerEntity c)-> computerMDTO.map(c));
 		} catch (Exception e) {
 			logger.error(DASHBOARD_EXCEPTION, e.getMessage(), e);
 		}
@@ -61,7 +65,7 @@ public class DashboardController {
 		
     	logger.info("{}; {}; {}; {}; {}", pagesComputer.getOffset(), pagesComputer.getStride(), numberOfPages, currentPage, focus);
     	
-    	modelAndView.addObject("pagesComputer", pagesComputer);
+    	modelAndView.addObject("pageComputer", mappedPageComputer);
     	modelAndView.addObject("focus", focus);
         return modelAndView;
     }

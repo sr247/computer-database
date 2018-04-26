@@ -6,46 +6,62 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 
 @Entity
+@Table(name = "computer")
 public class ComputerEntity {
 
 	@Id
 	@GeneratedValue
 	@Column(name = "id")
 	private Long id;
+		
+	@Column(name ="name")
+	private String name;
 	
 	@Column(name = "introduced")
 	private LocalDate introduced;
-
+	
 	@Column(name = "discontinued")
 	private LocalDate discontinued;
 	
-	@Column(name = "company_id")
-	private Long companyId;
+	@ManyToOne
+	@JoinColumn(name = "company_id")
+	private CompanyEntity company;
 		
-
-	public ComputerEntity(LocalDate introduced, LocalDate discontinued, Long companyId) {
+	
+	public ComputerEntity(LocalDate introduced, LocalDate discontinued, CompanyEntity company) {
 		super();
 		this.introduced = introduced;
 		this.discontinued = discontinued;
-		this.companyId = companyId;
+		this.company = company;
 	}
 
-	public ComputerEntity(Long id, LocalDate introduced, LocalDate discontinued, Long companyId) {
+	public ComputerEntity(Long id, LocalDate introduced, LocalDate discontinued, CompanyEntity company) {
 		super();
 		this.id = id;
 		this.introduced = introduced;
 		this.discontinued = discontinued;
-		this.companyId = companyId;
+		this.company = company;
 	}
-
+	
 	public Long getId() {
 		return id;
 	}
 
 	public void setId(Long id) {
 		this.id = id;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	public LocalDate getIntroduced() {
@@ -64,19 +80,19 @@ public class ComputerEntity {
 		this.discontinued = discontinued;
 	}
 
-	public Long getCompanyId() {
-		return companyId;
+	public CompanyEntity getCompany() {
+		return company;
 	}
 
-	public void setCompanyId(Long companyId) {
-		this.companyId = companyId;
+	public void setCompany(CompanyEntity companyId) {
+		this.company = companyId;
 	}
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
-		int result = 1;
-		result = result << prime * result + ((companyId == null) ? 0 : companyId.hashCode());
+		int result = 5;
+		result = result << prime * result + ((company == null) ? 0 : company.hashCode());
 		result = result << prime * result + ((discontinued == null) ? 0 : discontinued.hashCode());
 		result = result << prime * result + ((id == null) ? 0 : id.hashCode());
 		result = result << prime * result + ((introduced == null) ? 0 : introduced.hashCode());
@@ -92,10 +108,10 @@ public class ComputerEntity {
 		if (getClass() != obj.getClass())
 			return false;
 		ComputerEntity other = (ComputerEntity) obj;
-		if (companyId == null) {
-			if (other.companyId != null)
+		if (company == null) {
+			if (other.company != null)
 				return false;
-		} else if (!companyId.equals(other.companyId))
+		} else if (!company.equals(other.company))
 			return false;
 		if (discontinued == null) {
 			if (other.discontinued != null)

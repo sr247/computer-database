@@ -62,7 +62,7 @@ public class EditComputerServlet extends HttpServlet {
 					
 				int id = Integer.parseInt(parameter);
 				logger.debug("EditComputerServletLogger: {}", id);
-				computer = computerMDTO.map(serviceComputer.getComputer(id));
+//				computer = computerMDTO.map(serviceComputer.getComputer(id));
 				List<CompanyDTO> companies = companyMDTO.map(serviceCompany.getAllList());
 				
 				request.setAttribute("idComputer", id);
@@ -86,7 +86,7 @@ public class EditComputerServlet extends HttpServlet {
 				int id = Integer.parseInt(parameter);
 				LocalDate introduced = null;
 				LocalDate discontinued = null;
-				computer = serviceComputer.getComputer(id);
+//				computer = serviceComputer.getComputer(id);
 			
 				if((attribute = Optional.ofNullable((String) request.getParameter("computerName"))).isPresent() ) {
 					computer.setName(attribute.get());
@@ -113,7 +113,7 @@ public class EditComputerServlet extends HttpServlet {
 					computer.setCompany(company);
 				}
 				
-				serviceComputer.updateComputer(computer);
+//				serviceComputer.updateComputer(computer);
 				doGet(request, response);
 				
 			} catch (Exception e) {

@@ -25,7 +25,8 @@
 hs_err_pid*
 /build/
 /bin/
-target
+/target/
+*/target/**
 
 # Idea xml configurations files
 .idea/
@@ -47,7 +48,6 @@ buildNumber.properties
 # Settings & project
 .project
 .settings/
-**/target
 **/.project
 **/.classpath
 **/.settings/

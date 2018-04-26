@@ -1,6 +1,7 @@
 com/excilys/formation/cdb/webapp/config/DataBaseConfig.class
 com/excilys/formation/cdb/webapp/controller/DashboardController.class
 com/excilys/formation/cdb/webapp/servlets/EditComputerServlet.class
+com/excilys/formation/cdb/webapp/config/PersistenceJPAConfig.class
 com/excilys/formation/cdb/webapp/config/SpringMvcConfig.class
 com/excilys/formation/cdb/webapp/servlets/DashboardServlet.class
 com/excilys/formation/cdb/webapp/config/ApplicationInitializer.class

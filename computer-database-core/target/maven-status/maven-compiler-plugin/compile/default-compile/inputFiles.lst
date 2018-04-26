@@ -1,5 +1,8 @@
 /home/excilys/Documents/computer-database-m2/computer-database/computer-database-core/src/main/java/com/excilys/formation/cdb/core/ModelBase.java
+/home/excilys/Documents/computer-database-m2/computer-database/computer-database-core/src/main/java/com/excilys/formation/cdb/core/entity/CompanyEntity.java
+/home/excilys/Documents/computer-database-m2/computer-database/computer-database-core/src/main/java/com/excilys/formation/cdb/core/PagesDTO.java
 /home/excilys/Documents/computer-database-m2/computer-database/computer-database-core/src/main/java/com/excilys/formation/cdb/core/ComputerDTO.java
 /home/excilys/Documents/computer-database-m2/computer-database/computer-database-core/src/main/java/com/excilys/formation/cdb/core/Company.java
 /home/excilys/Documents/computer-database-m2/computer-database/computer-database-core/src/main/java/com/excilys/formation/cdb/core/Computer.java
 /home/excilys/Documents/computer-database-m2/computer-database/computer-database-core/src/main/java/com/excilys/formation/cdb/core/CompanyDTO.java
+/home/excilys/Documents/computer-database-m2/computer-database/computer-database-core/src/main/java/com/excilys/formation/cdb/core/entity/ComputerEntity.java

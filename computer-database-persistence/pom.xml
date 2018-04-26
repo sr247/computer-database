@@ -33,7 +33,38 @@
 		<dependency>
 			<groupId>com.zaxxer</groupId>
 			<artifactId>HikariCP</artifactId>
-			<version>${hikariCP.version}</version>
+		</dependency>
+
+
+		<!-- Spring -->
+		<!-- Spring MVC for Servlet Environments (depends on spring-core, spring-beans, 
+			spring-context, spring-web) Define this if you use Spring MVC with a Servlet 
+			Container such as Apache Tomcat (org.springframework.web.servlet.*) -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-webmvc</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-jdbc</artifactId>
+		</dependency>
+		<!-- Spring Data JPA -->
+		<dependency>
+			<groupId>org.springframework.data</groupId>
+			<artifactId>spring-data-jpa</artifactId>
+		</dependency>
+		
+		<!-- hibernate persistence -->
+		<dependency>
+			<groupId>org.hibernate.javax.persistence</groupId>
+			<artifactId>hibernate-jpa-2.0-api</artifactId>
+		</dependency>
+
+		<!-- entity manager -->
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-entitymanager</artifactId>
 		</dependency>
 	</dependencies>
 

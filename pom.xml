@@ -46,7 +46,7 @@
 		<hikariCP.version>3.0.0</hikariCP.version>
 
 		<!-- Spring version -->
-		<springframework.version>5.0.4.RELEASE</springframework.version>
+		<springframework.version>5.0.5.RELEASE</springframework.version>
 
 		<!-- Spring Data JPA -->
 		<springdata.version>2.0.6.RELEASE</springdata.version>
@@ -54,7 +54,7 @@
 		<!-- Hibernate Entity Manager -->
 		<entitymanager.version>5.2.16.Final</entitymanager.version>
 		
-		<hibernate-persistence.version>1.0.1.Final</hibernate-persistence.version>
+		<hibernate-persistence.version>1.0.2.Final</hibernate-persistence.version>
 
 	</properties>
 
@@ -171,7 +171,7 @@
 			<!-- hibernate persistence -->
 			<dependency>
 				<groupId>org.hibernate.javax.persistence</groupId>
-				<artifactId>hibernate-jpa-2.0-api</artifactId>
+				<artifactId>hibernate-jpa-2.1-api</artifactId>
 				<version>${hibernate-persistence.version}</version>
 			</dependency>
 

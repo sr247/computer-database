@@ -6,18 +6,19 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-
 @Entity
 @Table(name = "company")
 public class CompanyEntity {
-	
+
 	@Id
 	@GeneratedValue
 	@Column(name = "id")
 	private Long id;
-	
+
 	@Column(name = "name")
 	private String name;
+
+	public CompanyEntity() {}
 
 	public CompanyEntity(Long id, String name) {
 		super();
@@ -71,8 +72,5 @@ public class CompanyEntity {
 			return false;
 		return true;
 	}
-	
-	
-	
 
 }

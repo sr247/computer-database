@@ -31,7 +31,8 @@ public class ComputerEntity {
 	@ManyToOne
 	@JoinColumn(name = "company_id")
 	private CompanyEntity company;
-		
+	
+	public ComputerEntity() {}
 	
 	public ComputerEntity(LocalDate introduced, LocalDate discontinued, CompanyEntity company) {
 		super();

@@ -2,17 +2,19 @@ package com.excilys.formation.cdb.webapp.config;
 
 import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
 
+import com.excilys.formation.cdb.persistence.config.DataSourceConfig;
+
 
 public class ApplicationInitializer extends AbstractAnnotationConfigDispatcherServletInitializer {
 
 	@Override
 	protected Class<?>[] getRootConfigClasses() {
-		 return new Class<?>[] { DataBaseConfig.class };
+		 return new Class<?>[] { PersistenceJPAConfig.class };
 	}
 
 	@Override
 	protected Class<?>[] getServletConfigClasses() {
-		return new Class<?>[] { SpringMvcConfig.class };
+		return new Class<?>[] { PersistenceJPAConfig.class };
 	}
 
 	@Override
@@ -26,7 +28,7 @@ public class ApplicationInitializer extends AbstractAnnotationConfigDispatcherSe
 //		servlet.setThrowExceptionIfNoHandlerFound(true);
 //		return servlet;
 //	}
-//
+	
 //	@Override
 //	protected void registerDispatcherServlet(ServletContext arg0) {
 //		super.registerDispatcherServlet(arg0);

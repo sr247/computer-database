@@ -30,22 +30,19 @@
 		<!-- encoders are assigned the type ch.qos.logback.classic.encoder.PatternLayoutEncoder 
 			by default -->
 		<encoder>
-			<pattern>%-4relative [%thread] %-5level %logger{35} - %msg%n
-			</pattern>
+			<pattern>%-4relative [%thread] %-5level %logger{35} - %msg%n</pattern>
 		</encoder>
 	</appender>
 
 	<!-- STDOUT appender -->
 	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
 		<encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
-			<pattern>%d{dd/MM/yyyy | HH:mm:ss.SSS} [%thread] %-5level %logger{30}
-				- %msg%n</pattern>
+			<pattern>%d{dd/MM/yyyy | HH:mm:ss.SSS} [%thread] %-5level %logger{30}- %msg%n</pattern>
 		</encoder>
 	</appender>
 
 	<logger name="com.zaxxer.hikari" additivity="false">
 		<level value="error" />
-		<appender-ref ref="FILE" />
 	</logger>
 
 	<logger name="org.springframework" additivity="false">
@@ -53,9 +50,9 @@
 		<appender-ref ref="FILE" />
 	</logger>
 
-	<logger name="org.springframework.data" additivity="false">
+
+	<logger name="org.hibernate" additivity="false">
 		<level level="error" />
-		<appender-ref ref="STDOUT" />
 	</logger>
 
 	<root level="debug">

@@ -33,9 +33,6 @@ public interface CompanyRepository extends CrudRepository<CompanyEntity, Long>, 
 	Page<CompanyEntity> findAll(Pageable arg0);
 
 	@Override
-	Iterable<CompanyEntity> findAll(Sort arg0);
-
-	@Override
 	void delete(CompanyEntity arg0);
 
 	@Override

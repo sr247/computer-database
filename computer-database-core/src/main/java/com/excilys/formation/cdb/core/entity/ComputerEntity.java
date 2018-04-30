@@ -10,9 +10,11 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import com.excilys.formation.cdb.core.ModelBase;
+
 @Entity
 @Table(name = "computer")
-public class ComputerEntity {
+public class ComputerEntity extends ModelBase{
 
 	@Id
 	@GeneratedValue
@@ -89,6 +91,29 @@ public class ComputerEntity {
 		this.company = companyId;
 	}
 
+	@Override 
+	public String toString() {
+		StringBuilder s = new StringBuilder();
+		return s.append("ComputerEntity:(")
+				.append("id=")
+				.append(id)
+				.append(", ")
+				.append("name=")
+				.append(name)
+				.append(", ")
+				.append("introduced=")
+				.append(introduced)
+				.append(", ")
+				.append("discontinued=")
+				.append(discontinued)
+				.append(", ")
+				.append("company=")
+				.append(company)
+				.append(")")
+				.toString();
+	}
+	
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;

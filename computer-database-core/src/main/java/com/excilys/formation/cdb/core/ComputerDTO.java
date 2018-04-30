@@ -7,6 +7,10 @@ public class ComputerDTO extends ModelBase {
 	private String discontinued;
 	private String companyName;
 	
+	public ComputerDTO() {
+		super();
+	}
+	
 	public ComputerDTO(long id, String name, String introduced, String discontinued, String companyName) {
 		this.id = id;
 		this.name = name;
@@ -70,7 +74,7 @@ public class ComputerDTO extends ModelBase {
 	@Override 
 	public String toString() {
 		StringBuilder s = new StringBuilder();
-		return s.append("Computer:(")
+		return s.append("ComputerDTO:(")
 				.append("id=")
 				.append(id)
 				.append(", ")

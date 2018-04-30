@@ -28,7 +28,7 @@ public class CompanyDTO extends ModelBase {
 
 		@Override
 		public String toString() {
-			return "Company:("
+			return "CompanyDTO:("
 					+ "id=" + id + ", "
 					+ "name=" + name + ")";
 		}

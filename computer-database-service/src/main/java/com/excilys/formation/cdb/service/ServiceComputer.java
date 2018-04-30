@@ -6,10 +6,12 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import com.excilys.formation.cdb.core.ComputerDTO;
+import com.excilys.formation.cdb.core.entity.CompanyEntity;
 import com.excilys.formation.cdb.core.entity.ComputerEntity;
+import com.excilys.formation.cdb.persistence.repositories.CompanyRepository;
 import com.excilys.formation.cdb.persistence.repositories.ComputerRepository;
 import com.excilys.formation.cdb.service.validator.ValidateComputer;
 import com.excilys.formation.cdb.service.validator.ValidatorException;
@@ -22,6 +24,7 @@ public class ServiceComputer {
 	private static final String SERVICE_COMPUTER_LOGGER = "ServiceComputer: {}";
 	
 	private ComputerRepository computerREP;
+	private CompanyRepository companyREP;
 	private ValidateComputer validateComputer;
 	
 	@Autowired
@@ -40,26 +43,32 @@ public class ServiceComputer {
 		return computer.isPresent() ? computer.get() : null;
 	}
 	
-	public Iterable<ComputerEntity> getAllList() {
-		return computerREP.findAll();
-	}
-	
 	public Page<ComputerEntity> getList(int page, int size) {
 		Page<ComputerEntity> computersPage;
-		Sort sort = Sort.by(new Sort.Order(Sort.Direction.ASC, "id"));
-		PageRequest pageable = PageRequest.of(page, size, sort);
+//		Sort sort = Sort.by(new Sort.Order(Sort.Direction.ASC, "id"));
+		PageRequest pageable = PageRequest.of(page, size);
+		computersPage = computerREP.findAll(pageable);				
+		return computersPage;
+	}
+	
+	public Page<ComputerEntity> getAllList() {
+		Page<ComputerEntity> computersPage;
+//		Sort sort = Sort.by(new Sort.Order(Sort.Direction.ASC, "id"));
+		PageRequest pageable = PageRequest.of(0, (int)computerREP.count());
 		computersPage = computerREP.findAll(pageable);				
 		return computersPage;
 	}
 		
-	public void createComputer(ComputerEntity cmp) throws ServiceManagerException {
+	public void createComputer(ComputerDTO cmp) throws ServiceManagerException {
 		try {
-			validateComputer.validate(cmp);
+			CompanyEntity company = companyREP.findByName(cmp.getCompanyName());
+			ComputerEntity computer = new ComputerEntity(cmp.getName(), cmp.getIntroduced(), cmp.getDiscontinued(), company);
+			validateComputer.validate(computer);
+			computerREP.save(computer);
 		} catch (ValidatorException e) {
 			logger.error(SERVICE_COMPUTER_LOGGER, e.getClass().getSimpleName(), e.getMessage(), e);
 			throw new ServiceManagerException(String.format(SERVICE_COMPUTER_EXCEPTION, e.getMessage()), e);
 		}
-		computerREP.save(cmp);
 	}
 	
 	public void updateComputer(ComputerEntity cmp) throws ServiceManagerException {
@@ -70,10 +79,10 @@ public class ServiceComputer {
 			logger.error(SERVICE_COMPUTER_LOGGER, e.getClass().getSimpleName(), e.getMessage(), e);
 			throw new ServiceManagerException(String.format(SERVICE_COMPUTER_EXCEPTION, e.getMessage()), e);
 		}
+		computerREP.save(cmp);
 	}
 	
 	public void deleteComputer(Long id) throws ServiceManagerException {
-		// Method orElseThrow de optional plus intéressante
 		if(computerREP.existsById(id)) {
 			computerREP.deleteById(id); 				
 		}

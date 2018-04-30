@@ -3,14 +3,20 @@ package com.excilys.formation.cdb.core;
 public class CompanyDTO extends ModelBase {
 
 		private Long id;
-		private String name;	
+		private String name;
 		
+		
+		
+		public CompanyDTO() {
+			super();
+		}
+
 		public CompanyDTO(Long id, String name) {
 			this.id = id;
 			this.name = name;
 		}
 		
-		public long getId() {
+		public Long getId() {
 			return id;
 		}
 
@@ -28,7 +34,7 @@ public class CompanyDTO extends ModelBase {
 
 		@Override
 		public String toString() {
-			return "Company:("
+			return "CompanyDTO:("
 					+ "id=" + id + ", "
 					+ "name=" + name + ")";
 		}
@@ -43,8 +49,7 @@ public class CompanyDTO extends ModelBase {
 		public int hashCode() {
 			int hash = this.getClass().getMethods().length;
 			hash = hash * 7 + id.intValue();
-			hash = hash * 11 + name.hashCode();
-			
+			hash = hash * 11 + name.hashCode();			
 			return hash;
 		}
 }

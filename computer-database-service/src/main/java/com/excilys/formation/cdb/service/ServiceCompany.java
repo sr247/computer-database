@@ -1,15 +1,15 @@
 package com.excilys.formation.cdb.service;
 
-import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
-import com.excilys.formation.cdb.persistence.DAOException;
-import com.excilys.formation.cdb.core.Company;
-import com.excilys.formation.cdb.persistence.CompanyDB;
+import com.excilys.formation.cdb.persistence.repositories.CompanyRepository;
+import com.excilys.formation.cdb.core.entity.CompanyEntity;
 
 @Service
 @EnableTransactionManagement
@@ -19,55 +19,44 @@ public class ServiceCompany {
 	private static final String SERVICE_COMPANY_EXCEPTION = "ServiceCompany: %s";
 	private static final String SERVICE_COMPANY_LOGGER = "ServiceCompany: {}";
 	
-//	@Autowired
-	private CompanyDB companyDB;
+	private CompanyRepository companyREP;
 	
-	private ServiceCompany() {}
+	@Autowired
+	public ServiceCompany(CompanyRepository companyREP) {
+		this.companyREP = companyREP;
+	}
+	
 
 	public Long getNumberOf() throws ServiceManagerException {
-		try {
-			return (long)companyDB.getNumCompanies();			
-		}catch(DAOException e) {
-			logger.error(SERVICE_COMPANY_LOGGER, e.getMessage(), e);
-			throw new ServiceManagerException(String.format(SERVICE_COMPANY_EXCEPTION, e.getMessage()), e);
-		}
+		return companyREP.count();			
 	}
 
-	public List<Company> getAllList() throws ServiceManagerException {
-		try {
-			return companyDB.getCompanyList();			
-		}catch(DAOException e) {
-			logger.error(SERVICE_COMPANY_LOGGER, e.getMessage(), e);
-			throw new ServiceManagerException(String.format(SERVICE_COMPANY_EXCEPTION, e.getMessage()), e);
-		}
+	public Page<CompanyEntity> getList(int page, int size) {
+		Page<CompanyEntity> computersPage;
+//		Sort sort = Sort.by(new Sort.Order(Sort.Direction.ASC, "id"));
+		PageRequest pageable = PageRequest.of(page, size);
+		computersPage = companyREP.findAll(pageable);				
+		return computersPage;
 	}
 	
-	public List<Company> getList(int limit, int offset) throws ServiceManagerException{
-		try {
-			if(limit == 0 && offset == 0) {
-				return companyDB.getCompanyList();
-			}
-			return companyDB.getCompanyList(limit, offset);			
-		}catch (DAOException e) {
-			logger.error(SERVICE_COMPANY_LOGGER, e.getMessage(), e);
-			throw new ServiceManagerException(String.format(SERVICE_COMPANY_EXCEPTION, e.getMessage()), e);
-		}
+	public Page<CompanyEntity> getAllList() {
+		Page<CompanyEntity> computersPage;
+//		Sort sort = Sort.by(new Sort.Order(Sort.Direction.ASC, "id"));
+		PageRequest pageable = PageRequest.of(0, (int)companyREP.count());
+		computersPage = companyREP.findAll(pageable);				
+		return computersPage;
 	}
 	
-	public Company getCompany(String id) throws ServiceManagerException {
-		Optional<Company> optCompany = Optional.empty();
-		try {
-			optCompany = companyDB.getCompanyByID(Integer.valueOf(id));
-		}catch(NumberFormatException e) {
-			logger.error(SERVICE_COMPANY_LOGGER, e.getMessage(), e);
-			throw new ServiceManagerException(String.format(SERVICE_COMPANY_EXCEPTION, e.getMessage()), e);
-		}
-		return optCompany.isPresent() ? optCompany.get() : null;
-	}	
 	
-	public void deleteCompany(String id) throws ServiceManagerException {
-		Company company = null;
-		company  = getCompany(id);
-//			companyDB.delete(company);
+	public CompanyEntity getCompany(Long id) {
+		Optional<CompanyEntity> company;
+		company = companyREP.findById(id);
+		return company.isPresent() ? company.get() : null;
+	}
+	
+	public void deleteCompany(Long id) throws ServiceManagerException {
+		if(companyREP.existsById(id)) {
+			companyREP.deleteById(id); 				
+		}
 	}
 }

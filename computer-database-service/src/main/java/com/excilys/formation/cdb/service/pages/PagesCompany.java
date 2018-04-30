@@ -30,51 +30,21 @@ public class PagesCompany<T extends ModelBase> extends Pages<T> {
 	public void goTo(int index) throws ServiceManagerException {
 		numberOfElements = serviceCompany.getNumberOf();
 		numberOfPages = (int) Math.ceil((double)numberOfElements / (double) stride);
-		if(index <= 1) {
-			currentPage = Optional.of(1);
-		}else if(index > 1 && index < numberOfPages) {
+		if(index <= 0) {
+			currentPage = Optional.of(0);
+		}else if(index > 0 && index < numberOfPages) {
 			currentPage = Optional.of(index);
 		} else if(index >= numberOfPages) {
 			currentPage = Optional.of(numberOfPages);
 		}
-		offset = (currentPage.get()-1) * stride;
-		this.content = (List<T>) serviceCompany.getList(offset, stride);
-	}
-	
-	
-	@Override
-	public void next() throws ServiceManagerException  {
-		numberOfElements = serviceCompany.getNumberOf();
-		numberOfPages = (int) Math.ceil((double)numberOfElements / (double) stride);
-				
-		if(currentPage.isPresent()) {
-			currentPage = Optional.of(currentPage.get() + 1);
-			if(currentPage.get() > numberOfPages) 
-				currentPage = Optional.of(numberOfPages);
-		}
-		offset = (currentPage.get()-1) * stride;
-		this.content = (List<T>) serviceCompany.getList(offset, stride);
-	}
-	
-
-	@Override
-	public void preview() throws ServiceManagerException  {
-		numberOfElements = serviceCompany.getNumberOf();
-		numberOfPages = (int) Math.ceil((double)numberOfElements / (double) stride);
-		
-		if(currentPage.isPresent()) {
-			currentPage = Optional.of(currentPage.get()-1);
-			if(currentPage.get() < 2) 
-				currentPage = Optional.of(1);
-		}
-		offset = (currentPage.get()-1) * stride;
-		this.content = (List<T>) serviceCompany.getList(offset, stride);
+		setOffset((currentPage.get() - 1) * stride);
 	}
 
-//	public void update() throws ServiceManagerException {
-//		numberOfElements = serviceCompany.getNumberOf();
-//		numberOfPages = (int) Math.ceil((double)numberOfElements / (double) stride);
-//	}
+
+	public void update() throws ServiceManagerException {
+		numberOfElements = serviceCompany.getNumberOf();
+		numberOfPages = (int) Math.ceil((double)numberOfElements / (double) stride);
+	}
 
 	@Override
 	public int getNumberOfPages() throws ServiceManagerException {
@@ -87,8 +57,6 @@ public class PagesCompany<T extends ModelBase> extends Pages<T> {
 	public Long getNumberOfElements() throws ServiceManagerException {
 		numberOfElements = serviceCompany.getNumberOf();
 		return numberOfElements;
-	}
-
-	
+	}	
 
 }

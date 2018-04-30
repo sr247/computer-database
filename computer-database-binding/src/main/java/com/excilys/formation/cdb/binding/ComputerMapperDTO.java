@@ -9,11 +9,14 @@ import org.springframework.stereotype.Component;
 import com.excilys.formation.cdb.core.CompanyDTO;
 import com.excilys.formation.cdb.core.Computer;
 import com.excilys.formation.cdb.core.ComputerDTO;
+import com.excilys.formation.cdb.core.entity.CompanyEntity;
 import com.excilys.formation.cdb.core.entity.ComputerEntity;
 
 @Component
 public class ComputerMapperDTO {
-
+	
+	private static org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(ComputerMapperDTO.class);
+	
 	@Autowired
 	private CompanyMapperDTO companyMDTO;
 
@@ -31,9 +34,7 @@ public class ComputerMapperDTO {
 		String name = computer.getName() == null ? "" : computer.getName();
 		String intro = computer.getIntroduced() == null ? "" : computer.getIntroduced().toString();
 		String discon = computer.getDiscontinued() == null ? "" : computer.getDiscontinued().toString();
-
-		CompanyDTO companyTmp = companyMDTO.map(computer.getCompany());
-		String company = companyTmp == null ? "" : companyTmp.getName();
+		CompanyDTO company = companyMDTO.map(computer.getCompany());
 
 		return new ComputerDTO(id, name, intro, discon, company);
 	}
@@ -43,10 +44,8 @@ public class ComputerMapperDTO {
 		String name = computer.getName() == null ? "" : computer.getName();
 		String intro = computer.getIntroduced() == null ? "" : computer.getIntroduced().toString();
 		String discon = computer.getDiscontinued() == null ? "" : computer.getDiscontinued().toString();
-
-		CompanyDTO companyTmp = companyMDTO.map(computer.getCompany());
-		String company = companyTmp == null ? "" : companyTmp.getName();
-
+		CompanyDTO company = companyMDTO.map(computer.getCompany());
+	
 		return new ComputerDTO(id, name, intro, discon, company);
 	}
 

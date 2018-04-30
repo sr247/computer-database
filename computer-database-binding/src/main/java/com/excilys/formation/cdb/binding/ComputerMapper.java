@@ -10,8 +10,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.excilys.formation.cdb.core.Company;
-import com.excilys.formation.cdb.core.CompanyDTO;
 import com.excilys.formation.cdb.core.Computer;
+import com.excilys.formation.cdb.core.ComputerDTO;
+import com.excilys.formation.cdb.core.entity.CompanyEntity;
 import com.excilys.formation.cdb.core.entity.ComputerEntity;
 
 /**
@@ -46,6 +47,5 @@ public class ComputerMapper {
 			throw e;
 		}
 		return Optional.ofNullable(cmp);
-	}
-	
+	}	
 }

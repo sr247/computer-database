@@ -6,14 +6,16 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import com.excilys.formation.cdb.core.ModelBase;
+
 @Entity
 @Table(name = "company")
-public class CompanyEntity {
+public class CompanyEntity extends ModelBase {
 
 	@Id
 	@GeneratedValue
 	@Column(name = "id")
-	private Long id;
+	private long id;
 
 	@Column(name = "name")
 	private String name;
@@ -41,12 +43,27 @@ public class CompanyEntity {
 	public void setName(String name) {
 		this.name = name;
 	}
+	
 
+	@Override 
+	public String toString() {
+		StringBuilder s = new StringBuilder();
+		return s.append("ComputerEntity:(")
+				.append("id=")
+				.append(id)
+				.append(", ")
+				.append("name=")
+				.append(name)
+				.append(")")
+				.toString();
+	}
+	
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 7;
-		result = result << prime * result + ((id == null) ? 0 : id.hashCode());
+		result = result << prime * result + (int) id;
 		result = result << prime * result + ((name == null) ? 0 : name.hashCode());
 		return result;
 	}
@@ -60,10 +77,7 @@ public class CompanyEntity {
 		if (getClass() != obj.getClass())
 			return false;
 		CompanyEntity other = (CompanyEntity) obj;
-		if (id == null) {
-			if (other.id != null)
-				return false;
-		} else if (!id.equals(other.id))
+		if (id != other.id)
 			return false;
 		if (name == null) {
 			if (other.name != null)

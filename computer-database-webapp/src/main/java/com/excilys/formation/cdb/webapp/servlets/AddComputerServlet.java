@@ -50,8 +50,8 @@ public class AddComputerServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		try {
 			response.getWriter().append("Served at: ").append(request.getContextPath());
-			List<CompanyDTO> companies = companyMDTO.map(serviceCompany.getAllList());
-			request.setAttribute("companies", companies);
+//			List<CompanyDTO> companies = companyMDTO.map(serviceCompany.getAllList());
+//			request.setAttribute("companies", companies);
 			this.getServletContext().getRequestDispatcher("/WEB-INF/addComputer.jsp").forward(request, response);
 		} catch (Exception e) {
 			logger.debug("AddComputerServletException: {}", e.getMessage(), e);
@@ -75,8 +75,8 @@ public class AddComputerServlet extends HttpServlet {
 			}
 			
 			String cpyFromSel = request.getParameter("companyId");
-			Company company = serviceCompany.getCompany(cpyFromSel);
-			Computer cmp = new Computer(computerName, introduced, discontinued, company);
+//			Company company = serviceCompany.getCompany(cpyFromSel);
+//			Computer cmp = new Computer(computerName, introduced, discontinued, company);
 //			serviceComputer.createComputer(cmp);
 			doGet(request, response);
 		} catch (Exception e) {

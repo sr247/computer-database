@@ -10,14 +10,16 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import com.excilys.formation.cdb.core.ModelBase;
+
 @Entity
 @Table(name = "computer")
-public class ComputerEntity {
+public class ComputerEntity extends ModelBase{
 
 	@Id
 	@GeneratedValue
 	@Column(name = "id")
-	private Long id;
+	private long id;
 		
 	@Column(name ="name")
 	private String name;
@@ -34,14 +36,15 @@ public class ComputerEntity {
 	
 	public ComputerEntity() {}
 	
-	public ComputerEntity(LocalDate introduced, LocalDate discontinued, CompanyEntity company) {
+	public ComputerEntity(String name, LocalDate introduced, LocalDate discontinued, CompanyEntity company) {
 		super();
+		this.name = name;
 		this.introduced = introduced;
 		this.discontinued = discontinued;
 		this.company = company;
 	}
 
-	public ComputerEntity(Long id, LocalDate introduced, LocalDate discontinued, CompanyEntity company) {
+	public ComputerEntity(long id, LocalDate introduced, LocalDate discontinued, CompanyEntity company) {
 		super();
 		this.id = id;
 		this.introduced = introduced;
@@ -49,11 +52,11 @@ public class ComputerEntity {
 		this.company = company;
 	}
 	
-	public Long getId() {
+	public long getId() {
 		return id;
 	}
 
-	public void setId(Long id) {
+	public void setId(long id) {
 		this.id = id;
 	}
 
@@ -89,13 +92,36 @@ public class ComputerEntity {
 		this.company = companyId;
 	}
 
+	@Override 
+	public String toString() {
+		StringBuilder s = new StringBuilder();
+		return s.append("ComputerEntity:(")
+				.append("id=")
+				.append(id)
+				.append(", ")
+				.append("name=")
+				.append(name)
+				.append(", ")
+				.append("introduced=")
+				.append(introduced)
+				.append(", ")
+				.append("discontinued=")
+				.append(discontinued)
+				.append(", ")
+				.append("company=")
+				.append(company)
+				.append(")")
+				.toString();
+	}
+	
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 5;
 		result = result << prime * result + ((company == null) ? 0 : company.hashCode());
 		result = result << prime * result + ((discontinued == null) ? 0 : discontinued.hashCode());
-		result = result << prime * result + ((id == null) ? 0 : id.hashCode());
+		result = result << prime * result + (int) id;
 		result = result << prime * result + ((introduced == null) ? 0 : introduced.hashCode());
 		return result;
 	}
@@ -119,10 +145,7 @@ public class ComputerEntity {
 				return false;
 		} else if (!discontinued.equals(other.discontinued))
 			return false;
-		if (id == null) {
-			if (other.id != null)
-				return false;
-		} else if (!id.equals(other.id))
+		if (id != other.id)
 			return false;
 		if (introduced == null) {
 			if (other.introduced != null)

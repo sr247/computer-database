@@ -12,6 +12,8 @@ import com.excilys.formation.cdb.core.entity.CompanyEntity;
 @Component
 public class CompanyMapperDTO {
 	
+	private static org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(CompanyMapperDTO.class);
+	
     public CompanyDTO map(Company company) {
 		return new CompanyDTO(company.getId(), company.getName());
 	}    
@@ -26,7 +28,9 @@ public class CompanyMapperDTO {
 	}    
     
     public CompanyDTO map(CompanyEntity company) {
-		return new CompanyDTO(company.getId(), company.getName());		
+    	String companyName = company.getName();
+    	long id = company.getId();
+		return new CompanyDTO(id, companyName);		
 	}   
 
 }

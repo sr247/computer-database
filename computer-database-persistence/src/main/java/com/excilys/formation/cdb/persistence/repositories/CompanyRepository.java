@@ -14,14 +14,14 @@ import com.excilys.formation.cdb.core.entity.CompanyEntity;
 @Repository
 public interface CompanyRepository extends CrudRepository<CompanyEntity, Long>, PagingAndSortingRepository<CompanyEntity, Long>  {
 
-	@Override
-	public Optional<CompanyEntity> findById(Long arg0);
 
 	@Override
 	public long count();
 
 	@Override
 	public boolean existsById(Long arg0);
+
+	public Optional<CompanyEntity> findById(long arg0);
 	
 	@Override
 	public Iterable<CompanyEntity> findAllById(Iterable<Long> arg0);
@@ -31,9 +31,6 @@ public interface CompanyRepository extends CrudRepository<CompanyEntity, Long>, 
 
 	@Override
 	Page<CompanyEntity> findAll(Pageable arg0);
-
-	@Override
-	Iterable<CompanyEntity> findAll(Sort arg0);
 
 	@Override
 	void delete(CompanyEntity arg0);
@@ -53,6 +50,6 @@ public interface CompanyRepository extends CrudRepository<CompanyEntity, Long>, 
 	@Override
 	<S extends CompanyEntity> Iterable<S> saveAll(Iterable<S> arg0);
 	
-	
-	
+	public Optional<CompanyEntity> findByName(String name);
+		
 }

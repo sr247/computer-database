@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
-	
+
 	<!--Rolling file appender -->
 	<appender name="FIX_WINDOW_BASED_FILE"
 		class="ch.qos.logback.core.rolling.RollingFileAppender">
@@ -34,22 +34,27 @@
 		</encoder>
 	</appender>
 
-    <!-- STDOUT appender -->
-    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
-        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
-            <pattern>%d{dd/MM/yyyy | HH:mm:ss.SSS} [%thread] %-5level %logger{30} - %msg%n</pattern>
-        </encoder>
+	<!-- STDOUT appender -->
+	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+			<pattern>%d{dd/MM/yyyy | HH:mm:ss.SSS} [%thread] %-5level %logger{30} - %msg%n</pattern>
+		</encoder>
 	</appender>
-	
+
 	<logger name="com.zaxxer.hikari" additivity="false">
 		<level value="error" />
-		<appender-ref ref="FILE" />
 	</logger>
-	
-	<logger name="org.springframework" additivity="false">
+
+	<logger name="org.springframework.data" additivity="false">
 		<level level="error" />
-		<appender-ref ref="FILE" />
-	</logger>	
+		<appender-ref ref="STDOUT" />
+	</logger>
+
+
+	<logger name="org.hibernate.javax.persistence" additivity="false">
+		<level level="error" />
+		<appender-ref ref="STDOUT" />
+	</logger>
 
 	<root level="debug">
 		<appender-ref ref="FIX_WINDOW_BASED_FILE" />

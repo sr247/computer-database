@@ -18,7 +18,7 @@ public class CompanyRowMapper implements RowMapper<Optional<Company>> {
 		try {
 			int idCompany = res.getInt("id");
 			String name = res.getString("name");
-			company = new Company(idCompany, name);
+			company = new Company((long)idCompany, name);
 		} catch (SQLException e) {
 			logger.error("CompanyRowMapperException: {}", e.getMessage(), e);
 			throw e;

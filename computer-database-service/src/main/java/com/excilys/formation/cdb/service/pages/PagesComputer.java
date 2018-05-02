@@ -30,45 +30,17 @@ public class PagesComputer<T extends ModelBase> extends Pages<T> {
 	public void goTo(int index) throws ServiceManagerException {
 		numberOfElements = serviceComputer.getNumberOf();
 		numberOfPages = (int) Math.ceil((double) numberOfElements / (double) stride);
-		if(index <= 1) {
-			currentPage = Optional.of(1);
-		}else if(index > 1 && index < numberOfPages) {
+		if(index <= 0) {
+			currentPage = Optional.of(0);
+		}else if(index > 0 && index < numberOfPages) {
 			currentPage = Optional.of(index);
-		} else if(index >= numberOfPages) {
+		} else {
 			currentPage = Optional.of(numberOfPages);
 		}
 		setOffset((currentPage.get() - 1) * stride);
 	}
 	
-	
-	@Override
-	public void next() throws ServiceManagerException {
-		numberOfElements = serviceComputer.getNumberOf();
-		numberOfPages = (int) Math.ceil((double) numberOfElements / (double) stride);
-		if(currentPage.isPresent()) {
-			currentPage = Optional.of(currentPage.get() + 1);
-			if(currentPage.get() > numberOfPages) 
-				currentPage = Optional.of(numberOfPages);
-		}
-		setOffset((currentPage.get() - 1) * stride);
-		this.content = (List<T>) serviceComputer.getList(offset, stride);
-	}
-
-	
-	@Override
-	public void preview() throws ServiceManagerException  {
-		numberOfElements = serviceComputer.getNumberOf();
-		numberOfPages = (int) Math.ceil((double)numberOfElements / (double) stride);
-		if(currentPage.isPresent()) {
-			currentPage = Optional.of(currentPage.get() - 1);
-			if(currentPage.get() < 2 ) 
-				currentPage = Optional.of(1);
-		}
-		setOffset((currentPage.get() - 1) * stride);
-		this.content = (List<T>) serviceComputer.getList(offset, stride);
-	}
-
-	public void update() throws ServiceManagerException {
+	public void update() {
 		numberOfElements = serviceComputer.getNumberOf();
 		numberOfPages = (int) Math.ceil((double)numberOfElements / (double) stride);
 	}
@@ -77,14 +49,13 @@ public class PagesComputer<T extends ModelBase> extends Pages<T> {
 	public int getNumberOfPages() throws ServiceManagerException {
 		numberOfElements = serviceComputer.getNumberOf();
 		numberOfPages = (int) Math.ceil((double)numberOfElements / (double) stride);
-		logger.info("\nNumber of pages in PagesComputer : {}\nNumber of Elements: {}", numberOfPages, numberOfElements);
+		logger.info("Number of pages in PagesComputer : {}\nNumber of Elements: {}", numberOfPages, numberOfElements);
 		return numberOfPages;
 	}
 
 	@Override
-	public int getNumberOfElements() throws ServiceManagerException {
+	public Long getNumberOfElements() throws ServiceManagerException {
 		numberOfElements = serviceComputer.getNumberOf();
 		return numberOfElements;
 	}
-	
 }

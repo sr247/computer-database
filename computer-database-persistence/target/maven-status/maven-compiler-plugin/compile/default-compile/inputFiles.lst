@@ -1,8 +1,0 @@
-/home/excilys/Documents/computer-database-m2/computer-database/computer-database-persistence/src/main/java/com/excilys/formation/cdb/persistence/NumberOfInstanceException.java
-/home/excilys/Documents/computer-database-m2/computer-database/computer-database-persistence/src/main/java/com/excilys/formation/cdb/persistence/InstanceNotInDatabaseException.java
-/home/excilys/Documents/computer-database-m2/computer-database/computer-database-persistence/src/main/java/com/excilys/formation/cdb/persistence/DAOException.java
-/home/excilys/Documents/computer-database-m2/computer-database/computer-database-persistence/src/main/java/com/excilys/formation/cdb/persistence/CompanyDB.java
-/home/excilys/Documents/computer-database-m2/computer-database/computer-database-persistence/src/main/java/com/excilys/formation/cdb/persistence/DataSource.java
-/home/excilys/Documents/computer-database-m2/computer-database/computer-database-persistence/src/main/java/com/excilys/formation/cdb/persistence/ConnexionDB.java
-/home/excilys/Documents/computer-database-m2/computer-database/computer-database-persistence/src/main/java/com/excilys/formation/cdb/persistence/ModifyDatabaseException.java
-/home/excilys/Documents/computer-database-m2/computer-database/computer-database-persistence/src/main/java/com/excilys/formation/cdb/persistence/ComputerDB.java

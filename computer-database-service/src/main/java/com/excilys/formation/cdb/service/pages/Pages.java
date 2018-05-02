@@ -16,8 +16,8 @@ public abstract class Pages<T extends ModelBase> {
 	protected static int stride = 10;
 	protected static int offset = 0;
 	
-	protected Optional<Integer> currentPage = Optional.of(1);
-	protected int numberOfElements;
+	protected Optional<Integer> currentPage = Optional.of(0);
+	protected Long numberOfElements;
 	protected int numberOfPages;
 	protected int focus;
 	protected List<T> content;	
@@ -41,18 +41,18 @@ public abstract class Pages<T extends ModelBase> {
 	}
 	
 	public void setCurrentPage(int currentPage) {
-		if(currentPage >= 1 && currentPage <= numberOfPages)
+		if(currentPage >= 0 && currentPage <= numberOfPages)
 			this.currentPage = Optional.of(currentPage);
 		else
-			this.currentPage = Optional.of(1);
+			this.currentPage = Optional.of(0);
 	}
 	
 	public void reset() {
 		setStride(10);
 		setOffset(0);
 		
-		currentPage = Optional.of(1);		
-		numberOfElements = 0;
+		currentPage = Optional.of(0);		
+		numberOfElements = 0L;
 		numberOfPages = 0;
 		content = null;
 	}
@@ -87,12 +87,9 @@ public abstract class Pages<T extends ModelBase> {
 	
 	public abstract int getNumberOfPages() throws ServiceManagerException;
 	
-	public abstract int getNumberOfElements() throws ServiceManagerException;
+	public abstract Long getNumberOfElements() throws ServiceManagerException;
 
 	public abstract void goTo(int index) throws ServiceManagerException;
 	
-	public abstract void next() throws ServiceManagerException;
-	
-	public abstract void preview() throws ServiceManagerException;
 	
 }

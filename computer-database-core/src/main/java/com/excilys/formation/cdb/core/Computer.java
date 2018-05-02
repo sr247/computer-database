@@ -11,10 +11,6 @@ public class Computer extends ModelBase {
 
 	// Ce champ deviendra un objet company à part entière.
 	private Company company;
-	/*
-	 * Fonctionnalité  1 à tester immédiatement 
-	 * vérifier le lien avec JDBC (persitance)
-	 */
 
 	public Computer(int id, String name, LocalDate introduced, LocalDate discontinued, Company company) {
 		this.id = id;
@@ -24,7 +20,6 @@ public class Computer extends ModelBase {
 		this.company = company;
 	}
 	
-
 	public Computer(String name, LocalDate introduced, LocalDate discontinued, Company company) {
 		this.id = 0;
 		this.name = name;
@@ -33,90 +28,50 @@ public class Computer extends ModelBase {
 		this.company = company;
 	}
 	
-	/**
-	 * @return the id
-	 */
 	public int getId() {
 		return id;
 	}
 
 
-
-	/**
-	 * @param id the id to set
-	 */
 	public void setId(int id) {
 		this.id = id;
 	}
 
 
-
-	/**
-	 * @return the name
-	 */
 	public String getName() {
 		return name;
 	}
 
 
-
-	/**
-	 * @param name the name to set
-	 */
 	public void setName(String name) {
 		this.name = name;
 	}
 
 
-
-	/**
-	 * @return the introduced
-	 */
 	public LocalDate getIntroduced() {
 		return introduced;
 	}
 
-
-
-	/**
-	 * @param introduced the introduced to set
-	 */
 	public void setIntroduced(LocalDate introduced) {
 		this.introduced = introduced;
 	}
 
 
-
-	/**
-	 * @return the discontinued
-	 */
 	public LocalDate getDiscontinued() {
 		return discontinued;
 	}
 
 
-
-	/**
-	 * @param discontinued the discontinued to set
-	 */
 	public void setDiscontinued(LocalDate discontinued) {
 		this.discontinued = discontinued;
 	}
 
 
-
-	/**
-	 * @return the company_id
-	 */
 	public Company getCompany() {
 		return company;
 	}
 
 
-
-	/**
-	 * @param company_id the company_id to set
-	 */
 	public void setCompany(Company company) {
 		this.company = company;
 	}
@@ -129,7 +84,6 @@ public class Computer extends ModelBase {
 				+ "introduced=" + introduced + ", "
 				+ "discontinued=" + discontinued + ", "
 				+ "company=" + company + ")";
-		
 	}
 	
 	@Override
@@ -140,6 +94,5 @@ public class Computer extends ModelBase {
 				&& this.introduced == cmp.introduced
 				&& this.discontinued == cmp.discontinued
 				&& this.company == cmp.company;
-		
 	}
 }

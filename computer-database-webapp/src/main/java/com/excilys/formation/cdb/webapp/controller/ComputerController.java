@@ -13,8 +13,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.excilys.formation.cdb.binding.CompanyMapperDTO;
-import com.excilys.formation.cdb.binding.ComputerMapper;
 import com.excilys.formation.cdb.binding.ComputerMapperDTO;
+import com.excilys.formation.cdb.core.CompanyDTO;
 import com.excilys.formation.cdb.core.ComputerDTO;
 import com.excilys.formation.cdb.core.entity.CompanyEntity;
 import com.excilys.formation.cdb.core.entity.ComputerEntity;
@@ -24,9 +24,9 @@ import com.excilys.formation.cdb.service.ServiceManagerException;
 import com.excilys.formation.cdb.service.pages.PagesComputer;
 
 @Controller
-public class DashboardController {
+public class ComputerController {
 
-	private final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(DashboardController.class);
+	private final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(ComputerController.class);
 	private static final String DASHBOARD_EXCEPTION = "DashBoardControllerException: {}";
 	private final int CENTER_VALUE = 2;
 
@@ -35,12 +35,10 @@ public class DashboardController {
 	private ServiceCompany serviceCompany;
 	private ComputerMapperDTO computerMDTO;
 	private CompanyMapperDTO companyMDTO;
-	private ComputerMapper computerMap;
 
 	@Autowired
-	public DashboardController(PagesComputer<ComputerDTO> pages, 
+	public ComputerController(PagesComputer<ComputerDTO> pages, 
 			ComputerMapperDTO computerMDTO,
-			ComputerMapper computerMap,
 			CompanyMapperDTO companyMDTO,
 			ServiceComputer serviceComputer,
 			ServiceCompany serviceCompany) {
@@ -48,8 +46,7 @@ public class DashboardController {
 		this.serviceComputer = serviceComputer;
 		this.serviceCompany = serviceCompany;
 		this.computerMDTO = computerMDTO;
-		this.computerMap = computerMap;
-		this.companyMDTO = companyMDTO;
+		this.companyMDTO= companyMDTO;
 	}
 
 	@GetMapping("/dashboard")
@@ -101,22 +98,24 @@ public class DashboardController {
 	public ModelAndView add() {
 		ModelAndView modelAndView = new ModelAndView();
 		try {
-			Page<CompanyEntity> pageCompany = serviceCompany.getAllList();
+			Page<CompanyEntity> page= serviceCompany.getAllList();
+			Page<CompanyDTO> pageCompany = page.map((CompanyEntity c) -> companyMDTO.map(c));
+			modelAndView.addObject("ComputerDTO", new ComputerDTO());
 			modelAndView.addObject("companies", pageCompany.getContent());
 		} catch (Exception e) {
-			logger.debug("AddComputerServletException: {}", e.getMessage(), e);
+			logger.error("AddComputerGet: {}", e.getMessage(), e);
 		}
 		return modelAndView;
 	}
 
 	@PostMapping("/addComputer")
-	public ModelAndView postAdd(@ModelAttribute("ComputerDTO") ComputerDTO cmp) {
+	public ModelAndView postAdd(@ModelAttribute("ComputerDTO") ComputerDTO computer) {
 		ModelAndView modelAndView = new ModelAndView();
-		logger.info("{}", cmp);
+		logger.info("{}", computer);
 		try {
-			serviceComputer.createComputer(cmp);
+			serviceComputer.createComputer(computer);
 		} catch (ServiceManagerException e) {
-			logger.error("{}", e.getMessage(), e);
+			logger.error("AddComputerPost: {}", e.getMessage(), e);
 			modelAndView = new ModelAndView();
 			modelAndView.setViewName("redirect:500");
 		}

@@ -26,6 +26,7 @@ hs_err_pid*
 /build/
 /bin/
 /target/
+*/target/**
 
 # Idea xml configurations files
 .idea/
@@ -45,10 +46,9 @@ buildNumber.properties
 .mvn/timing.properties
 
 # Settings & project
-.project*
+.project
 .settings/
-/computer-database-*/target/*
-computer-database-*/.project
-computer-database-*/.classpath
-computer-database-*/.settings/
+**/.project
+**/.classpath
+**/.settings/
 

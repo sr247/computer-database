@@ -2,7 +2,6 @@ package com.excilys.formation.cdb.webapp.servlets;
 
 import java.io.IOException;
 import java.time.LocalDate;
-import java.util.List;
 import java.util.Optional;
 
 import javax.servlet.ServletConfig;
@@ -18,8 +17,6 @@ import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
 import com.excilys.formation.cdb.binding.CompanyMapperDTO;
 import com.excilys.formation.cdb.binding.ComputerMapperDTO;
-import com.excilys.formation.cdb.core.Company;
-import com.excilys.formation.cdb.core.CompanyDTO;
 import com.excilys.formation.cdb.core.Computer;
 import com.excilys.formation.cdb.core.ComputerDTO;
 import com.excilys.formation.cdb.service.ServiceCompany;
@@ -62,12 +59,12 @@ public class EditComputerServlet extends HttpServlet {
 					
 				int id = Integer.parseInt(parameter);
 				logger.debug("EditComputerServletLogger: {}", id);
-				computer = computerMDTO.map(serviceComputer.getComputer(id));
-				List<CompanyDTO> companies = companyMDTO.map(serviceCompany.getAllList());
+//				computer = computerMDTO.map(serviceComputer.getComputer(id));
+//				List<CompanyDTO> companies = companyMDTO.map(serviceCompany.getAllList());
 				
 				request.setAttribute("idComputer", id);
 				request.setAttribute("computer", computer);
-				request.setAttribute("companies", companies);
+//				request.setAttribute("companies", companies);
 				this.getServletContext().getRequestDispatcher("/WEB-INF/editComputer.jsp").forward(request, response);
 			}
 		} catch (Exception e) {
@@ -86,7 +83,7 @@ public class EditComputerServlet extends HttpServlet {
 				int id = Integer.parseInt(parameter);
 				LocalDate introduced = null;
 				LocalDate discontinued = null;
-				computer = serviceComputer.getComputer(id);
+//				computer = serviceComputer.getComputer(id);
 			
 				if((attribute = Optional.ofNullable((String) request.getParameter("computerName"))).isPresent() ) {
 					computer.setName(attribute.get());
@@ -109,11 +106,11 @@ public class EditComputerServlet extends HttpServlet {
 				}
 				
 				if((attribute = Optional.ofNullable((String) request.getParameter("companyId"))).isPresent() ) {
-					Company company = serviceCompany.getCompany(attribute.get());
-					computer.setCompany(company);
+//					Company company = serviceCompany.getCompany(attribute.get());
+//					computer.setCompany(company);
 				}
 				
-				serviceComputer.updateComputer(computer);
+//				serviceComputer.updateComputer(computer);
 				doGet(request, response);
 				
 			} catch (Exception e) {

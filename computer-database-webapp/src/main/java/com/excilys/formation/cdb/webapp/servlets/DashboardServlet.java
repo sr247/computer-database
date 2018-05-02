@@ -53,7 +53,7 @@ public class DashboardServlet extends HttpServlet {
 		int numComputers = 0;
 		try {
 			response.getWriter().append("Served at: ").append(request.getContextPath());
-			numComputers = serviceComputer.getNumberOf();
+//			numComputers = serviceComputer.getNumberOf();
 			request.setAttribute("numComputers", numComputers);
 		} catch (Exception e) {
 			logger.error(DASHBOARD_EXCEPTION, e.getMessage(), e);
@@ -80,7 +80,7 @@ public class DashboardServlet extends HttpServlet {
 			}
 			int offset = pagesComputer.getOffset();
 			int limit = pagesComputer.getStride();
-			pagesComputer.setContent(computerMDTO.map(serviceComputer.getList(offset, limit)));
+//			pagesComputer.setContent(computerMDTO.map(serviceComputer.getList(offset, limit)));
 			
 			int numberOfPages = pagesComputer.getNumberOfPages();
 			int currentPage = pagesComputer.getCurrentPage();
@@ -115,7 +115,7 @@ public class DashboardServlet extends HttpServlet {
 						.map(Integer::parseInt)
 						.collect(Collectors.toList());
 				logger.info("Liste des checkboxes: {}", idListInteger.toString());
-				serviceComputer.deleteComputerFromIDList(idListInteger);
+//				serviceComputer.deleteComputerFromIDList(idListInteger);
 			} else {
 				String s = "No checkbox checked.";
 				logger.info(DASHBOARD_EXCEPTION, s);

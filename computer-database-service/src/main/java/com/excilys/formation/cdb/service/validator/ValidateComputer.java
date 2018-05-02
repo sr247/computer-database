@@ -9,15 +9,17 @@ import org.springframework.stereotype.Component;
 
 import com.excilys.formation.cdb.core.Company;
 import com.excilys.formation.cdb.core.Computer;
-import com.excilys.formation.cdb.persistence.CompanyDB;
+import com.excilys.formation.cdb.core.entity.CompanyEntity;
+import com.excilys.formation.cdb.core.entity.ComputerEntity;
+import com.excilys.formation.cdb.persistence.repositories.CompanyRepository;
 
 @Component
 public class ValidateComputer {
 	
 	@Autowired
-	private CompanyDB companyDB;	
+	private CompanyRepository companyREP;
 	
-	public void validate(Computer computer) throws ValidatorException {
+	public void validate(ComputerEntity computer) throws ValidatorException {
 		checkName(Optional.ofNullable(computer.getName()));
 		checkDate(Optional.ofNullable(computer.getIntroduced()), Optional.ofNullable(computer.getDiscontinued()) );
 		checkCompany(Optional.ofNullable(computer.getCompany()));
@@ -44,9 +46,9 @@ public class ValidateComputer {
 		}
 	}
 	
-	private void checkCompany(Optional<Company> company) throws ValidatorException {
+	private void checkCompany(Optional<CompanyEntity> company) throws ValidatorException {
 		if(company.isPresent()) {			
-			if(!companyDB.getCompanyByID(company.get().getId()).isPresent()) {		
+			if(!companyREP.existsById(company.get().getId())) {		
 				throw new InexistentEntityException("ValidatorException: Company not in database");
 			}
 		}else {

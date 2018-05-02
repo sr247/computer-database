@@ -1,8 +1,0 @@
-com/excilys/formation/cdb/persistence/ComputerDB.class
-com/excilys/formation/cdb/persistence/InstanceNotInDatabaseException.class
-com/excilys/formation/cdb/persistence/ConnexionDB.class
-com/excilys/formation/cdb/persistence/NumberOfInstanceException.class
-com/excilys/formation/cdb/persistence/DAOException.class
-com/excilys/formation/cdb/persistence/CompanyDB.class
-com/excilys/formation/cdb/persistence/DataSource.class
-com/excilys/formation/cdb/persistence/ModifyDatabaseException.class

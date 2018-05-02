@@ -1,18 +1,21 @@
 package com.excilys.formation.cdb.service;
 
-import java.util.ArrayList;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-import com.excilys.formation.cdb.persistence.DAOException;
+import com.excilys.formation.cdb.core.ComputerDTO;
+import com.excilys.formation.cdb.core.entity.CompanyEntity;
+import com.excilys.formation.cdb.core.entity.ComputerEntity;
+import com.excilys.formation.cdb.persistence.repositories.CompanyRepository;
+import com.excilys.formation.cdb.persistence.repositories.ComputerRepository;
 import com.excilys.formation.cdb.service.validator.ValidateComputer;
 import com.excilys.formation.cdb.service.validator.ValidatorException;
-import com.excilys.formation.cdb.binding.ComputerMapperDTO;
-import com.excilys.formation.cdb.core.Computer;
-import com.excilys.formation.cdb.persistence.ComputerDB;
 
 @Service
 public class ServiceComputer {
@@ -21,102 +24,79 @@ public class ServiceComputer {
 	private static final String SERVICE_COMPUTER_EXCEPTION = "ServiceComputer: %s";
 	private static final String SERVICE_COMPUTER_LOGGER = "ServiceComputer: {}";
 	
-	private ComputerDB computerDB;
-	private ValidateComputer validateComputer;	
+	private ComputerRepository computerREP;
+	private CompanyRepository companyREP;
+	private ValidateComputer validateComputer;
 	
 	@Autowired
-	public ServiceComputer(ComputerDB computerDB, ValidateComputer validateComputer) {
-		this.computerDB = computerDB;
+	public ServiceComputer(ComputerRepository computerREP, ValidateComputer validateComputer) {
+		this.computerREP = computerREP;
 		this.validateComputer = validateComputer;
 	}
 	
-	public int getNumberOf() throws ServiceManagerException{
-		try {
-			return computerDB.getNumComputers();
-		}catch(DAOException e) {
-			logger.error(SERVICE_COMPUTER_LOGGER, e.getClass().getSimpleName(), e.getMessage(), e);
-			throw new ServiceManagerException(String.format(SERVICE_COMPUTER_EXCEPTION, e.getMessage()), e);
-		}
+	public Long getNumberOf() {
+		return computerREP.count();
 	}
 	
-	public Computer getComputer(int id) throws ServiceManagerException {
-		Optional<Computer> computer = Optional.empty();
+	public ComputerEntity getComputer(Long id) {
+		Optional<ComputerEntity> computer;
+		computer = computerREP.findById(id);
+		return computer.isPresent() ? computer.get() : null;
+	}
+	
+	public Page<ComputerEntity> getList(int page, int size) {
+		Page<ComputerEntity> computersPage;
+//		if(sorted) {
+//			Sort sort = Sort.by(new Sort.Order(Sort.Direction.ASC, "name"));				
+//		}
+		PageRequest pageable = PageRequest.of(page, size);
+		computersPage = computerREP.findAll(pageable);				
+		return computersPage;
+	}
+	
+	public Page<ComputerEntity> getAllList() {
+		Page<ComputerEntity> computersPage;
+//		if(sorted) {
+//			Sort sort = Sort.by(new Sort.Order(Sort.Direction.ASC, "name"));				
+//		}
+		PageRequest pageable = PageRequest.of(0, (int)computerREP.count());
+		computersPage = computerREP.findAll(pageable);				
+		return computersPage;
+	}
+		
+	public void createComputer(ComputerDTO cmp) throws ServiceManagerException {
 		try {
-			computer = computerDB.getComputerByID(id);
-			validateComputer.checkIsNull(computer);
+			long id = cmp.getCompany().getId();
+			CompanyEntity company = companyREP.findByName(cmp.getCompanyName());
+			ComputerEntity computer = new ComputerEntity(cmp.getName(), cmp.getIntroduced(), cmp.getDiscontinued(), company);
+			validateComputer.validate(computer);
+			computerREP.save(computer);
 		} catch (ValidatorException e) {
 			logger.error(SERVICE_COMPUTER_LOGGER, e.getClass().getSimpleName(), e.getMessage(), e);
 			throw new ServiceManagerException(String.format(SERVICE_COMPUTER_EXCEPTION, e.getMessage()), e);
 		}
-		return computer.get();
 	}
 	
-	public List<Computer> getAllList() throws ServiceManagerException {
-		try {
-			return computerDB.getComputerList();
-		} catch (DAOException e) {
-			logger.error(SERVICE_COMPUTER_LOGGER, e.getClass().getSimpleName(), e.getMessage(), e);
-			throw new ServiceManagerException(String.format(SERVICE_COMPUTER_EXCEPTION, e.getMessage()), e);
-		}
-	}
-	
-	public List<Computer> getList(int limit, int offset) throws ServiceManagerException {
-		try {
-			List<Computer> computerList = new ArrayList<>();			
-			if(limit == 0 && offset == 0) {
-				computerList =  computerDB.getComputerList();
-			} else {
-				computerList = computerDB.getComputerList(limit, offset);
-			}
-			return computerList;
-			
-		} catch (DAOException e) {
-			logger.error(SERVICE_COMPUTER_LOGGER, e.getClass().getSimpleName(), e.getMessage(), e);
-			throw new ServiceManagerException(String.format(SERVICE_COMPUTER_EXCEPTION, e.getMessage()), e);
-		}
-	}
-		
-	public void createComputer(Computer cmp) throws ServiceManagerException {
-		try {
-			validateComputer.validate(cmp);		
-			computerDB.create(cmp);
-		} catch (DAOException | ValidatorException e) {
-			logger.error(SERVICE_COMPUTER_LOGGER, e.getClass().getSimpleName(), e.getMessage(), e);
-			throw new ServiceManagerException(String.format(SERVICE_COMPUTER_EXCEPTION, e.getMessage()), e);
-		}
-	}
-	
-	public void updateComputer(Computer cmp) throws ServiceManagerException {
+	public void updateComputer(ComputerEntity cmp) throws ServiceManagerException {
 		try {
 			validateComputer.validate(cmp);	
-			computerDB.update(cmp);
-		} catch (DAOException | ValidatorException e) {
+			computerREP.save(cmp);
+		} catch (ValidatorException e) {
 			logger.error(SERVICE_COMPUTER_LOGGER, e.getClass().getSimpleName(), e.getMessage(), e);
 			throw new ServiceManagerException(String.format(SERVICE_COMPUTER_EXCEPTION, e.getMessage()), e);
+		}
+		computerREP.save(cmp);
+	}
+	
+	public void deleteComputer(Long id) {
+		if(computerREP.existsById(id)) {
+			computerREP.deleteById(id); 				
 		}
 	}
 	
-	public void deleteComputer(int id) throws ServiceManagerException {
-		Optional<Computer> computer;
-		try {
-			computer = computerDB.getComputerByID(id);
-			validateComputer.checkIsNull(computer);
-			// Method orElseThrow de optional plus intéressante
-			computerDB.delete(computer.get()); 
-		} catch (DAOException | ValidatorException e) {
-			logger.error(SERVICE_COMPUTER_LOGGER, e.getClass().getSimpleName(), e.getMessage(), e);
-			throw new ServiceManagerException(String.format(SERVICE_COMPUTER_EXCEPTION, e.getMessage()), e);
-		}
+	public void deleteComputerFromIDList(List<Long> idList) {
+		Iterable<ComputerEntity> entityList = computerREP.findAllById(idList);
+		computerREP.deleteAll(entityList);
 	}
-	
-	public void deleteComputerFromIDList(List<Integer> idList) throws ServiceManagerException{
-		try {
-			computerDB.deleteFromIDList(idList);
-		} catch (DAOException e) {
-			logger.error(SERVICE_COMPUTER_LOGGER, e.getClass().getSimpleName(), e.getMessage(), e);
-			throw new ServiceManagerException(String.format(SERVICE_COMPUTER_EXCEPTION, e.getMessage()), e);
-		}
-	}
-
 	
 }

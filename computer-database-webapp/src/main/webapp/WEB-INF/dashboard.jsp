@@ -2,12 +2,16 @@
 	pageEncoding="UTF-8"%>
 
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<%-- <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%> --%>
+<%@taglib uri="http://www.springframework.org/tags"  prefix="f" %>
 
-<%--     <c:url value="dashboard.jsp" var="dash">
-	 	<c:param name="page"   value="${pagesComputer.current}" />
-	 	<c:param name="stride"    value="${pagesComputer.stride}" />
-	</c:url> --%>
+<!-- TagLib perso essai -->
+<%--
+    <c:url value="dashboard.jsp" var="dash">
+ 	<c:param name="page"   value="${pagesComputer.current}" />
+ 	<c:param name="stride"    value="${pagesComputer.stride}" />
+	</c:url>
+--%>
+	
 <%@ page isELIgnored="false"%> 
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
@@ -15,12 +19,13 @@
 <title>Computer Database</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta charset="utf-8">
+
 <!-- Bootstrap -->
 <!-- Le répertoire Racine est webapp -->
-<link href="static/css/bootstrap.min.css" rel="stylesheet"
-	media="screen">
-<link href="static/css/font-awesome.css" rel="stylesheet" media="screen">
+<link href="static/css/bootstrap.min.css" rel="stylesheet" media="screen">
+<link href="static/css/font-awesome.css" rel="stylesheet"  media="screen">
 <link href="static/css/main.css" rel="stylesheet" media="screen">
+
 </head>
 <body> 
 	<header class="navbar navbar-inverse navbar-fixed-top">
@@ -32,7 +37,7 @@
 
 	<section id="main">
 	<div class="container">
-		<h1 id="homeTitle">${pagesComputer.numberOfElements} Computers
+		<h1 id="homeTitle">${numberOfElements} Computers
 			found</h1>
 		<div id="actions" class="form-horizontal">
 			<div class="pull-left">
@@ -78,7 +83,7 @@
 			</thead>
 			<!-- Browse attribute computers -->
 			<tbody id="results">
-				<c:forEach var="computer" items="${pagesComputer.content}">
+				<c:forEach var="computer" items="${pageComputer}">
 					<tr>
 						<td class="editMode"><input type="checkbox" name="cb"
 							class="cb" value="${computer.id}"></td>
@@ -87,7 +92,7 @@
 								${computer.name} </a></td>
 						<td>${computer.introduced}</td>
 						<td>${computer.discontinued}</td>
-						<td>${computer.companyName}</td>
+						<td>${computer.company.name}</td>
 					</tr>
 				</c:forEach>
 			</tbody>
@@ -99,29 +104,29 @@
 	<div class="container text-center">
 		<ul class="pagination">
 			<li><a href="#" aria-label="Previous"
-				onclick="location.href='dashboard?page=1&stride=${pagesComputer.stride}'"> <span
+				onclick="location.href='dashboard?page=0&stride=${stride}'"> <span
 					aria-hidden="true">First</span>
 			</a> <a href="#" aria-label="Previous"
-				onclick="location.href='dashboard?page=${pagesComputer.currentPage > 1 ? pagesComputer.currentPage-1 : 1}&stride=${pagesComputer.stride}'"> <span
-					aria-hidden="true">&larr;</span>
+				onclick="location.href='dashboard?page=${currentPage > 0 ? currentPage-1 : 0}&stride=${stride}'"> 
+				<span aria-hidden="true">&larr;</span>
 			</a></li>
 			<!-- Focus de Pages -->
 			<c:forEach var="i" begin="${focus-2}" end="${focus+2}" step="1">
 				<c:choose>
-					<c:when test="${i == pagesComputer.currentPage}">
+					<c:when test="${i == currentPage}">
 						<li><a style="background-color: WhiteSmoke;" href="#"
-							onclick="location.href='dashboard?page=${i}&stride=${pagesComputer.stride}'">${i}</a></li>
+							onclick="location.href='dashboard?page=${i}&stride=${stride}'">${i}</a></li>
 					</c:when>
-					<c:when test="${i != pagesComputer.currentPage}">
-						<li><a href="#" onclick="location.href='dashboard?page=${i}&stride=${pagesComputer.stride}'">${i}</a></li>
+					<c:when test="${i != currentPage}">
+						<li><a href="#" onclick="location.href='dashboard?page=${i}&stride=${stride}'">${i}</a></li>
 					</c:when>
 				</c:choose>
 			</c:forEach>
 			<li><a href="#" aria-label="Next"
-				onclick="location.href='dashboard?page=${pagesComputer.currentPage < pagesComputer.numberOfPages ? pagesComputer.currentPage+1 : pagesComputer.numberOfPages}&stride=${pagesComputer.stride}'"> <span
-					aria-hidden="true">&rarr;</span>
+				onclick="location.href='dashboard?page=${currentPage < numberOfPages-1 ? currentPage+1 : numberOfPages-1}&stride=${stride}'"> 
+				<span aria-hidden="true">&rarr;</span>
 			</a> <a href="#" aria-label="Next"
-				onclick="location.href='dashboard?page=${pagesComputer.numberOfPages}&stride=${pagesComputer.stride}'">
+				onclick="location.href='dashboard?page=${numberOfPages-1}&stride=${stride}'">
 					<span aria-hidden="true">Last</span>
 			</a></li>
 		</ul>
@@ -129,11 +134,11 @@
 		<div class="btn-group btn-group-sm pull-right" role="group">
 			<!-- Gérer les url via tag lib -->
 			<button type="button" class="btn btn-default"
-				onclick="location.href='dashboard?page=${pagesComputer.currentPage}&stride=10'">10</button>
+				onclick="location.href='dashboard?page=${currentPage}&stride=10'">10</button>
 			<button type="button" class="btn btn-default"
-				onclick="location.href='dashboard?page=${pagesComputer.currentPage}&stride=50'">50</button>
+				onclick="location.href='dashboard?page=${currentPage}&stride=50'">50</button>
 			<button type="button" class="btn btn-default"
-				onclick="location.href='dashboard?page=${pagesComputer.currentPage}&stride=100'">100</button>
+				onclick="location.href='dashboard?page=${currentPage}&stride=100'">100</button>
 		</div>
 	</div>
 	</footer>

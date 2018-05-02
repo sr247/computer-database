@@ -5,8 +5,6 @@ public class CompanyDTO extends ModelBase {
 		private Long id;
 		private String name;
 		
-		
-		
 		public CompanyDTO() {
 			super();
 		}

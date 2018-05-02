@@ -26,7 +26,29 @@ hs_err_pid*
 /build/
 /bin/
 /target/
+*/target/**
 
 # Idea xml configurations files
 .idea/
 *iml
+
+# Maven 
+# Pom misc
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+dependency-reduced-pom.xml
+
+# Properties misc
+release.properties
+buildNumber.properties
+.mvn/timing.properties
+
+# Settings & project
+.project
+.settings/
+**/.project
+**/.classpath
+**/.settings/
+

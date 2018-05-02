@@ -7,7 +7,6 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.excilys.formation.cdb.core.ComputerDTO;
@@ -68,9 +67,8 @@ public class ServiceComputer {
 	public void createComputer(ComputerDTO cmp) throws ServiceManagerException {
 		try {
 			long id = cmp.getCompany().getId();
-			Optional<CompanyEntity> opt = companyREP.findById(id);
-			CompanyEntity company = opt.isPresent() ? opt.get() : null;
-			ComputerEntity computer = new ComputerEntity(cmp.getName(), LocalDate.parse(cmp.getIntroduced()), LocalDate.parse(cmp.getDiscontinued()), company);
+			CompanyEntity company = companyREP.findByName(cmp.getCompanyName());
+			ComputerEntity computer = new ComputerEntity(cmp.getName(), cmp.getIntroduced(), cmp.getDiscontinued(), company);
 			validateComputer.validate(computer);
 			computerREP.save(computer);
 		} catch (ValidatorException e) {

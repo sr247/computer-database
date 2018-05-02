@@ -1,3 +1,4 @@
+
 package com.excilys.formation.cdb.binding;
 
 import java.util.ArrayList;
@@ -45,7 +46,6 @@ public class ComputerMapperDTO {
 		String intro = computer.getIntroduced() == null ? "" : computer.getIntroduced().toString();
 		String discon = computer.getDiscontinued() == null ? "" : computer.getDiscontinued().toString();
 		CompanyDTO company = companyMDTO.map(computer.getCompany());
-	
 		return new ComputerDTO(id, name, intro, discon, company);
 	}
 

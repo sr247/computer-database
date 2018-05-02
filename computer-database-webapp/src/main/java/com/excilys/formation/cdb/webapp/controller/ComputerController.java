@@ -98,7 +98,7 @@ public class ComputerController {
 		try {
 			Page<CompanyEntity> page= serviceCompany.getAllList();
 			Page<CompanyDTO> pageCompany = page.map((CompanyEntity c) -> companyMDTO.map(c));
-			modelAndView.addObject("computerDTO", new ComputerDTO());
+			modelAndView.addObject("DTO", new ComputerDTO());
 			modelAndView.addObject("companies", pageCompany.getContent());
 		} catch (Exception e) {
 			logger.error("AddComputerGet: {}", e.getMessage(), e);
@@ -130,7 +130,7 @@ public class ComputerController {
 			
 			Page<CompanyEntity> page= serviceCompany.getAllList();
 			Page<CompanyDTO> pageCompany = page.map((CompanyEntity c) -> companyMDTO.map(c));
-			modelAndView.addObject("computerDTO", new ComputerDTO());
+			modelAndView.addObject("DTO", new ComputerDTO());
 			modelAndView.addObject("computer", computerDTO);
 			modelAndView.addObject("companies", pageCompany.getContent());
 		} catch (Exception e) {

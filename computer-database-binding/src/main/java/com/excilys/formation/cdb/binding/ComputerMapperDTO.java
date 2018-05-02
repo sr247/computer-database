@@ -10,7 +10,6 @@ import org.springframework.stereotype.Component;
 import com.excilys.formation.cdb.core.CompanyDTO;
 import com.excilys.formation.cdb.core.Computer;
 import com.excilys.formation.cdb.core.ComputerDTO;
-import com.excilys.formation.cdb.core.entity.CompanyEntity;
 import com.excilys.formation.cdb.core.entity.ComputerEntity;
 
 @Component
@@ -31,7 +30,7 @@ public class ComputerMapperDTO {
 	}
 
 	public ComputerDTO map(Computer computer) {
-		int id = computer.getId();
+		Long id = computer.getId();
 		String name = computer.getName() == null ? "" : computer.getName();
 		String intro = computer.getIntroduced() == null ? "" : computer.getIntroduced().toString();
 		String discon = computer.getDiscontinued() == null ? "" : computer.getDiscontinued().toString();

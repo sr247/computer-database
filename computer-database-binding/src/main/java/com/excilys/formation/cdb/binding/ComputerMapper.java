@@ -11,9 +11,6 @@ import org.springframework.stereotype.Component;
 
 import com.excilys.formation.cdb.core.Company;
 import com.excilys.formation.cdb.core.Computer;
-import com.excilys.formation.cdb.core.ComputerDTO;
-import com.excilys.formation.cdb.core.entity.CompanyEntity;
-import com.excilys.formation.cdb.core.entity.ComputerEntity;
 
 /**
  * Classe Mapper pour mapper les ordinateurs.
@@ -32,7 +29,7 @@ public class ComputerMapper {
 		Computer cmp = null;
 		try {
 			if (!res.equals(null)) {
-				int id = res.getInt("cmpId");
+				long id = res.getLong("cmpId");
 				String name = res.getString("cmpName");
 				Date intro = res.getDate("INTRODUCED");
 				Date discon = res.getDate("DISCONTINUED");

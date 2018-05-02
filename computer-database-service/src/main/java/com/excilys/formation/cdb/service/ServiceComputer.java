@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import com.excilys.formation.cdb.core.ComputerDTO;
 import com.excilys.formation.cdb.core.entity.CompanyEntity;
@@ -29,9 +30,10 @@ public class ServiceComputer {
 	private ValidateComputer validateComputer;
 	
 	@Autowired
-	public ServiceComputer(ComputerRepository computerREP, ValidateComputer validateComputer) {
-		this.computerREP = computerREP;
+	public ServiceComputer(ComputerRepository computerREP, CompanyRepository companyREP, ValidateComputer validateComputer) {
 		this.validateComputer = validateComputer;
+		this.computerREP = computerREP;
+		this.companyREP = companyREP;
 	}
 	
 	public Long getNumberOf() {
@@ -67,9 +69,14 @@ public class ServiceComputer {
 	public void createComputer(ComputerDTO cmp) throws ServiceManagerException {
 		try {
 			long id = cmp.getCompany().getId();
-			CompanyEntity company = companyREP.findByName(cmp.getCompanyName());
-			ComputerEntity computer = new ComputerEntity(cmp.getName(), cmp.getIntroduced(), cmp.getDiscontinued(), company);
+			Optional<CompanyEntity> opt = companyREP.findById(id);
+			
+			CompanyEntity company = opt.isPresent() ? opt.get() : null;
+			LocalDate introduced = !cmp.getIntroduced().equals("") ? LocalDate.parse(cmp.getIntroduced()) : null;
+			LocalDate discontinued = !cmp.getDiscontinued().equals("") ? LocalDate.parse(cmp.getDiscontinued()): null;
+			ComputerEntity computer = new ComputerEntity(cmp.getName(), introduced, discontinued, company);
 			validateComputer.validate(computer);
+			
 			computerREP.save(computer);
 		} catch (ValidatorException e) {
 			logger.error(SERVICE_COMPUTER_LOGGER, e.getClass().getSimpleName(), e.getMessage(), e);
@@ -77,15 +84,21 @@ public class ServiceComputer {
 		}
 	}
 	
-	public void updateComputer(ComputerEntity cmp) throws ServiceManagerException {
+	public void updateComputer(ComputerDTO cmp) throws ServiceManagerException {
 		try {
-			validateComputer.validate(cmp);	
-			computerREP.save(cmp);
+			long id = cmp.getCompany().getId();
+			Optional<CompanyEntity> opt = companyREP.findById(id);
+			
+			CompanyEntity company = opt.isPresent() ? opt.get() : null;
+			LocalDate introduced = !cmp.getIntroduced().equals("") ? LocalDate.parse(cmp.getIntroduced()) : null;
+			LocalDate discontinued = !cmp.getDiscontinued().equals("") ? LocalDate.parse(cmp.getDiscontinued()): null;
+			ComputerEntity computer = new ComputerEntity(cmp.getName(), introduced, discontinued, company);
+			validateComputer.validate(computer);
+			computerREP.save(computer);
 		} catch (ValidatorException e) {
 			logger.error(SERVICE_COMPUTER_LOGGER, e.getClass().getSimpleName(), e.getMessage(), e);
 			throw new ServiceManagerException(String.format(SERVICE_COMPUTER_EXCEPTION, e.getMessage()), e);
 		}
-		computerREP.save(cmp);
 	}
 	
 	public void deleteComputer(Long id) {

@@ -4,7 +4,7 @@ import java.time.LocalDate;
 
 public class Computer extends ModelBase {
 	
-	private int id;
+	private Long id;
 	private String name;
 	private LocalDate introduced;
 	private LocalDate discontinued;
@@ -12,7 +12,7 @@ public class Computer extends ModelBase {
 	// Ce champ deviendra un objet company à part entière.
 	private Company company;
 
-	public Computer(int id, String name, LocalDate introduced, LocalDate discontinued, Company company) {
+	public Computer(Long id, String name, LocalDate introduced, LocalDate discontinued, Company company) {
 		this.id = id;
 		this.name = name;
 		this.introduced = introduced;
@@ -21,19 +21,19 @@ public class Computer extends ModelBase {
 	}
 	
 	public Computer(String name, LocalDate introduced, LocalDate discontinued, Company company) {
-		this.id = 0;
+		this.id = 0L;
 		this.name = name;
 		this.introduced = introduced;
 		this.discontinued = discontinued;
 		this.company = company;
 	}
 	
-	public int getId() {
+	public Long getId() {
 		return id;
 	}
 
 
-	public void setId(int id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 

@@ -21,7 +21,6 @@
 			Database </a>
 	</div>
 	</header>
-
 	<section id="main">
 	<div class="container">
 		<!-- Error/Success messages -->

@@ -11,7 +11,7 @@ public class ComputerDTO extends ModelBase {
 		super();
 	}
 	
-	public ComputerDTO(long id, String name, String introduced, String discontinued, CompanyDTO company) {
+	public ComputerDTO(Long id, String name, String introduced, String discontinued, CompanyDTO company) {
 		this.id = id;
 		this.name = name;
 		this.introduced = introduced;
@@ -34,7 +34,7 @@ public class ComputerDTO extends ModelBase {
 	}
 
 
-	public void setId(long id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 
@@ -96,7 +96,7 @@ public class ComputerDTO extends ModelBase {
 	@Override
 	public boolean equals(Object o) {
 		ComputerDTO cmp = (ComputerDTO) o;
-		return this.id == cmp.id
+		return this.id.equals(cmp.id)
 				&& this.name.equals(cmp.name)
 				&& this.introduced.equals(cmp.introduced)
 				&& this.discontinued.equals(cmp.discontinued)

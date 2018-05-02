@@ -17,7 +17,6 @@ public interface ComputerRepository extends PagingAndSortingRepository<ComputerE
 	@Override
 	long count();
 
-	
 	Optional<ComputerEntity> findById(long arg0);
 	
 	@Override

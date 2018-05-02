@@ -27,7 +27,6 @@ import com.excilys.formation.cdb.service.pages.PagesComputer;
 public class ComputerController {
 
 	private final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(ComputerController.class);
-	private static final String DASHBOARD_EXCEPTION = "DashBoardControllerException: {}";
 	private final int CENTER_VALUE = 2;
 
 	private PagesComputer<ComputerDTO> pages;
@@ -55,14 +54,13 @@ public class ComputerController {
 		ModelAndView modelAndView = new ModelAndView();
 
 		logger.info("PageUrl:{}", String.valueOf(pageUrlParam));
-		logger.info("StrideUrl:{}", String.valueOf(strideUrlParam));
-
-		Page<ComputerEntity> pageComputer = Page.empty();
+		logger.info("StrideUrl:{}", String.valueOf(strideUrlParam));		
 
 		try {
 			pages.setStride(strideUrlParam);
 			pages.goTo(pageUrlParam);
-			pageComputer = serviceComputer.getList(pages.getCurrentPage(), pages.getStride());
+			Page<ComputerEntity> pageComputer= serviceComputer.getList(pages.getCurrentPage(), pages.getStride());
+//			Page<ComputerDTO> pageComputer = page.map((ComputerEntity c) -> computerMDTO.map(c));
 
 			// Mapping Inutile : les entities sont relativement simples pour être postées
 			// sur les Jsps.
@@ -82,7 +80,7 @@ public class ComputerController {
 			modelAndView.addObject("stride", pages.getStride());
 			modelAndView.addObject("focus", focus);
 		} catch (Exception e) {
-			logger.error(DASHBOARD_EXCEPTION, e.getMessage());
+			logger.error("DashboardComputerGet: {}", e.getMessage(), e);
 			modelAndView = new ModelAndView();
 			modelAndView.setViewName("redirect:500");
 		}
@@ -100,10 +98,11 @@ public class ComputerController {
 		try {
 			Page<CompanyEntity> page= serviceCompany.getAllList();
 			Page<CompanyDTO> pageCompany = page.map((CompanyEntity c) -> companyMDTO.map(c));
-			modelAndView.addObject("ComputerDTO", new ComputerDTO());
+			modelAndView.addObject("computerDTO", new ComputerDTO());
 			modelAndView.addObject("companies", pageCompany.getContent());
 		} catch (Exception e) {
 			logger.error("AddComputerGet: {}", e.getMessage(), e);
+			modelAndView.setViewName("redirect:500");
 		}
 		return modelAndView;
 	}
@@ -111,7 +110,7 @@ public class ComputerController {
 	@PostMapping("/addComputer")
 	public ModelAndView postAdd(@ModelAttribute("ComputerDTO") ComputerDTO computer) {
 		ModelAndView modelAndView = new ModelAndView();
-		logger.info("{}", computer);
+		logger.info("Add: {}", computer);
 		try {
 			serviceComputer.createComputer(computer);
 		} catch (ServiceManagerException e) {
@@ -123,28 +122,32 @@ public class ComputerController {
 	}
 
 	@GetMapping("/editComputer")
-	public ModelAndView edit(@RequestParam(value = "id", defaultValue = "1") long idComputer) {
+	public ModelAndView edit(@RequestParam(value = "id", defaultValue = "1") long id) {
 		ModelAndView modelAndView = new ModelAndView();
 		try {
-			ComputerDTO computerDTO = computerMDTO.map(serviceComputer.getComputer(idComputer));
-			Page<CompanyEntity> pageCompany = serviceCompany.getAllList();
+			ComputerEntity computer = serviceComputer.getComputer(id);
+			ComputerDTO computerDTO = computerMDTO.map(computer);
+			
+			Page<CompanyEntity> page= serviceCompany.getAllList();
+			Page<CompanyDTO> pageCompany = page.map((CompanyEntity c) -> companyMDTO.map(c));
+			modelAndView.addObject("computerDTO", new ComputerDTO());
 			modelAndView.addObject("computer", computerDTO);
 			modelAndView.addObject("companies", pageCompany.getContent());
 		} catch (Exception e) {
-			logger.debug("AddComputerServletException: {}", e.getMessage(), e);
+			logger.error("EditComputerGet: {}", e.getMessage(), e);
+			modelAndView.setViewName("redirect:500");
 		}
 		return modelAndView;
 	}
 
 	@PostMapping("/editComputer")
-	public ModelAndView postEdit(@ModelAttribute("ComputerDTO") ComputerDTO cmp) {
+	public ModelAndView postEdit(@ModelAttribute("ComputerDTO") ComputerDTO computer) {
 		ModelAndView modelAndView = new ModelAndView("editComputer");
-		logger.info("{}", cmp);
+		logger.info("Edit: {}", computer);
 		try {
-			ComputerEntity computer = serviceComputer.getComputer(cmp.getId());
 			serviceComputer.updateComputer(computer);
 		} catch (ServiceManagerException e) {
-			logger.error("{}", e.getMessage(), e);
+			logger.error("EditComputerPost: {}", e.getMessage(), e);
 			modelAndView = new ModelAndView();
 			modelAndView.setViewName("redirect:500");
 		}

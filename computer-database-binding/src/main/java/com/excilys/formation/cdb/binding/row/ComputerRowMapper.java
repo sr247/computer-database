@@ -20,7 +20,7 @@ public class ComputerRowMapper implements RowMapper<Optional<Computer>> {
 	public Optional<Computer> mapRow(ResultSet res, int id) throws SQLException {
 		Computer computer = null;		
 		try {
-			int idComputer = res.getInt("id");
+			long idComputer = res.getInt("id");
 			String name = res.getString("name");
 			Date intro = res.getDate("introduced");
 			Date discon = res.getDate("discontinued");

@@ -39,8 +39,8 @@ public class CompanyDTO extends ModelBase {
 		
 		@Override
 		public boolean equals(Object o) {
-			CompanyDTO cpy = (CompanyDTO) o;
-			return this.id == cpy.id && this.name.equals(cpy.name);
+			CompanyDTO company = (CompanyDTO) o;
+			return this.id.equals(company.id) && this.name.equals(company.name);
 		}
 		
 		@Override

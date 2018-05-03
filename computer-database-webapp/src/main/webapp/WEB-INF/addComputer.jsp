@@ -33,19 +33,21 @@
 							<label for="computerName">Computer name</label> <input
 								type="text" class="form-control" name="name"
 								id="name" placeholder="Computer name"
-								required>
+								pattern="^[A-Z]+[a-z]+[0-9]*)+" required>
 						</div>
 						<div class="form-group">
 							<label for="introduced">Introduced date</label> <input
 								type="date" class="form-control" name="introduced"
 								id="introduced" placeholder="Introduced date"
-								data-validation="date">
+								data-validation="date"
+								data-validation-format="yyyy-mm-dd">
 						</div>
 						<div class="form-group">
 							<label for="discontinued">Discontinued date</label> <input
 								type="date" class="form-control" name="discontinued"
 								id="discontinued" placeholder="Discontinued date"
-								data-validation="date">
+								data-validation="date"
+								data-validation-format="yyyy-mm-dd">
 						</div>
 						<div class="form-group">
 							<form:label for="companyId" path="company">Company</form:label> 

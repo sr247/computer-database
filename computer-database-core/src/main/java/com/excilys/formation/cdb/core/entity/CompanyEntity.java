@@ -48,7 +48,7 @@ public class CompanyEntity extends ModelBase {
 	@Override 
 	public String toString() {
 		StringBuilder s = new StringBuilder();
-		return s.append("ComputerEntity:(")
+		return s.append("CompanyEntity:(")
 				.append("id=")
 				.append(id)
 				.append(", ")

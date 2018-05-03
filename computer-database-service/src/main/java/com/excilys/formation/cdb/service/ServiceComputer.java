@@ -4,11 +4,14 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
+import javax.transaction.Transactional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import com.excilys.formation.cdb.core.ComputerDTO;
 import com.excilys.formation.cdb.core.entity.CompanyEntity;
@@ -19,6 +22,7 @@ import com.excilys.formation.cdb.service.validator.ValidateComputer;
 import com.excilys.formation.cdb.service.validator.ValidatorException;
 
 @Service
+@EnableTransactionManagement
 public class ServiceComputer {
 	
 	private static org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(ServiceComputer.class);
@@ -48,20 +52,18 @@ public class ServiceComputer {
 	
 	public Page<ComputerEntity> getList(int page, int size) {
 		Page<ComputerEntity> computersPage;
-//		if(sorted) {
-//			Sort sort = Sort.by(new Sort.Order(Sort.Direction.ASC, "name"));				
-//		}
-		PageRequest pageable = PageRequest.of(page, size);
+		String column = "id";
+		Sort sort = Sort.by(new Sort.Order(Sort.Direction.ASC, column));				
+		PageRequest pageable = PageRequest.of(page, size, sort);
 		computersPage = computerREP.findAll(pageable);				
 		return computersPage;
 	}
 	
 	public Page<ComputerEntity> getAllList() {
 		Page<ComputerEntity> computersPage;
-//		if(sorted) {
-//			Sort sort = Sort.by(new Sort.Order(Sort.Direction.ASC, "name"));				
-//		}
-		PageRequest pageable = PageRequest.of(0, (int)computerREP.count());
+		String column = "id";
+		Sort sort = Sort.by(new Sort.Order(Sort.Direction.ASC, column));				
+		PageRequest pageable = PageRequest.of(0, (int)computerREP.count(), sort);
 		computersPage = computerREP.findAll(pageable);				
 		return computersPage;
 	}
@@ -107,6 +109,14 @@ public class ServiceComputer {
 		}
 	}
 	
+	
+	public void deleteComputer(ComputerDTO computer) {
+		if(computerREP.existsById(computer.getId())) {
+			computerREP.deleteById(computer.getId()); 				
+		}
+	}
+	
+	@Transactional
 	public void deleteComputerFromIDList(List<Long> idList) {
 		Iterable<ComputerEntity> entityList = computerREP.findAllById(idList);
 		computerREP.deleteAll(entityList);

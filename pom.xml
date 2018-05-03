@@ -12,32 +12,32 @@
 	<url>https://github.com/sr247/computer-database</url>
 
 	<properties>
-		<!-- sets the projects encoding to UTF-8 -->
+		<!-- Sets the projects encoding to UTF-8 -->
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
 
-		<!-- compile -->
+		<!-- Compile -->
 		<java.version>1.8</java.version>
 		<javax.version>4.0.0</javax.version>
 		<mojo.version>1.2.1</mojo.version>
 		<jstl.version>1.2</jstl.version>
 
-		<!-- checkstyle -->
+		<!-- Checkstyle -->
 		<checkstyle.version>3.0.0</checkstyle.version>
 
-		<!-- test -->
+		<!-- Test -->
 		<junit.version>5.0.1</junit.version>
 		<mockito.version>1.9.5</mockito.version>
 		<sunfire.version>2.20.1</sunfire.version>
 
-		<!-- logs -->
+		<!-- Logs -->
 		<log4j.version>1.2.17</log4j.version>
 		<slf4j.version>1.7.25</slf4j.version>
 		<logback.version>1.2.3</logback.version>
 
-		<!-- runtime -->
+		<!-- Runtime -->
 		<mysql.version>5.1.38</mysql.version>
 		<myqsl-jdbc.version>8.0.8-dmr</myqsl-jdbc.version>
 		<tomcat-plugin.version>2.2</tomcat-plugin.version>
@@ -48,9 +48,12 @@
 		<!-- Spring version -->
 		<springframework.version>5.0.5.RELEASE</springframework.version>
 
+		<!-- Spring Security -->
+		<springsecurity.version>5.0.4.RELEASE</springsecurity.version>
+
 		<!-- Spring Data JPA -->
 		<springdata.version>2.0.6.RELEASE</springdata.version>
-
+		
 		<!-- Hibernate Entity Manager -->
 		<entitymanager.version>5.2.16.Final</entitymanager.version>
 
@@ -218,6 +221,18 @@
 				<groupId>org.springframework.data</groupId>
 				<artifactId>spring-data-jpa</artifactId>
 				<version>${springdata.version}</version>
+			</dependency>
+
+			<!-- Spring Security -->
+			<dependency>
+				<groupId>org.springframework.security</groupId>
+				<artifactId>spring-security-web</artifactId>
+				<version>${springsecurity.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework.security</groupId>
+				<artifactId>spring-security-config</artifactId>
+				<version>${springsecurity.version}</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>

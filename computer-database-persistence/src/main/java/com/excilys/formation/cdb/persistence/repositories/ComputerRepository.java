@@ -36,6 +36,8 @@ public interface ComputerRepository extends PagingAndSortingRepository<ComputerE
 
 	@Override
 	void deleteAll(Iterable<? extends ComputerEntity> arg0);
+	
+	void deleteAllById(Iterable<Long> arg0);
 
 	@Override
 	boolean existsById(Long arg0);

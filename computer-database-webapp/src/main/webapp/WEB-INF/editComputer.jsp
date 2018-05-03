@@ -26,43 +26,39 @@
 	<!-- Error/Success messages -->
 		<div class="row">
 			<div class="col-xs-8 col-xs-offset-2 box">
-				<div class="label label-default pull-right">id: ${computer.id}
+				<div class="label label-default pull-right">id: ${selectedComputer.id}
 				</div>
 				<h1>Edit Computer</h1>
+
 				<form:form action="editComputer" method="POST" modelAttribute="ComputerDTO">
-					<input type="hidden" value="${computer.id}" id="id" name="id" />
-					<!-- TODO: Change this value with the computer id -->
 					<fieldset>
 						<div class="form-group">
-							<label for="computerName">Computer name</label> 
-							<input type="text" class="form-control" id="name"
-								name="name" placeholder=""
-								value="<c:out value="${computer.name}"/>"
+							<label for="computerName">Computer name</label> <input
+								type="text" class="form-control" name="name" id="name" 
+								value="<c:out value="${selectedComputer.name}"/>"
 								required>
 						</div>
 						<div class="form-group">
 							<label for="introduced">Introduced date</label> <input
-								type="date" class="form-control" id="introduced"
-								name="introduced" placeholder="${computer.introduced}"
-								value="<c:out value="${computer.introduced}"/>"
-								data-validation="date">
+								type="date" class="form-control" name="introduced" id="introduced" 
+								value="<c:out value="${selectedComputer.introduced}"/>"
+								date-validation="date">
 						</div>
 						<div class="form-group">
 							<label for="discontinued">Discontinued date</label> <input
-								type="date" class="form-control" id="discontinued"
-								name="discontinued" placeholder="${computer.discontinued}"
-								value="<c:out value="${computer.discontinued}"/>"
+								type="date" class="form-control" name="discontinued" id="discontinued"
+								value="<c:out value="${selectedComputer.discontinued}"/>"
 								data-validation="date">
 						</div>
 						<div class="form-group">
-							<form:label for="companyId" path="company">Company</form:label> 
+							<label for="companyId">Company</label> 
 							<form:select class="form-control" id="companyId" name="companyId" path="company.id">
 								<c:forEach var="c" items="${companies}">
 									<c:choose>
-										<c:when test="${c.id == computer.company.id}">
+										<c:when test="${c.id == selectedComputer.company.id}">
 											<form:option value="${c.id}" selected="selected">${c.name}</form:option>
 										</c:when>
-										<c:when test="${c.id != computer.company.name}">
+										<c:when test="${c.id != selectedComputer.company.id}">
 											<form:option value="${c.id}">${c.name}</form:option>
 										</c:when>
 									</c:choose>
@@ -74,7 +70,8 @@
 						<input type="submit" value="Edit" class="btn btn-primary">
 						or <a href="dashboard" class="btn btn-default">Cancel</a>
 					</div>
-				</form:form>
+				</form:form>						
+
 			</div>
 		</div>
 	</div>

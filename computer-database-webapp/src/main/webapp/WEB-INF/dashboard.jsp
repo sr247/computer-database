@@ -1,8 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
-
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<%@taglib uri="http://www.springframework.org/tags"  prefix="f" %>
+<%@taglib uri="http://www.springframework.org/tags/form"  prefix="form"%>
 
 <!-- TagLib perso essai -->
 <%--
@@ -57,7 +56,7 @@
 	</div>
 
 	<form id="deleteForm" action="#" method="POST">
-		<input type="hidden" name="selection" value="">
+		<input type="hidden" name="selection" value="" />
 	</form>
 
 	<div class="container" style="margin-top: 10px;">
@@ -69,8 +68,8 @@
 					<th class="editMode" style="width: 60px; height: 22px;"><input
 						type="checkbox" id="selectall" /> <span
 						style="vertical-align: top;"> - <a href="#"
-							id="deleteSelected" onclick="$.fn.deleteSelected();"> <i
-								class="fa fa-trash-o fa-lg"></i>
+							id="deleteSelected" onclick="$.fn.deleteSelected();"> 
+							<i class="fa fa-trash-o fa-lg"></i>
 						</a>
 					</span></th>
 					<th>Computer name</th>
@@ -106,7 +105,7 @@
 			<li><a href="#" aria-label="Previous"
 				onclick="location.href='dashboard?page=0&stride=${stride}'"> <span
 					aria-hidden="true">First</span>
-			</a> <a href="#" aria-label="Previous"
+			</a> <a href="#" aria-label="Previous" 
 				onclick="location.href='dashboard?page=${currentPage > 0 ? currentPage-1 : 0}&stride=${stride}'"> 
 				<span aria-hidden="true">&larr;</span>
 			</a></li>
@@ -114,7 +113,7 @@
 			<c:forEach var="i" begin="${focus-2}" end="${focus+2}" step="1">
 				<c:choose>
 					<c:when test="${i == currentPage}">
-						<li><a style="background-color: WhiteSmoke;" href="#"
+						<li><a style="background-color: WhiteSmoke;" href="#" 
 							onclick="location.href='dashboard?page=${i}&stride=${stride}'">${i}</a></li>
 					</c:when>
 					<c:when test="${i != currentPage}">

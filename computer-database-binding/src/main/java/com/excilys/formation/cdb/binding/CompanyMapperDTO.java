@@ -2,6 +2,7 @@ package com.excilys.formation.cdb.binding;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.stereotype.Component;
 
@@ -28,8 +29,13 @@ public class CompanyMapperDTO {
 	}    
     
     public CompanyDTO map(CompanyEntity company) {
-    	String companyName = company.getName();
-    	long id = company.getId();
+    	Optional<CompanyEntity> opt = Optional.ofNullable(company);
+    	String companyName = "";
+    	long id = 0L;
+    	if (opt.isPresent()){
+    		companyName = opt.get().getName();
+    		id = opt.get().getId();
+    	}
 		return new CompanyDTO(id, companyName);		
 	}   
 

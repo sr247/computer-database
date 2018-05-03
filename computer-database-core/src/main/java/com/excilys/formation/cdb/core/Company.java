@@ -11,9 +11,15 @@ public class Company extends ModelBase {
 	
 	@Override
 	public String toString() {
-		return "Company:("
-				+ "id=" + id + ", "
-				+ "name=" + name + ")";
+		return new StringBuilder()
+				.append("Company:(")
+				.append("id=")
+				.append(id)
+				.append(", ")
+				.append("name=")
+				.append(name)
+				.append(")")
+				.toString();
 	}
 
 	public Long getId() {
@@ -33,18 +39,34 @@ public class Company extends ModelBase {
 	}
 
 	@Override
-	public boolean equals(Object o) {
-		Company cpy = (Company) o;
-		return this.id == cpy.id && this.name.equals(cpy.name);
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Company other = (Company) obj;
+		if (id == null) {
+			if (other.id != null)
+				return false;
+		} else if (!id.equals(other.id))
+			return false;
+		if (name == null) {
+			if (other.name != null)
+				return false;
+		} else if (!name.equals(other.name))
+			return false;
+		return true;
 	}
 	
 	@Override
 	public int hashCode() {
-		int hash = this.getClass().getMethods().length;
-		hash = hash * 7 + id.hashCode();
-		hash = hash * 11 + name.hashCode();
-		
-		return hash;
+		final int prime = 31;
+		int result = 17;
+		result = result << prime * result + ((id == null) ? 0 : id.hashCode());
+		result = result << prime * result + ((name == null) ? 0 : name.hashCode());
+		return result;
 	}
 
 }

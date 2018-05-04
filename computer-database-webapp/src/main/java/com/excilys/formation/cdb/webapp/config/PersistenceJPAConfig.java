@@ -4,6 +4,7 @@ package com.excilys.formation.cdb.webapp.config;
 import javax.annotation.Resource;
 import javax.sql.DataSource;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -11,7 +12,6 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
-import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
@@ -39,47 +39,18 @@ import org.springframework.web.servlet.view.JstlView;
 public class PersistenceJPAConfig implements WebMvcConfigurer {
 
 	private static org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(PersistenceJPAConfig.class);
-	private static final String INIT_LESSAGE = "Initiate...";
+	private static final String INIT_MESSAGE = "Initiate...";
 	private static final String ACK_MESSAGE = "OK";
 		
 	@Resource
 	private Environment environment;	
 	
-	@Bean
-	public DataSource dataSource() {
-		logger.info("dataSource: {}", INIT_LESSAGE);
-		DriverManagerDataSource dataSource = new DriverManagerDataSource();
-		try {
-			dataSource.setDriverClassName(environment.getProperty("dataSource.driver"));
-			dataSource.setUrl(environment.getProperty("jdbcUrl"));
-			dataSource.setUsername(environment.getProperty("dataSource.user"));
-			dataSource.setPassword(environment.getProperty("dataSource.password"));
-		} catch (Exception e) {
-			logger.info("dataSource: {driver={}, url={}, user={}, password={}}", 
-					environment.getProperty("dataSource.driver"), 
-					environment.getProperty("jdbcUrl"),
-					environment.getProperty("dataSource.user"),
-					environment.getProperty("dataSource.password"));
-			throw e;
-		}
-		logger.info("dataSource: {}", ACK_MESSAGE);
-		return dataSource;
-	}
-	
-	@Bean
-	public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
-		logger.info("EntityManagedFactory: {}", INIT_LESSAGE);
-		LocalContainerEntityManagerFactoryBean lemfb = new LocalContainerEntityManagerFactoryBean();
-		lemfb.setDataSource(dataSource());
-		lemfb.setJpaVendorAdapter(jpaVendorAdapter());
-		lemfb.setPackagesToScan("com.excilys.formation.cdb");
-		logger.info("EntityManagedFactory: {}", ACK_MESSAGE);
-		return lemfb;
-	}
-		
+	@Autowired
+	private DataSource dataSource;
+
 	@Bean
 	public JpaVendorAdapter jpaVendorAdapter() {
-		logger.info("jpaVendorAdapter: {}", INIT_LESSAGE);
+		logger.info("jpaVendorAdapter: {}", INIT_MESSAGE);
 		HibernateJpaVendorAdapter jpaVendorAdapter = new HibernateJpaVendorAdapter();
 		jpaVendorAdapter.setDatabase(Database.MYSQL);
 		jpaVendorAdapter.setGenerateDdl(true);
@@ -88,8 +59,20 @@ public class PersistenceJPAConfig implements WebMvcConfigurer {
 	}
 	
 	@Bean
+	public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
+		logger.info("EntityManagedFactory: {}", INIT_MESSAGE);
+		LocalContainerEntityManagerFactoryBean lemfb = new LocalContainerEntityManagerFactoryBean();
+		lemfb.setDataSource(dataSource);
+		lemfb.setJpaVendorAdapter(jpaVendorAdapter());
+		lemfb.setPackagesToScan("com.excilys.formation.cdb");
+		logger.info("EntityManagedFactory: {}", ACK_MESSAGE);
+		return lemfb;
+	}
+	
+	
+	@Bean
     public JpaTransactionManager transactionManager() {
-		logger.info("transactionManager: {}", INIT_LESSAGE);
+		logger.info("transactionManager: {}", INIT_MESSAGE);
 		JpaTransactionManager txnMgr = new JpaTransactionManager();
         txnMgr.setEntityManagerFactory(entityManagerFactory().getObject());
         logger.info("transactionManager: {}", ACK_MESSAGE);
@@ -98,13 +81,13 @@ public class PersistenceJPAConfig implements WebMvcConfigurer {
 
 	@Bean
 	public PersistenceExceptionTranslationPostProcessor exceptionTranslation() {
-		logger.info("exceptionTranslation: {}", INIT_LESSAGE);
+		logger.info("exceptionTranslation: {}", INIT_MESSAGE);
 		return new PersistenceExceptionTranslationPostProcessor();
 	}
 	
     @Bean
     public ViewResolver viewResolver() {
-    	logger.info("viewResolver: {}", INIT_LESSAGE);
+    	logger.info("viewResolver: {}", INIT_MESSAGE);
     	InternalResourceViewResolver bean = new InternalResourceViewResolver();
         bean.setViewClass(JstlView.class);
         bean.setPrefix("/WEB-INF/");
@@ -116,7 +99,7 @@ public class PersistenceJPAConfig implements WebMvcConfigurer {
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         // Specifying static resource location for themes related files(css etc)
-    	logger.info("viewResolver: {}", INIT_LESSAGE);
+    	logger.info("viewResolver: {}", INIT_MESSAGE);
     	registry.addResourceHandler("/static/**")
     		.addResourceLocations("/static/");
     	logger.info("viewResolver: {}", ACK_MESSAGE);

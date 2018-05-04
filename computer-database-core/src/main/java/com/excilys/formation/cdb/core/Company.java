@@ -7,20 +7,7 @@ public class Company extends ModelBase {
 	public Company(Long id, String name) {
 		this.id = id;
 		this.name = name;
-	}	
-	
-	@Override
-	public String toString() {
-		return new StringBuilder()
-				.append("Company:(")
-				.append("id=")
-				.append(id)
-				.append(", ")
-				.append("name=")
-				.append(name)
-				.append(")")
-				.toString();
-	}
+	}		
 
 	public Long getId() {
 		return id;
@@ -69,4 +56,17 @@ public class Company extends ModelBase {
 		return result;
 	}
 
+	@Override
+	public String toString() {
+		return new StringBuilder()
+				.append("Company:(")
+				.append("id=")
+				.append(id)
+				.append(", ")
+				.append("name=")
+				.append(name)
+				.append(")")
+				.toString();
+	}
+	
 }

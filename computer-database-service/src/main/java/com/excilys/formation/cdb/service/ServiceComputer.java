@@ -68,7 +68,7 @@ public class ServiceComputer {
 		return computersPage;
 	}
 		
-	public void createComputer(ComputerDTO cmp) throws ServiceManagerException {
+	public void createComputer(ComputerDTO cmp) throws Exception {
 		try {
 			long id = cmp.getCompany().getId();
 			Optional<CompanyEntity> opt = companyREP.findById(id);
@@ -78,8 +78,8 @@ public class ServiceComputer {
 			LocalDate discontinued = !cmp.getDiscontinued().equals("") ? LocalDate.parse(cmp.getDiscontinued()): null;
 			ComputerEntity computer = new ComputerEntity(cmp.getName(), introduced, discontinued, company);
 			validateComputer.validate(computer);
-			
-			computerREP.save(computer);
+			throw new Exception("Attention toi hein ?");
+//			computerREP.save(computer);
 		} catch (ValidatorException e) {
 			logger.error(SERVICE_COMPUTER_LOGGER, e.getClass().getSimpleName(), e.getMessage(), e);
 			throw new ServiceManagerException(String.format(SERVICE_COMPUTER_EXCEPTION, e.getMessage()), e);

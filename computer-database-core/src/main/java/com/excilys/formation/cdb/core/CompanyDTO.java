@@ -29,19 +29,6 @@ public class CompanyDTO extends ModelBase {
 		public void setName(String name) {
 			this.name = name;
 		}
-
-		@Override
-		public String toString() {
-			return new StringBuilder()
-					.append("CompanyDTO:(")
-					.append("id=")
-					.append(id)
-					.append(", ")
-					.append("name=")
-					.append(name)
-					.append(")")
-					.toString();
-		}
 		
 		@Override
 		public boolean equals(Object obj) {
@@ -72,5 +59,18 @@ public class CompanyDTO extends ModelBase {
 			result = result << prime * result + ((id == null) ? 0 : id.hashCode());
 			result = result << prime * result + ((name == null) ? 0 : name.hashCode());
 			return result;
+		}
+		
+		@Override
+		public String toString() {
+			return new StringBuilder()
+					.append("CompanyDTO:(")
+					.append("id=")
+					.append(id)
+					.append(", ")
+					.append("name=")
+					.append(name)
+					.append(")")
+					.toString();
 		}
 }

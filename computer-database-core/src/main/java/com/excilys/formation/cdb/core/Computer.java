@@ -74,30 +74,7 @@ public class Computer extends ModelBase {
 
 	public void setCompany(Company company) {
 		this.company = company;
-	}
-	
-	@Override 
-	public String toString() {
-		return new StringBuilder()
-				.append("Computer:(")
-				.append("id=")
-				.append(id)
-				.append(", ")
-				.append("name=")
-				.append(name)
-				.append(", ")
-				.append("introduced=")
-				.append(introduced)
-				.append(", ")
-				.append("discontinued=")
-				.append(discontinued)
-				.append(", ")
-				.append("company=")
-				.append(company)
-				.append(")")
-				.toString();
-	}
-	
+	}	
 
 	@Override
 	public int hashCode() {
@@ -148,6 +125,26 @@ public class Computer extends ModelBase {
 		return true;
 	}
 
-	
+	@Override 
+	public String toString() {
+		return new StringBuilder()
+				.append("Computer:(")
+				.append("id=")
+				.append(id)
+				.append(", ")
+				.append("name=")
+				.append(name)
+				.append(", ")
+				.append("introduced=")
+				.append(introduced)
+				.append(", ")
+				.append("discontinued=")
+				.append(discontinued)
+				.append(", ")
+				.append("company=")
+				.append(company)
+				.append(")")
+				.toString();
+	}
 }
 

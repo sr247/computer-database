@@ -28,7 +28,7 @@ public class ComputerMapper {
 	public Optional<Computer> map(ResultSet res) throws SQLException {
 		Computer cmp = null;
 		try {
-			if (!res.equals(null)) {
+			if (res != null) {
 				long id = res.getLong("cmpId");
 				String name = res.getString("cmpName");
 				Date intro = res.getDate("INTRODUCED");

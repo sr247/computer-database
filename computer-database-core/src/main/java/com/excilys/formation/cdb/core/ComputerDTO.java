@@ -71,28 +71,6 @@ public class ComputerDTO extends ModelBase {
 		this.company = company;
 	}
 	
-	@Override 
-	public String toString() {
-		StringBuilder s = new StringBuilder();
-		return s.append("ComputerDTO:(")
-				.append("id=")
-				.append(id)
-				.append(", ")
-				.append("name=")
-				.append(name)
-				.append(", ")
-				.append("introduced=")
-				.append(introduced)
-				.append(", ")
-				.append("discontinued=")
-				.append(discontinued)
-				.append(", ")
-				.append("company=")
-				.append(company)
-				.append(")")
-				.toString();
-	}
-	
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -140,5 +118,27 @@ public class ComputerDTO extends ModelBase {
 		} else if (!name.equals(other.name))
 			return false;
 		return true;
+	}
+	
+	@Override 
+	public String toString() {
+		StringBuilder s = new StringBuilder();
+		return s.append("ComputerDTO:(")
+				.append("id=")
+				.append(id)
+				.append(", ")
+				.append("name=")
+				.append(name)
+				.append(", ")
+				.append("introduced=")
+				.append(introduced)
+				.append(", ")
+				.append("discontinued=")
+				.append(discontinued)
+				.append(", ")
+				.append("company=")
+				.append(company)
+				.append(")")
+				.toString();
 	}
 }

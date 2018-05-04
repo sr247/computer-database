@@ -1,12 +1,12 @@
 package com.excilys.formation.cdb.webapp.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -27,7 +27,7 @@ import com.excilys.formation.cdb.service.pages.PagesComputer;
 public class ComputerController {
 
 	private final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(ComputerController.class);
-	private final int CENTER_VALUE = 2;
+	private static final int CENTER_VALUE = 2;
 
 	private PagesComputer<ComputerDTO> pages;
 	private ServiceComputer serviceComputer;
@@ -50,7 +50,7 @@ public class ComputerController {
 
 	@GetMapping("/dashboard")
 	public ModelAndView dashboard(@RequestParam(value = "page", defaultValue = "0") int pageUrlParam,
-			@RequestParam(value = "stride", defaultValue = "10") int strideUrlParam) throws Exception {
+			@RequestParam(value = "stride", defaultValue = "10") int strideUrlParam) {
 		ModelAndView modelAndView = new ModelAndView();
 
 		logger.info("PageUrl:{}", String.valueOf(pageUrlParam));
@@ -68,8 +68,7 @@ public class ComputerController {
 					: ( currentPage >= CENTER_VALUE && currentPage <= (numberOfPages - 3) ? currentPage
 							: numberOfPages - 3 );
 
-			logger.info("{}; {}; {}; {}; {}", pages.getOffset(), pages.getStride(), numberOfPages, currentPage, focus);
-			
+			logger.info("{}; {}; {}; {}; {}", pages.getOffset(), pages.getStride(), numberOfPages, currentPage, focus);			
 			modelAndView.addObject("ComputerDTO", new ComputerDTO());
 			modelAndView.addObject("numberOfElements", pages.getNumberOfElements());
 			modelAndView.addObject("numberOfPages", pages.getNumberOfPages());
@@ -81,7 +80,6 @@ public class ComputerController {
 			logger.error("DashboardComputerGet: {}", e.getMessage(), e);
 			modelAndView = new ModelAndView();
 			modelAndView.setViewName("redirect:500");
-			throw e;
 		}
 		return modelAndView;
 	}
@@ -113,6 +111,7 @@ public class ComputerController {
 			modelAndView.addObject("companies", pageCompany.getContent());
 		} catch (Exception e) {
 			logger.error("AddComputerGet: {}", e.getMessage(), e);
+			modelAndView.addObject("statusOperation", new ArrayList<Exception>().add(e));
 			modelAndView.setViewName("redirect:500");
 		}
 		return modelAndView;
@@ -120,10 +119,10 @@ public class ComputerController {
 
 	@PostMapping("/addComputer")
 	public ModelAndView postAdd(@ModelAttribute("ComputerDTO") ComputerDTO computer) {
-		ModelAndView modelAndView = new ModelAndView();
+		ModelAndView modelAndView = new ModelAndView("addComputer");
 		logger.info("Add: {}", computer);
 		try {
-			serviceComputer.createComputer(computer);
+			serviceComputer.createComputer(computer);			
 		} catch (Exception e) {
 			logger.error("AddComputerPost: {}", e.getMessage(), e);
 			modelAndView = new ModelAndView();
@@ -160,7 +159,6 @@ public class ComputerController {
 			modelAndView.addObject("ComputerDTO", new ComputerDTO());
 		} catch (Exception e) {
 			logger.error("EditComputerPost: {}", e.getMessage(), e);
-			modelAndView = new ModelAndView();
 			modelAndView.setViewName("redirect:500");
 		}
 		return modelAndView;

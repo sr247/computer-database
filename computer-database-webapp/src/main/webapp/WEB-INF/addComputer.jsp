@@ -24,6 +24,22 @@
 	<section id="main">
 	<div class="container">
 		<!-- Error/Success messages -->
+		<c:if test="${not empty statusOperation}">
+		<c:choose>
+			<c:when test="${statusOperation[0]}">
+				<c:set var="state"     value="Success !"/>
+				<c:set var="alertType" value="alert alert-succes" />
+			</c:when>
+			<c:otherwise>
+				<c:set var="state"     value="Failure !"/>
+				<c:set var="alertType" value="alert alert-danger" />
+			</c:otherwise>
+		</c:choose>
+		<div class="${alertType}">
+			${state}
+			<br/>
+		</div>
+		</c:if>
 		<div class="row">
 			<div class="col-xs-8 col-xs-offset-2 box">
 				<h1>Add Computer</h1>

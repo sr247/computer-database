@@ -29,25 +29,48 @@ public class CompanyDTO extends ModelBase {
 		public void setName(String name) {
 			this.name = name;
 		}
-
-		@Override
-		public String toString() {
-			return "CompanyDTO:("
-					+ "id=" + id + ", "
-					+ "name=" + name + ")";
-		}
 		
 		@Override
-		public boolean equals(Object o) {
-			CompanyDTO cpy = (CompanyDTO) o;
-			return this.id == cpy.id && this.name.equals(cpy.name);
+		public boolean equals(Object obj) {
+			if (this == obj)
+				return true;
+			if (obj == null)
+				return false;
+			if (getClass() != obj.getClass())
+				return false;
+			CompanyDTO other = (CompanyDTO) obj;
+			if (id == null) {
+				if (other.id != null)
+					return false;
+			} else if (!id.equals(other.id))
+				return false;
+			if (name == null) {
+				if (other.name != null)
+					return false;
+			} else if (!name.equals(other.name))
+				return false;
+			return true;
 		}
 		
 		@Override
 		public int hashCode() {
-			int hash = this.getClass().getMethods().length;
-			hash = hash * 7 + id.intValue();
-			hash = hash * 11 + name.hashCode();			
-			return hash;
+			final int prime = 31;
+			int result = 5;
+			result = result << prime * result + ((id == null) ? 0 : id.hashCode());
+			result = result << prime * result + ((name == null) ? 0 : name.hashCode());
+			return result;
+		}
+		
+		@Override
+		public String toString() {
+			return new StringBuilder()
+					.append("CompanyDTO:(")
+					.append("id=")
+					.append(id)
+					.append(", ")
+					.append("name=")
+					.append(name)
+					.append(")")
+					.toString();
 		}
 }

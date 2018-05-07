@@ -3,6 +3,7 @@ package com.excilys.formation.cdb.core.entity;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
@@ -13,7 +14,7 @@ import com.excilys.formation.cdb.core.ModelBase;
 public class CompanyEntity extends ModelBase {
 
 	@Id
-	@GeneratedValue
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id")
 	private long id;
 
@@ -42,13 +43,12 @@ public class CompanyEntity extends ModelBase {
 
 	public void setName(String name) {
 		this.name = name;
-	}
-	
+	}	
 
 	@Override 
 	public String toString() {
 		StringBuilder s = new StringBuilder();
-		return s.append("ComputerEntity:(")
+		return s.append("CompanyEntity:(")
 				.append("id=")
 				.append(id)
 				.append(", ")
@@ -57,8 +57,7 @@ public class CompanyEntity extends ModelBase {
 				.append(")")
 				.toString();
 	}
-	
-	
+		
 	@Override
 	public int hashCode() {
 		final int prime = 31;

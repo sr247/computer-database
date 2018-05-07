@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -17,7 +18,7 @@ import com.excilys.formation.cdb.core.ModelBase;
 public class ComputerEntity extends ModelBase{
 
 	@Id
-	@GeneratedValue
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id")
 	private long id;
 		
@@ -34,19 +35,13 @@ public class ComputerEntity extends ModelBase{
 	@JoinColumn(name = "company_id")
 	private CompanyEntity company;
 	
-	public ComputerEntity() {}
+	public ComputerEntity() {
+		super();
+	}
 	
 	public ComputerEntity(String name, LocalDate introduced, LocalDate discontinued, CompanyEntity company) {
 		super();
 		this.name = name;
-		this.introduced = introduced;
-		this.discontinued = discontinued;
-		this.company = company;
-	}
-
-	public ComputerEntity(long id, LocalDate introduced, LocalDate discontinued, CompanyEntity company) {
-		super();
-		this.id = id;
 		this.introduced = introduced;
 		this.discontinued = discontinued;
 		this.company = company;
@@ -94,8 +89,7 @@ public class ComputerEntity extends ModelBase{
 
 	@Override 
 	public String toString() {
-		StringBuilder s = new StringBuilder();
-		return s.append("ComputerEntity:(")
+		return new StringBuilder().append("ComputerEntity:(")
 				.append("id=")
 				.append(id)
 				.append(", ")
@@ -154,6 +148,5 @@ public class ComputerEntity extends ModelBase{
 			return false;
 		return true;
 	}
-
 	
 }

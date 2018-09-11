@@ -15,15 +15,15 @@ import com.excilys.formation.cdb.core.entity.ComputerEntity;
 public interface ComputerRepository extends PagingAndSortingRepository<ComputerEntity, Long>, CrudRepository<ComputerEntity, Long> {
 
 	@Override
+	Page<ComputerEntity> findAll(Pageable pageable);
+	
+	@Override
 	long count();
 
 	Optional<ComputerEntity> findById(long arg0);
 	
 	@Override
 	Iterable<ComputerEntity> findAllById(Iterable<Long> arg0);
-	
-	@Override
-	Page<ComputerEntity> findAll(Pageable pageable);
 
 	@Override
 	Iterable<ComputerEntity> findAll();
